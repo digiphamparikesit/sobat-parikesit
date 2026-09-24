@@ -51,6 +51,7 @@
   .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
   .toolbar input, .toolbar select { width: auto; margin: 0; }
   .toolbar input[type=text] { min-width: 220px; }
+  .toolbar select#viewAsUser { min-width: 220px; }
   .loc-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
   .loc-panel .loc-icon { font-size: 22px; }
   .loc-panel .loc-body { flex: 1; min-width: 220px; }
@@ -106,6 +107,8 @@
   .status-pending { color: #d97706; font-weight: 600; }
   .status-synced { color: #0891b2; font-weight: 600; font-size: 11px; }
   .hint { font-size: 12px; color: #64748b; background:#fefce8; border:1px solid #fde68a; padding:8px 12px; border-radius:8px; margin-bottom:12px; }
+  .viewas-banner { background:#e0e7ff; border:1px solid #c7d2fe; color:#3730a3; padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:13px; }
+  .viewas-banner b { color:#1e1b4b; }
 </style>
 </head>
 <body>
@@ -126,7 +129,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>Sobat Parikesit</h2>
-    <small>v1.6</small>
+    <small>v1.7</small>
     <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian Hari Ini</div>
     <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
     <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat Kunjungan</div>
@@ -140,7 +143,7 @@
 
   <div class="main">
     <div id="page-queue">
-      <h1>Antrian Pengantaran Hari Ini</h1>
+      <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
 
       <div class="loc-panel wait" id="locPanel">
         <div class="loc-icon">📍</div>
@@ -161,6 +164,9 @@
         <select id="queueFilter" onchange="loadQueue()">
           <option value="all">Semua</option>
           <option value="unassigned">Belum di-assign</option>
+        </select>
+        <select id="viewAsUser" onchange="onViewAsChange()">
+          <option value="">— Lihat Semua Petugas —</option>
         </select>
         <label class="upload-zone" style="padding:8px 14px;margin:0;border-width:1px">
           📤 Upload CSV
@@ -197,7 +203,7 @@
 <!-- ===================== MODAL DETAIL ANTRIAN ===================== -->
 <div id="qDetailModal" class="modal-bg hidden">
   <div class="modal">
-    <h3>Detail Antrian Pasien</h3>
+    <h3 id="qDetailTitle">Detail Antrian Pasien</h3>
     <div id="qGeoStatus" class="geo-status wait">📡 Merekam kunjungan Anda...</div>
     <div id="qPatientDetail"></div>
     <div class="row">
@@ -230,7 +236,7 @@
 <div id="bcModal" class="modal-bg hidden">
   <div class="modal modal-wide">
     <h3>📢 Broadcast WhatsApp</h3>
-    <p style="color:#64748b;font-size:13px;margin-top:-8px">Pesan dikirim ke semua pasien dalam antrian Anda hari ini.</p>
+    <p style="color:#64748b;font-size:13px;margin-top:-8px">Pesan dikirim ke semua pasien dalam antrian ini.</p>
     <div style="font-size:12px;font-weight:600;color:#475569;margin:12px 0 6px">Preview pesan:</div>
     <div class="bc-preview" id="bcPreview"></div>
     <div style="font-size:12px;font-weight:600;color:#475569;margin:12px 0 6px">
@@ -260,6 +266,7 @@ let myQueue = [];
 let allUsers = [];
 let officerLocation = null;
 let currentQId = null;
+let viewAsUserId = '';   // '' = semua (hanya berlaku untuk admin)
 
 // =========================================================
 // UTILITAS
@@ -351,8 +358,14 @@ async function initApp() {
     document.getElementById('queueDate').value = todayStr();
     const { data: u } = await sb.from('profiles').select('id, full_name, role').order('full_name');
     allUsers = u || [];
+
+    // Isi dropdown "Lihat sebagai user"
+    const sel = document.getElementById('viewAsUser');
+    sel.innerHTML = '<option value="">— Lihat Semua Petugas —</option>' +
+      allUsers.map(u => `<option value="${u.id}">${esc(u.full_name || u.id)}${u.role === 'admin' ? ' (admin)' : ''}</option>`).join('');
   }
 
+  updateActionButtonsVisibility();
   await loadPatients();
   showPage('queue');
 }
@@ -377,6 +390,25 @@ function showPage(page) {
   if (page === 'queue') { renderLocPanel(); loadQueue(); }
   if (page === 'history') loadHistory();
   if (page === 'users') loadUsers();
+}
+
+// =========================================================
+// VIEW AS USER (admin)
+// =========================================================
+function onViewAsChange() {
+  viewAsUserId = document.getElementById('viewAsUser').value;
+  updateActionButtonsVisibility();
+  loadQueue();
+}
+
+function updateActionButtonsVisibility() {
+  // Tombol Broadcast WA & Simpan Semua hanya berguna kalau ada antrian yang dilihat
+  // - Admin view "Semua" → sembunyikan (karena antrian bercampur semua petugas)
+  // - Admin view "user X" → tampilkan (biar bisa handle broadcast untuk user itu)
+  // - Petugas → tampilkan (antrian milik sendiri)
+  const show = !isAdmin || viewAsUserId !== '';
+  document.getElementById('btnBroadcast').style.display = show ? '' : 'none';
+  document.getElementById('btnSyncAll').style.display = show ? '' : 'none';
 }
 
 // =========================================================
@@ -428,7 +460,7 @@ function renderLocPanel() {
 }
 
 // =========================================================
-// UPLOAD CSV — dengan pencocokan nama+HP (fallback: nama+alamat)
+// UPLOAD CSV
 // =========================================================
 async function handleCSVUpload(ev) {
   const file = ev.target.files[0];
@@ -450,7 +482,6 @@ async function handleCSVUpload(ev) {
     ev.target.value = ''; return;
   }
 
-  // ===== LOOKUP MASTER: nama + no_hp (prioritas), fallback nama + alamat =====
   const names = valid.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
     .select('nama, alamat, no_hp, latitude, longitude')
@@ -471,9 +502,7 @@ async function handleCSVUpload(ev) {
   let matched = 0, unmatched = 0;
   const payloads = valid.map(r => {
     let m = null;
-    // Prioritas 1: nama + HP
     if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
-    // Prioritas 2: nama + alamat (kalau HP tidak ada atau tidak ketemu)
     if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
     if (m) matched++; else unmatched++;
 
@@ -519,29 +548,55 @@ async function loadQueue() {
     ? (document.getElementById('queueDate').value || todayStr())
     : todayStr();
 
+  // Tentukan mode:
+  // - Petugas → selalu view sendiri
+  // - Admin dengan viewAsUserId != '' → view petugas tsb (reorder aktif)
+  // - Admin dengan viewAsUserId == '' → view ringkasan semua
+  const userSpecificView = !isAdmin || (isAdmin && viewAsUserId !== '');
+
   let q = sb.from('daily_deliveries').select('*').eq('delivery_date', dateVal);
-  if (!isAdmin) q = q.eq('assigned_to', currentUser.id);
+
+  if (userSpecificView) {
+    const targetUserId = isAdmin ? viewAsUserId : currentUser.id;
+    q = q.eq('assigned_to', targetUserId);
+  }
 
   const { data, error } = await q.order('urutan', { ascending: true }).order('id', { ascending: true });
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
 
   const list = data || [];
-  if (!isAdmin) myQueue = list.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
 
-  let displayed = list;
-  if (isAdmin) {
+  if (userSpecificView) {
+    myQueue = list.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
+    // Judul halaman
+    if (isAdmin) {
+      const u = allUsers.find(x => x.id === viewAsUserId);
+      document.getElementById('queueTitle').textContent = `Antrian Pengantaran Hari Ini — ${u?.full_name || 'Petugas'}`;
+    } else {
+      document.getElementById('queueTitle').textContent = 'Antrian Pengantaran Hari Ini';
+    }
+    if (!list.length) {
+      const targetName = isAdmin ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini') : 'Anda';
+      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada tanggal ${dateVal}.
+        ${isAdmin ? '<br><small>Assign pasien ke petugas ini dari mode "Lihat Semua Petugas".</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
+      return;
+    }
+    renderQueueUser(list);
+  } else {
+    // Mode admin: view ringkasan semua petugas
+    myQueue = [];  // kosongkan supaya broadcast/sync batch tidak aktif
+    document.getElementById('queueTitle').textContent = 'Antrian Pengantaran Hari Ini';
+
+    let displayed = list;
     const f = document.getElementById('queueFilter').value;
     if (f === 'unassigned') displayed = list.filter(r => !r.assigned_to);
-  }
 
-  if (!displayed.length) {
-    wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.
-      ${isAdmin ? '<br><small>Upload CSV di toolbar atas.</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
-    return;
+    if (!displayed.length) {
+      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Upload CSV di toolbar atas.</small></div>`;
+      return;
+    }
+    renderQueueAdmin(displayed, dateVal);
   }
-
-  if (isAdmin) renderQueueAdmin(displayed, dateVal);
-  else renderQueueUser(displayed);
 }
 
 function renderQueueAdmin(list, dateVal) {
@@ -549,6 +604,7 @@ function renderQueueAdmin(list, dateVal) {
   wrap.innerHTML = `
     <p style="font-size:13px;color:#64748b;margin:0 0 12px">
       ${list.length} baris · ${dateVal} · Belum assign: <b>${list.filter(r => !r.assigned_to).length}</b>
+      <br><small>💡 Ingin mengatur urutan rute untuk petugas? Pilih nama petugas di dropdown <b>"Lihat Semua Petugas"</b> pada toolbar.</small>
     </p>
     <table>
       <thead><tr><th>No</th><th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Petugas</th><th>Aksi</th></tr></thead>
@@ -575,12 +631,20 @@ function renderQueueAdmin(list, dateVal) {
 
 function renderQueueUser(list) {
   const wrap = document.getElementById('queueTableWrap');
+  const banner = isAdmin
+    ? `<div class="viewas-banner">
+        👁️ Anda melihat antrian sebagai <b>${esc(allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas')}</b> (mode admin).
+        Anda bisa atur urutan. Klik nama pasien hanya untuk pratinjau — tidak merekam kunjungan.
+      </div>`
+    : '';
+
   wrap.innerHTML = `
+    ${banner}
     <div class="hint">
       💡 <b>Ubah urutan:</b> klik tombol <b>↑↓</b> untuk geser satu langkah, atau ketik nomor tujuan di kotak kecil lalu tekan <b>Enter</b> (contoh: isi <b>4</b> untuk pindah ke posisi 4).
     </div>
     <p style="font-size:13px;color:#64748b;margin:0 0 12px">
-      Anda memiliki <b>${list.length}</b> pasien hari ini.
+      Terdapat <b>${list.length}</b> pasien.
     </p>
     <table>
       <thead><tr>
@@ -650,7 +714,7 @@ async function hapusAntrianHariIni() {
 }
 
 // =========================================================
-// REORDER — geser satu langkah
+// REORDER
 // =========================================================
 async function moveItem(index, dir) {
   const target = index + dir;
@@ -665,9 +729,6 @@ async function moveItem(index, dir) {
   await loadQueue();
 }
 
-// =========================================================
-// REORDER — pindah ke posisi tertentu (misal #1 → #4)
-// =========================================================
 async function moveToPosition(fromIndex, targetInput) {
   const targetPos = parseInt(targetInput, 10);
   if (isNaN(targetPos)) return;
@@ -675,7 +736,7 @@ async function moveToPosition(fromIndex, targetInput) {
     return alert(`Posisi harus antara 1 sampai ${myQueue.length}.`);
   }
   const targetIndex = targetPos - 1;
-  if (targetIndex === fromIndex) return; // tidak ada perubahan
+  if (targetIndex === fromIndex) return;
 
   const list = [...myQueue];
   const [item] = list.splice(fromIndex, 1);
@@ -690,7 +751,7 @@ async function moveToPosition(fromIndex, targetInput) {
 }
 
 // =========================================================
-// SIMPAN KOORDINAT KE DATA PASIEN (anti-duplikat: nama+HP / nama+alamat)
+// SIMPAN KOORDINAT KE MASTER
 // =========================================================
 async function syncOneToMaster(deliveryId, silent = false) {
   const r = myQueue.find(x => x.id === deliveryId);
@@ -710,7 +771,6 @@ async function syncOneToMaster(deliveryId, silent = false) {
 
   if (e1) return { ok: false, msg: e1.message };
 
-  // Cari existing: prioritas nama+HP, fallback nama+alamat
   let existing = null;
   if (hpKey) {
     existing = (candidates || []).find(c =>
@@ -742,7 +802,6 @@ async function syncOneToMaster(deliveryId, silent = false) {
     return { ok: true, msg: 'updated' };
   }
 
-  // Belum ada → insert baru (nama + no_hp + alamat + koordinat agar ke depan bisa di-match)
   const { error } = await sb.from('patients').insert({
     nama: r.nama.trim(),
     alamat: r.alamat || null,
@@ -811,19 +870,25 @@ function openQDetail(id) {
   const r = myQueue.find(x => x.id === id);
   if (!r) return;
 
+  // Mode read-only: admin sedang view-as-user
+  const readOnly = isAdmin && viewAsUserId !== '';
+
   const hasCoord = r.latitude && r.longitude;
   const mapsUrl = hasCoord
     ? `https://www.google.com/maps?q=${r.latitude},${r.longitude}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((r.alamat || '') + ' ' + (r.nama || ''))}`;
 
+  document.getElementById('qDetailTitle').textContent = readOnly ? 'Detail Pasien (Pratinjau Admin)' : 'Detail Antrian Pasien';
   document.getElementById('qPatientDetail').innerHTML = `
     <div class="info-box">
       <p><b>Nama:</b> ${esc(r.nama)}</p>
       <p><b>Alamat:</b> ${esc(r.alamat || '-')}</p>
       <p><b>No HP:</b> ${esc(r.no_hp || '-')}</p>
       <p><b>Koordinat:</b><br><span class="coord">${hasCoord ? r.latitude+', '+r.longitude : 'belum ada'}</span></p>
+      <p><b>Status:</b> ${r.status === 'delivered' ? '<span class="status-done">✓ Terkirim</span>' : '<span class="status-pending">Menunggu</span>'}</p>
       ${r.synced_to_master ? '<p class="status-synced">✓ Koordinat sudah disimpan ke Data Pasien</p>' : ''}
     </div>
+    ${readOnly ? '<p style="font-size:12px;color:#94a3b8">Mode pratinjau: aksi GPS dan simpan dinonaktifkan untuk admin.</p>' : `
     <div class="detail-actions">
       <a href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none">
         <button class="maps">🗺️ Navigasi ke Lokasi</button>
@@ -835,13 +900,19 @@ function openQDetail(id) {
         💾 Simpan Koordinat ke Data Pasien
       </button>
     </div>
+    `}
   `;
 
   document.getElementById('qDetailModal').classList.remove('hidden');
-  document.getElementById('qGeoStatus').className = 'geo-status wait';
-  document.getElementById('qGeoStatus').textContent = '📡 Merekam kunjungan Anda...';
 
-  recordDelivery(r.id);
+  if (readOnly) {
+    document.getElementById('qGeoStatus').style.display = 'none';
+  } else {
+    document.getElementById('qGeoStatus').style.display = '';
+    document.getElementById('qGeoStatus').className = 'geo-status wait';
+    document.getElementById('qGeoStatus').textContent = '📡 Merekam kunjungan Anda...';
+    recordDelivery(r.id);
+  }
 }
 
 function closeQDetail() {
@@ -929,7 +1000,9 @@ function updateQCoord(deliveryId) {
 // WA
 // =========================================================
 function buildWAText(patient) {
-  const petugas = currentProfile?.full_name || 'Petugas';
+  const petugas = isAdmin && viewAsUserId
+    ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'Petugas')
+    : (currentProfile?.full_name || 'Petugas');
   const salam = salamWaktu();
   let listPart = '';
   if (myQueue.length > 1) {
@@ -957,7 +1030,7 @@ function openWAFromQueue(deliveryId) {
 }
 
 function openBroadcast() {
-  if (!myQueue.length) return alert('Belum ada pasien dalam antrian Anda.');
+  if (!myQueue.length) return alert('Belum ada pasien dalam antrian ini.');
   document.getElementById('bcPreview').textContent = buildWAText({ nama: '[nama pasien]' });
   document.getElementById('bcCount').textContent = myQueue.length;
   document.getElementById('bcList').innerHTML = myQueue.map((p, i) => {
@@ -986,7 +1059,7 @@ function copyBroadcastText() {
 }
 
 // =========================================================
-// DATA PASIEN (MASTER)
+// DATA PASIEN MASTER
 // =========================================================
 async function loadPatients() {
   const { data, error } = await sb.from('patients').select('*').order('nama').limit(5000);
@@ -1024,7 +1097,6 @@ function renderPatients() {
       </tbody>
     </table>`;
 }
-
 function openPatientForm(id) {
   document.getElementById('formModal').classList.remove('hidden');
   document.getElementById('formCoord').textContent = 'Belum ada koordinat';
