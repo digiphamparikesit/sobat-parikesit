@@ -15,7 +15,7 @@
   .login-box p { margin: 0 0 24px; color: #64748b; font-size: 13px; }
   input, textarea, button, select { font-size: 14px; }
   input, textarea, select { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background:#fff; }
-  input[type=text], input[type=email], input[type=password], input[type=date], textarea, select { width: 100%; }
+  input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], textarea, select { width: 100%; }
   input:focus, textarea:focus { border-color: #0ea5e9; }
   button { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 600; transition: .15s; }
   button:hover { background: #0284c7; }
@@ -71,7 +71,10 @@
   .name-link { color: #0369a1; cursor: pointer; text-decoration: underline dotted; }
   .name-link:hover { color: #0ea5e9; }
   .order-badge { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; background: #0ea5e9; color: #fff; font-size: 12px; font-weight: 700; border-radius: 50%; }
-  .move-cell { display: flex; gap: 2px; }
+  .move-cell { display: flex; gap: 2px; align-items: center; }
+  .move-input { width: 42px !important; padding: 4px 6px !important; font-size: 12px; text-align: center; margin: 0; }
+  .move-input::-webkit-outer-spin-button, .move-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .move-input[type=number] { -moz-appearance: textfield; }
   .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
   .modal { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
   .modal.modal-wide { max-width: 620px; }
@@ -102,6 +105,7 @@
   .status-done { color: #16a34a; font-weight: 600; }
   .status-pending { color: #d97706; font-weight: 600; }
   .status-synced { color: #0891b2; font-weight: 600; font-size: 11px; }
+  .hint { font-size: 12px; color: #64748b; background:#fefce8; border:1px solid #fde68a; padding:8px 12px; border-radius:8px; margin-bottom:12px; }
 </style>
 </head>
 <body>
@@ -122,7 +126,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>Sobat Parikesit</h2>
-    <small>v1.5</small>
+    <small>v1.6</small>
     <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian Hari Ini</div>
     <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
     <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat Kunjungan</div>
@@ -424,7 +428,7 @@ function renderLocPanel() {
 }
 
 // =========================================================
-// UPLOAD CSV
+// UPLOAD CSV — dengan pencocokan nama+HP (fallback: nama+alamat)
 // =========================================================
 async function handleCSVUpload(ev) {
   const file = ev.target.files[0];
@@ -446,12 +450,33 @@ async function handleCSVUpload(ev) {
     ev.target.value = ''; return;
   }
 
+  // ===== LOOKUP MASTER: nama + no_hp (prioritas), fallback nama + alamat =====
   const names = valid.map(r => r.nama);
-  const { data: masters } = await sb.from('patients').select('nama, latitude, longitude').in('nama', names);
-  const masterMap = Object.fromEntries((masters || []).map(m => [m.nama, m]));
+  const { data: masters } = await sb.from('patients')
+    .select('nama, alamat, no_hp, latitude, longitude')
+    .in('nama', names);
 
+  const keyNamaHp = (nama, hp) =>
+    String(nama || '').trim().toLowerCase() + '||' + (normalizePhone(hp) || '');
+  const keyNamaAlamat = (nama, alamat) =>
+    String(nama || '').trim().toLowerCase() + '||' + String(alamat || '').trim().toLowerCase();
+
+  const byNameHp = {};
+  const byNameAlamat = {};
+  for (const m of (masters || [])) {
+    byNameHp[keyNamaHp(m.nama, m.no_hp)] = m;
+    if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
+  }
+
+  let matched = 0, unmatched = 0;
   const payloads = valid.map(r => {
-    const m = masterMap[r.nama];
+    let m = null;
+    // Prioritas 1: nama + HP
+    if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
+    // Prioritas 2: nama + alamat (kalau HP tidak ada atau tidak ketemu)
+    if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
+    if (m) matched++; else unmatched++;
+
     return {
       delivery_date: dateVal,
       nama: r.nama,
@@ -475,7 +500,11 @@ async function handleCSVUpload(ev) {
   }
 
   ev.target.value = '';
-  alert(`✅ ${total} pasien diimpor.`);
+  alert(
+    `✅ ${total} pasien diimpor.\n\n` +
+    `🎯 Koordinat ketemu (nama+HP / nama+alamat): ${matched}\n` +
+    `❓ Tidak ketemu (perlu update manual): ${unmatched}`
+  );
   loadQueue();
 }
 
@@ -547,8 +576,11 @@ function renderQueueAdmin(list, dateVal) {
 function renderQueueUser(list) {
   const wrap = document.getElementById('queueTableWrap');
   wrap.innerHTML = `
+    <div class="hint">
+      💡 <b>Ubah urutan:</b> klik tombol <b>↑↓</b> untuk geser satu langkah, atau ketik nomor tujuan di kotak kecil lalu tekan <b>Enter</b> (contoh: isi <b>4</b> untuk pindah ke posisi 4).
+    </div>
     <p style="font-size:13px;color:#64748b;margin:0 0 12px">
-      Anda memiliki <b>${list.length}</b> pasien hari ini. Urutkan dengan <b>↑↓</b>.
+      Anda memiliki <b>${list.length}</b> pasien hari ini.
     </p>
     <table>
       <thead><tr>
@@ -565,12 +597,13 @@ function renderQueueUser(list) {
           return `
           <tr>
             <td>
-              <div style="display:flex;align-items:center;gap:6px">
+              <div class="move-cell">
                 <span class="order-badge">${i+1}</span>
-                <div class="move-cell">
-                  <button class="updown" ${i===0?'disabled':''} onclick="moveItem(${i}, -1)">↑</button>
-                  <button class="updown" ${i===list.length-1?'disabled':''} onclick="moveItem(${i}, 1)">↓</button>
-                </div>
+                <button class="updown" ${i===0?'disabled':''} onclick="moveItem(${i}, -1)">↑</button>
+                <button class="updown" ${i===list.length-1?'disabled':''} onclick="moveItem(${i}, 1)">↓</button>
+                <input type="number" class="move-input" min="1" max="${list.length}" placeholder="→"
+                  title="Ketik nomor posisi tujuan lalu Enter"
+                  onkeydown="if(event.key==='Enter'){ event.preventDefault(); moveToPosition(${i}, this.value); }">
               </div>
             </td>
             <td><span class="name-link" onclick="openQDetail(${r.id})"><b>${esc(r.nama)}</b></span></td>
@@ -616,6 +649,9 @@ async function hapusAntrianHariIni() {
   loadQueue();
 }
 
+// =========================================================
+// REORDER — geser satu langkah
+// =========================================================
 async function moveItem(index, dir) {
   const target = index + dir;
   if (target < 0 || target >= myQueue.length) return;
@@ -630,39 +666,72 @@ async function moveItem(index, dir) {
 }
 
 // =========================================================
-// SIMPAN KOORDINAT KE DATA PASIEN (ANTI-DUPLIKAT)
+// REORDER — pindah ke posisi tertentu (misal #1 → #4)
+// =========================================================
+async function moveToPosition(fromIndex, targetInput) {
+  const targetPos = parseInt(targetInput, 10);
+  if (isNaN(targetPos)) return;
+  if (targetPos < 1 || targetPos > myQueue.length) {
+    return alert(`Posisi harus antara 1 sampai ${myQueue.length}.`);
+  }
+  const targetIndex = targetPos - 1;
+  if (targetIndex === fromIndex) return; // tidak ada perubahan
+
+  const list = [...myQueue];
+  const [item] = list.splice(fromIndex, 1);
+  list.splice(targetIndex, 0, item);
+
+  try {
+    await Promise.all(list.map((it, i) =>
+      sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', it.id)
+    ));
+  } catch (e) { alert('Gagal menyimpan urutan: ' + e.message); }
+  await loadQueue();
+}
+
+// =========================================================
+// SIMPAN KOORDINAT KE DATA PASIEN (anti-duplikat: nama+HP / nama+alamat)
 // =========================================================
 async function syncOneToMaster(deliveryId, silent = false) {
   const r = myQueue.find(x => x.id === deliveryId);
   if (!r) return { ok: false, msg: 'Data tidak ditemukan' };
   if (!r.latitude || !r.longitude) {
-    if (!silent) alert('Koordinat belum ada. Update koordinat dulu di lokasi pasien.');
+    if (!silent) alert('Koordinat belum ada.');
     return { ok: false, msg: 'Belum ada koordinat' };
   }
 
   const namaKey = String(r.nama || '').trim().toLowerCase();
+  const hpKey = normalizePhone(r.no_hp);
+  const alamatKey = String(r.alamat || '').trim().toLowerCase();
 
-  // Cari pasien dengan nama yang sama (case-insensitive)
   const { data: candidates, error: e1 } = await sb.from('patients')
-    .select('id, nama, latitude, longitude')
+    .select('id, nama, alamat, no_hp, latitude, longitude')
     .ilike('nama', r.nama.trim());
 
   if (e1) return { ok: false, msg: e1.message };
 
-  const existing = (candidates || []).find(c =>
-    String(c.nama || '').trim().toLowerCase() === namaKey
-  );
+  // Cari existing: prioritas nama+HP, fallback nama+alamat
+  let existing = null;
+  if (hpKey) {
+    existing = (candidates || []).find(c =>
+      String(c.nama || '').trim().toLowerCase() === namaKey &&
+      normalizePhone(c.no_hp) === hpKey
+    );
+  }
+  if (!existing && alamatKey) {
+    existing = (candidates || []).find(c =>
+      String(c.nama || '').trim().toLowerCase() === namaKey &&
+      String(c.alamat || '').trim().toLowerCase() === alamatKey
+    );
+  }
 
   if (existing) {
-    // Sudah ada → cek dulu apakah koordinatnya sudah sama
     if (existing.latitude === r.latitude && existing.longitude === r.longitude) {
-      // Tandai di antrian kalau belum
       if (!r.synced_to_master) {
         await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
       }
       return { ok: true, msg: 'sama' };
     }
-    // Update hanya koordinat
     const { error } = await sb.from('patients').update({
       latitude: r.latitude,
       longitude: r.longitude,
@@ -673,9 +742,11 @@ async function syncOneToMaster(deliveryId, silent = false) {
     return { ok: true, msg: 'updated' };
   }
 
-  // Belum ada → insert baru dengan nama + koordinat saja
+  // Belum ada → insert baru (nama + no_hp + alamat + koordinat agar ke depan bisa di-match)
   const { error } = await sb.from('patients').insert({
     nama: r.nama.trim(),
+    alamat: r.alamat || null,
+    no_hp: r.no_hp || null,
     latitude: r.latitude,
     longitude: r.longitude,
     recorded_by: currentUser.id
@@ -696,7 +767,7 @@ async function syncThisToMaster(deliveryId) {
   const msgMap = {
     'sama': '✅ Data di master sudah sama — tidak ada perubahan.',
     'updated': '✅ Koordinat diperbarui di Data Pasien.',
-    'inserted': '✅ Pasien baru ditambahkan ke Data Pasien (nama + koordinat).'
+    'inserted': '✅ Pasien baru ditambahkan ke Data Pasien.'
   };
   alert(msgMap[result.msg] || '✅ Selesai.');
   await loadPatients();
@@ -708,7 +779,7 @@ async function syncAllToMaster() {
   const withCoord = myQueue.filter(r => r.latitude && r.longitude);
   if (!withCoord.length) return alert('Belum ada pasien yang punya koordinat.');
 
-  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?\n\n· Nama yang sudah ada → koordinat diperbarui\n· Nama yang belum ada → ditambahkan baru\n· Yang sudah sama → dilewati (anti-duplikat)`)) return;
+  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?\n\n· Nama+HP/alamat sudah ada → koordinat diperbarui\n· Belum ada → ditambahkan baru\n· Sama persis → dilewati`)) return;
 
   const btn = document.getElementById('btnSyncAll');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
@@ -726,11 +797,7 @@ async function syncAllToMaster() {
   if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Semua ke Data Pasien'; }
 
   alert(
-    `Selesai!\n\n` +
-    `🔄 Diperbarui: ${updated}\n` +
-    `➕ Ditambahkan: ${inserted}\n` +
-    `⏭️ Sudah sama (dilewati): ${same}\n` +
-    `❌ Gagal: ${failed}`
+    `Selesai!\n\n🔄 Diperbarui: ${updated}\n➕ Ditambahkan: ${inserted}\n⏭️ Sudah sama: ${same}\n❌ Gagal: ${failed}`
   );
   await loadPatients();
   await loadQueue();
@@ -807,9 +874,13 @@ function recordDelivery(deliveryId) {
       statusEl.className = 'geo-status ok';
       statusEl.textContent = `✅ Kunjungan tersimpan (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
 
-      // Refresh cache supaya tombol Simpan ke Data Pasien aktif
       const idx = myQueue.findIndex(x => x.id === deliveryId);
-      if (idx >= 0) { myQueue[idx].latitude = latitude; myQueue[idx].longitude = longitude; myQueue[idx].status = 'delivered'; }
+      if (idx >= 0) {
+        myQueue[idx].latitude = latitude;
+        myQueue[idx].longitude = longitude;
+        myQueue[idx].status = 'delivered';
+        myQueue[idx].synced_to_master = false;
+      }
       const btn = document.getElementById('btnSaveMaster');
       if (btn) btn.disabled = false;
 
