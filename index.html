@@ -15,15 +15,20 @@
   .login-box { background: #fff; padding: 32px; border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,.2); width: 340px; }
   .login-box h1 { margin: 0 0 4px; color: #0369a1; font-size: 22px; }
   .login-box p { margin: 0 0 24px; color: #64748b; font-size: 13px; }
+
   input, textarea, button, select { font-size: 14px; }
   input, textarea, select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; outline: none; }
   input:focus, textarea:focus { border-color: #0ea5e9; }
-  button { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 600; }
+  button { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 600; transition: .15s; }
   button:hover { background: #0284c7; }
   button.ghost { background: #e2e8f0; color: #334155; }
   button.ghost:hover { background: #cbd5e1; }
   button.danger { background: #ef4444; }
   button.danger:hover { background: #dc2626; }
+  button.wa { background: #25D366; }
+  button.wa:hover { background: #1da851; }
+  button.tel { background: #0ea5e9; }
+  button.tel:hover { background: #0284c7; }
   button:disabled { opacity: .6; cursor: not-allowed; }
 
   /* LAYOUT */
@@ -46,7 +51,9 @@
   th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; vertical-align: top; }
   th { background: #f8fafc; font-weight: 600; color: #475569; }
   tr:last-child td { border-bottom: none; }
-  .badge { background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+  .badge { background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 999px; font-size: 11px; display: inline-block; }
+  td .actions { display: flex; flex-wrap: wrap; gap: 4px; }
+  td .actions button, td .actions a button { padding: 5px 10px; font-size: 12px; }
 
   /* MODAL */
   .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
@@ -59,6 +66,8 @@
   .geo-status.err { background: #fee2e2; color: #991b1b; }
   .coord { font-family: monospace; font-size: 12px; color: #475569; }
   .empty { text-align: center; padding: 40px; color: #94a3b8; }
+  .modal p { margin: 6px 0; font-size: 14px; }
+  .detail-actions { display: flex; gap: 8px; margin: 14px 0; flex-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -134,7 +143,7 @@
     <h3 id="formTitle">Tambah Pasien</h3>
     <input id="fNama" placeholder="Nama pasien">
     <textarea id="fAlamat" rows="2" placeholder="Alamat"></textarea>
-    <input id="fHp" placeholder="No HP">
+    <input id="fHp" placeholder="No HP (contoh: 08123456789)">
     <div style="font-size:12px;color:#64748b;margin-bottom:8px">
       Koordinat (opsional, klik ambil lokasi):
       <button class="ghost" style="padding:4px 10px;font-size:12px" onclick="ambilLokasiForm()">📡 Ambil Lokasi</button>
@@ -164,6 +173,24 @@ let patientsCache = [];
 let currentDetailId = null;
 
 // =========================================================
+// UTILITAS
+// =========================================================
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// Normalisasi nomor HP ke format internasional (62xxx)
+function normalizePhone(raw) {
+  if (!raw) return '';
+  let n = String(raw).replace(/\D/g, '');
+  if (!n) return '';
+  if (n.startsWith('0')) return '62' + n.slice(1);
+  if (n.startsWith('62')) return n;
+  if (n.startsWith('8')) return '62' + n;
+  return n;
+}
+
+// =========================================================
 // AUTENTIKASI
 // =========================================================
 async function doLogin() {
@@ -190,7 +217,6 @@ async function initApp() {
   if (!user) { showLogin(); return; }
   currentUser = user;
 
-  // Ambil profil
   const { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
   currentProfile = prof || { full_name: user.email, role: 'petugas' };
 
@@ -253,24 +279,53 @@ function renderPatients() {
         <th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th>
       </tr></thead>
       <tbody>
-        ${list.map(p => `
+        ${list.map(p => {
+          const phone = normalizePhone(p.no_hp);
+          const waBtn = phone
+            ? `<button class="wa" onclick="kirimWA(${p.id})">💬 WA</button>`
+            : '';
+          const telBtn = phone
+            ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞 Telepon</button></a>`
+            : '';
+          return `
           <tr>
             <td><b>${esc(p.nama)}</b></td>
             <td>${esc(p.alamat || '-')}</td>
             <td>${esc(p.no_hp || '-')}</td>
             <td class="coord">${p.latitude ? p.latitude.toFixed(5)+', '+p.longitude.toFixed(5) : '-'}</td>
             <td>
-              <button class="ghost" style="padding:5px 10px;font-size:12px" onclick="openDetail(${p.id})">Buka</button>
-              <button class="ghost" style="padding:5px 10px;font-size:12px" onclick="openPatientForm(${p.id})">Edit</button>
-              <button class="danger" style="padding:5px 10px;font-size:12px" onclick="deletePatient(${p.id})">Hapus</button>
+              <div class="actions">
+                ${waBtn}
+                ${telBtn}
+                <button class="ghost" onclick="openDetail(${p.id})">Buka</button>
+                <button class="ghost" onclick="openPatientForm(${p.id})">Edit</button>
+                <button class="danger" onclick="deletePatient(${p.id})">Hapus</button>
+              </div>
             </td>
-          </tr>
-        `).join('')}
+          </tr>`;
+        }).join('')}
       </tbody>
     </table>`;
 }
 
-function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// =========================================================
+// KIRIM WHATSAPP
+// =========================================================
+function kirimWA(patientId) {
+  const p = patientsCache.find(x => x.id === patientId);
+  if (!p) return;
+  const phone = normalizePhone(p.no_hp);
+  if (!phone) return alert('Nomor HP pasien tidak tersedia.');
+
+  const pesan =
+    `Halo ${p.nama},\n\n` +
+    `Kami dari Sobat Parikesit ingin mengingatkan jadwal kunjungan / pemeriksaan Anda.\n\n` +
+    `Alamat terdaftar: ${p.alamat || '-'}\n\n` +
+    `Terima kasih.`;
+
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(pesan)}`;
+  window.open(url, '_blank');
+}
 
 // =========================================================
 // DETAIL PASIEN + WAJIB SIMPAN KOORDINAT
@@ -280,17 +335,26 @@ function openDetail(id) {
   const p = patientsCache.find(x => x.id === id);
   if (!p) return;
 
+  const phone = normalizePhone(p.no_hp);
+  const actionBtns = phone
+    ? `<div class="detail-actions">
+         <button class="wa" onclick="kirimWA(${p.id})">💬 Kirim WhatsApp</button>
+         <a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞 Telepon</button></a>
+       </div>`
+    : '<p style="color:#94a3b8;font-size:13px">Nomor HP belum tersedia.</p>';
+
   document.getElementById('patientDetail').innerHTML = `
     <p><b>Nama:</b> ${esc(p.nama)}</p>
     <p><b>Alamat:</b> ${esc(p.alamat || '-')}</p>
     <p><b>No HP:</b> ${esc(p.no_hp || '-')}</p>
     <p><b>Koordinat tersimpan:</b> <span class="coord">${p.latitude ? p.latitude+', '+p.longitude : 'belum ada'}</span></p>
+    ${actionBtns}
   `;
+
   document.getElementById('detailModal').classList.remove('hidden');
   document.getElementById('geoStatus').className = 'geo-status wait';
   document.getElementById('geoStatus').textContent = '📡 Mengambil titik koordinat GPS Anda...';
 
-  // === WAJIB: simpan titik koordinat saat membuka data pasien ===
   simpanKoordinatKunjungan(id);
 }
 
@@ -409,7 +473,6 @@ async function loadToday() {
   const wrap = document.getElementById('todayTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat...</div>';
 
-  // Awal & akhir hari ini (waktu lokal browser)
   const start = new Date(); start.setHours(0,0,0,0);
   const end = new Date(); end.setHours(23,59,59,999);
 
