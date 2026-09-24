@@ -29,6 +29,10 @@
   button.wa:hover { background: #1da851; }
   button.tel { background: #0ea5e9; }
   button.tel:hover { background: #0284c7; }
+  button.maps { background: #6366f1; }
+  button.maps:hover { background: #4f46e5; }
+  button.update { background: #f59e0b; }
+  button.update:hover { background: #d97706; }
   button:disabled { opacity: .6; cursor: not-allowed; }
 
   /* LAYOUT */
@@ -54,12 +58,14 @@
   .badge { background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 999px; font-size: 11px; display: inline-block; }
   td .actions { display: flex; flex-wrap: wrap; gap: 4px; }
   td .actions button, td .actions a button { padding: 5px 10px; font-size: 12px; }
+  .name-link { color: #0369a1; cursor: pointer; text-decoration: underline dotted; }
+  .name-link:hover { color: #0ea5e9; }
 
   /* MODAL */
   .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
-  .modal { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
+  .modal { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
   .modal h3 { margin: 0 0 16px; }
-  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
   .geo-status { padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
   .geo-status.ok { background: #dcfce7; color: #166534; }
   .geo-status.wait { background: #fef9c3; color: #854d0e; }
@@ -67,7 +73,9 @@
   .coord { font-family: monospace; font-size: 12px; color: #475569; }
   .empty { text-align: center; padding: 40px; color: #94a3b8; }
   .modal p { margin: 6px 0; font-size: 14px; }
-  .detail-actions { display: flex; gap: 8px; margin: 14px 0; flex-wrap: wrap; }
+  .detail-actions { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+  .detail-actions button, .detail-actions a button { width: 100%; }
+  .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 12px 0; }
 </style>
 </head>
 <body>
@@ -88,7 +96,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>Sobat Parikesit</h2>
-    <small>v1.0</small>
+    <small>v1.1</small>
     <div class="nav-item active" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
     <div class="nav-item" data-page="today" onclick="showPage('today')">🕒 Pasien Hari Ini</div>
     <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
@@ -125,7 +133,7 @@
   </div>
 </div>
 
-<!-- ===================== MODAL DETAIL PASIEN (wajib GPS) ===================== -->
+<!-- ===================== MODAL DETAIL PASIEN ===================== -->
 <div id="detailModal" class="modal-bg hidden">
   <div class="modal">
     <h3>Detail Pasien</h3>
@@ -179,7 +187,6 @@ function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// Normalisasi nomor HP ke format internasional (62xxx)
 function normalizePhone(raw) {
   if (!raw) return '';
   let n = String(raw).replace(/\D/g, '');
@@ -235,7 +242,6 @@ function showLogin() {
   document.getElementById('loginPage').classList.remove('hidden');
 }
 
-// Deteksi sesi saat halaman dibuka
 sb.auth.getSession().then(({ data: { session } }) => {
   if (session) initApp(); else showLogin();
 });
@@ -279,41 +285,31 @@ function renderPatients() {
         <th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th>
       </tr></thead>
       <tbody>
-        ${list.map(p => {
-          const phone = normalizePhone(p.no_hp);
-          const waBtn = phone
-            ? `<button class="wa" onclick="kirimWA(${p.id})">💬 WA</button>`
-            : '';
-          const telBtn = phone
-            ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞 Telepon</button></a>`
-            : '';
-          return `
+        ${list.map(p => `
           <tr>
-            <td><b>${esc(p.nama)}</b></td>
+            <td><span class="name-link" onclick="openDetail(${p.id})"><b>${esc(p.nama)}</b></span></td>
             <td>${esc(p.alamat || '-')}</td>
             <td>${esc(p.no_hp || '-')}</td>
             <td class="coord">${p.latitude ? p.latitude.toFixed(5)+', '+p.longitude.toFixed(5) : '-'}</td>
             <td>
               <div class="actions">
-                ${waBtn}
-                ${telBtn}
                 <button class="ghost" onclick="openDetail(${p.id})">Buka</button>
                 <button class="ghost" onclick="openPatientForm(${p.id})">Edit</button>
                 <button class="danger" onclick="deletePatient(${p.id})">Hapus</button>
               </div>
             </td>
-          </tr>`;
-        }).join('')}
+          </tr>
+        `).join('')}
       </tbody>
     </table>`;
 }
 
 // =========================================================
-// KIRIM WHATSAPP
+// KIRIM WHATSAPP (dipanggil dari menu Pasien Hari Ini)
 // =========================================================
-function kirimWA(patientId) {
+function openWA(patientId) {
   const p = patientsCache.find(x => x.id === patientId);
-  if (!p) return;
+  if (!p) return alert('Data pasien tidak ditemukan.');
   const phone = normalizePhone(p.no_hp);
   if (!phone) return alert('Nomor HP pasien tidak tersedia.');
 
@@ -328,33 +324,45 @@ function kirimWA(patientId) {
 }
 
 // =========================================================
-// DETAIL PASIEN + WAJIB SIMPAN KOORDINAT
+// DETAIL PASIEN — auto GPS kunjungan + navigasi maps + update koordinat
 // =========================================================
 function openDetail(id) {
   currentDetailId = id;
   const p = patientsCache.find(x => x.id === id);
   if (!p) return;
 
-  const phone = normalizePhone(p.no_hp);
-  const actionBtns = phone
-    ? `<div class="detail-actions">
-         <button class="wa" onclick="kirimWA(${p.id})">💬 Kirim WhatsApp</button>
-         <a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞 Telepon</button></a>
-       </div>`
-    : '<p style="color:#94a3b8;font-size:13px">Nomor HP belum tersedia.</p>';
+  const hasCoord = p.latitude && p.longitude;
+  const mapsUrl = hasCoord
+    ? `https://www.google.com/maps?q=${p.latitude},${p.longitude}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.alamat || '') + ' ' + (p.nama || ''))}`;
 
   document.getElementById('patientDetail').innerHTML = `
-    <p><b>Nama:</b> ${esc(p.nama)}</p>
-    <p><b>Alamat:</b> ${esc(p.alamat || '-')}</p>
-    <p><b>No HP:</b> ${esc(p.no_hp || '-')}</p>
-    <p><b>Koordinat tersimpan:</b> <span class="coord">${p.latitude ? p.latitude+', '+p.longitude : 'belum ada'}</span></p>
-    ${actionBtns}
+    <div class="info-box">
+      <p><b>Nama:</b> ${esc(p.nama)}</p>
+      <p><b>Alamat:</b> ${esc(p.alamat || '-')}</p>
+      <p><b>No HP:</b> ${esc(p.no_hp || '-')}</p>
+      <p><b>Koordinat tersimpan:</b><br>
+         <span class="coord">${hasCoord ? p.latitude+', '+p.longitude : 'belum ada'}</span></p>
+    </div>
+
+    <div class="detail-actions">
+      <a href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none">
+        <button class="maps">🗺️ Navigasi ke Lokasi (Google Maps)</button>
+      </a>
+      <button class="update" id="btnUpdateCoord" onclick="updateKoordinatPasien(${p.id})">
+        🎯 Update Koordinat di Lokasi Saya Sekarang
+      </button>
+    </div>
+    <p style="font-size:12px;color:#94a3b8;margin-top:8px">
+      Tips: klik <b>Navigasi</b> untuk menuju rumah pasien. Setelah tiba, klik <b>Update Koordinat</b> agar titik tersimpan lebih akurat.
+    </p>
   `;
 
   document.getElementById('detailModal').classList.remove('hidden');
   document.getElementById('geoStatus').className = 'geo-status wait';
-  document.getElementById('geoStatus').textContent = '📡 Mengambil titik koordinat GPS Anda...';
+  document.getElementById('geoStatus').textContent = '📡 Merekam kunjungan Anda...';
 
+  // Auto-record kunjungan saat pasien dibuka
   simpanKoordinatKunjungan(id);
 }
 
@@ -381,15 +389,49 @@ function simpanKoordinatKunjungan(patientId) {
       });
       if (error) {
         statusEl.className = 'geo-status err';
-        statusEl.textContent = '❌ Gagal simpan koordinat: ' + error.message;
+        statusEl.textContent = '❌ Gagal simpan kunjungan: ' + error.message;
         return;
       }
       statusEl.className = 'geo-status ok';
-      statusEl.textContent = `✅ Kunjungan tersimpan. Koordinat: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+      statusEl.textContent = `✅ Kunjungan tersimpan (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
     },
     (err) => {
       statusEl.className = 'geo-status err';
       statusEl.textContent = '❌ Gagal ambil lokasi: ' + err.message + '. Izinkan akses lokasi di browser.';
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+// =========================================================
+// UPDATE KOORDINAT PASIEN (tombol di modal detail)
+// =========================================================
+function updateKoordinatPasien(patientId) {
+  if (!navigator.geolocation) return alert('Geolocation tidak didukung browser.');
+  if (!confirm('Update koordinat pasien ini dengan lokasi Anda sekarang?')) return;
+
+  const btn = document.getElementById('btnUpdateCoord');
+  if (btn) { btn.disabled = true; btn.textContent = '📡 Mengambil lokasi...'; }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      const { error } = await sb.from('patients').update({
+        latitude, longitude,
+        updated_at: new Date().toISOString()
+      }).eq('id', patientId);
+
+      if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya Sekarang'; }
+
+      if (error) return alert('Gagal update koordinat: ' + error.message);
+
+      alert('✅ Koordinat pasien berhasil diperbarui:\n' + latitude.toFixed(6) + ', ' + longitude.toFixed(6));
+      await loadPatients();
+      openDetail(patientId); // refresh tampilan modal
+    },
+    (err) => {
+      if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya Sekarang'; }
+      alert('Gagal ambil lokasi: ' + err.message + '\nPastikan GPS aktif dan izin lokasi diberikan.');
     },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
@@ -467,7 +509,7 @@ async function deletePatient(id) {
 }
 
 // =========================================================
-// PASIEN HARI INI
+// PASIEN HARI INI (dengan WA & Telepon)
 // =========================================================
 async function loadToday() {
   const wrap = document.getElementById('todayTableWrap');
@@ -478,7 +520,7 @@ async function loadToday() {
 
   const { data, error } = await sb
     .from('patient_visits')
-    .select('id, visited_at, latitude, longitude, patients(nama, alamat, no_hp), profiles:user_id(full_name)')
+    .select('id, visited_at, latitude, longitude, patients(id, nama, alamat, no_hp), profiles:user_id(full_name)')
     .gte('visited_at', start.toISOString())
     .lte('visited_at', end.toISOString())
     .order('visited_at', { ascending: false });
@@ -489,10 +531,19 @@ async function loadToday() {
   wrap.innerHTML = `
     <table>
       <thead><tr>
-        <th>Jam</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Petugas</th><th>Koordinat</th>
+        <th>Jam</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Petugas</th><th>Koordinat</th><th>Aksi</th>
       </tr></thead>
       <tbody>
-        ${data.map(v => `
+        ${data.map(v => {
+          const phone = normalizePhone(v.patients?.no_hp);
+          const pid = v.patients?.id;
+          const waBtn = phone
+            ? `<button class="wa" onclick="openWA(${pid})">💬 WA</button>`
+            : '';
+          const telBtn = phone
+            ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞 Telepon</button></a>`
+            : '';
+          return `
           <tr>
             <td>${new Date(v.visited_at).toLocaleTimeString('id-ID')}</td>
             <td><b>${esc(v.patients?.nama || '-')}</b></td>
@@ -500,8 +551,14 @@ async function loadToday() {
             <td>${esc(v.patients?.no_hp || '-')}</td>
             <td>${esc(v.profiles?.full_name || '-')}</td>
             <td class="coord">${v.latitude ? v.latitude.toFixed(5)+', '+v.longitude.toFixed(5) : '-'}</td>
-          </tr>
-        `).join('')}
+            <td>
+              <div class="actions">
+                ${waBtn}
+                ${telBtn}
+              </div>
+            </td>
+          </tr>`;
+        }).join('')}
       </tbody>
     </table>`;
 }
