@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobat Parikesit</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+  body { margin: 0; background: #f0f4f8; color: #1e293b; }
+  .hidden { display: none !important; }
+
+  /* LOGIN */
+  #loginPage { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#0ea5e9,#0369a1); }
+  .login-box { background: #fff; padding: 32px; border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,.2); width: 340px; }
+  .login-box h1 { margin: 0 0 4px; color: #0369a1; font-size: 22px; }
+  .login-box p { margin: 0 0 24px; color: #64748b; font-size: 13px; }
+  input, textarea, button, select { font-size: 14px; }
+  input, textarea, select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; outline: none; }
+  input:focus, textarea:focus { border-color: #0ea5e9; }
+  button { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 600; }
+  button:hover { background: #0284c7; }
+  button.ghost { background: #e2e8f0; color: #334155; }
+  button.ghost:hover { background: #cbd5e1; }
+  button.danger { background: #ef4444; }
+  button.danger:hover { background: #dc2626; }
+  button:disabled { opacity: .6; cursor: not-allowed; }
+
+  /* LAYOUT */
+  #appPage { display: flex; min-height: 100vh; }
+  .sidebar { width: 220px; background: #0f172a; color: #cbd5e1; padding: 20px 12px; }
+  .sidebar h2 { color: #fff; font-size: 16px; margin: 0 0 4px 8px; }
+  .sidebar small { display: block; margin: 0 0 20px 8px; color: #64748b; font-size: 11px; }
+  .nav-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-bottom: 4px; }
+  .nav-item:hover { background: #1e293b; }
+  .nav-item.active { background: #0ea5e9; color: #fff; }
+  .sidebar .user-info { margin-top: 24px; padding: 12px 8px; border-top: 1px solid #1e293b; font-size: 12px; }
+  .sidebar .user-info b { color: #fff; display: block; margin-bottom: 8px; }
+
+  .main { flex: 1; padding: 24px; overflow-x: auto; }
+  .main h1 { margin: 0 0 20px; font-size: 22px; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toolbar input { margin: 0; max-width: 260px; }
+
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; vertical-align: top; }
+  th { background: #f8fafc; font-weight: 600; color: #475569; }
+  tr:last-child td { border-bottom: none; }
+  .badge { background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+
+  /* MODAL */
+  .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+  .modal { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
+  .modal h3 { margin: 0 0 16px; }
+  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+  .geo-status { padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
+  .geo-status.ok { background: #dcfce7; color: #166534; }
+  .geo-status.wait { background: #fef9c3; color: #854d0e; }
+  .geo-status.err { background: #fee2e2; color: #991b1b; }
+  .coord { font-family: monospace; font-size: 12px; color: #475569; }
+  .empty { text-align: center; padding: 40px; color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- ===================== HALAMAN LOGIN ===================== -->
+<div id="loginPage">
+  <div class="login-box">
+    <h1>Sobat Parikesit</h1>
+    <p>Silakan login untuk melanjutkan</p>
+    <input id="loginEmail" type="email" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
+    <button onclick="doLogin()" style="width:100%" id="btnLogin">Login</button>
+    <div id="loginMsg" style="color:#dc2626;font-size:13px;margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- ===================== HALAMAN APLIKASI ===================== -->
+<div id="appPage" class="hidden">
+  <div class="sidebar">
+    <h2>Sobat Parikesit</h2>
+    <small>v1.0</small>
+    <div class="nav-item active" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
+    <div class="nav-item" data-page="today" onclick="showPage('today')">🕒 Pasien Hari Ini</div>
+    <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
+    <div class="user-info">
+      <b id="userName">-</b>
+      <div id="userRole" class="badge">-</div>
+      <button class="ghost" style="width:100%;margin-top:10px;font-size:12px" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- HALAMAN: DATA PASIEN -->
+    <div id="page-patients">
+      <h1>Data Utama Pasien</h1>
+      <div class="toolbar">
+        <input id="searchPatient" placeholder="Cari nama / alamat..." oninput="renderPatients()">
+        <button onclick="openPatientForm()">+ Tambah Pasien</button>
+      </div>
+      <div id="patientsTableWrap"></div>
+    </div>
+
+    <!-- HALAMAN: PASIEN HARI INI -->
+    <div id="page-today" class="hidden">
+      <h1>Daftar Pasien Hari Ini</h1>
+      <button class="ghost" onclick="loadToday()" style="margin-bottom:12px">🔄 Refresh</button>
+      <div id="todayTableWrap"></div>
+    </div>
+
+    <!-- HALAMAN: USER -->
+    <div id="page-users" class="hidden">
+      <h1>Daftar User</h1>
+      <div id="usersTableWrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL DETAIL PASIEN (wajib GPS) ===================== -->
+<div id="detailModal" class="modal-bg hidden">
+  <div class="modal">
+    <h3>Detail Pasien</h3>
+    <div id="geoStatus" class="geo-status wait">📡 Mengambil titik koordinat GPS Anda...</div>
+    <div id="patientDetail"></div>
+    <div class="row">
+      <button class="ghost" onclick="closeDetail()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL FORM PASIEN ===================== -->
+<div id="formModal" class="modal-bg hidden">
+  <div class="modal">
+    <h3 id="formTitle">Tambah Pasien</h3>
+    <input id="fNama" placeholder="Nama pasien">
+    <textarea id="fAlamat" rows="2" placeholder="Alamat"></textarea>
+    <input id="fHp" placeholder="No HP">
+    <div style="font-size:12px;color:#64748b;margin-bottom:8px">
+      Koordinat (opsional, klik ambil lokasi):
+      <button class="ghost" style="padding:4px 10px;font-size:12px" onclick="ambilLokasiForm()">📡 Ambil Lokasi</button>
+    </div>
+    <div class="coord" id="formCoord">Belum ada koordinat</div>
+    <input type="hidden" id="fLat">
+    <input type="hidden" id="fLng">
+    <input type="hidden" id="fId">
+    <div class="row">
+      <button class="ghost" onclick="closeForm()">Batal</button>
+      <button onclick="savePatient()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =========================================================
+// KONFIGURASI SUPABASE
+// =========================================================
+const SUPABASE_URL = 'https://vqglvkqyhxlukmzbmdal.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxZ2x2a3F5aHhsdWttemJtZGFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMjgxNzQsImV4cCI6MjEwNTgwNDE3NH0.4piz3ljW8SrZ3xBIfFVyNNKtnCq-b8Vg2rV0cGsz4Qg';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let currentProfile = null;
+let patientsCache = [];
+let currentDetailId = null;
+
+// =========================================================
+// AUTENTIKASI
+// =========================================================
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('btnLogin');
+  msg.textContent = '';
+  btn.disabled = true; btn.textContent = 'Memuat...';
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false; btn.textContent = 'Login';
+  if (error) { msg.textContent = error.message; return; }
+  await initApp();
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+async function initApp() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) { showLogin(); return; }
+  currentUser = user;
+
+  // Ambil profil
+  const { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  currentProfile = prof || { full_name: user.email, role: 'petugas' };
+
+  document.getElementById('userName').textContent = currentProfile.full_name || user.email;
+  document.getElementById('userRole').textContent = currentProfile.role || 'petugas';
+
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('appPage').classList.remove('hidden');
+
+  await loadPatients();
+  showPage('patients');
+}
+
+function showLogin() {
+  document.getElementById('appPage').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+}
+
+// Deteksi sesi saat halaman dibuka
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) initApp(); else showLogin();
+});
+
+// =========================================================
+// NAVIGASI
+// =========================================================
+function showPage(page) {
+  ['patients','today','users'].forEach(p => {
+    document.getElementById('page-' + p).classList.toggle('hidden', p !== page);
+  });
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === page);
+  });
+  if (page === 'today') loadToday();
+  if (page === 'users') loadUsers();
+}
+
+// =========================================================
+// DATA PASIEN
+// =========================================================
+async function loadPatients() {
+  const { data, error } = await sb.from('patients').select('*').order('nama');
+  if (error) { alert('Gagal memuat pasien: ' + error.message); return; }
+  patientsCache = data || [];
+  renderPatients();
+}
+
+function renderPatients() {
+  const q = document.getElementById('searchPatient').value.toLowerCase();
+  const list = patientsCache.filter(p =>
+    (p.nama || '').toLowerCase().includes(q) ||
+    (p.alamat || '').toLowerCase().includes(q)
+  );
+  const wrap = document.getElementById('patientsTableWrap');
+  if (!list.length) { wrap.innerHTML = '<div class="empty">Belum ada data pasien.</div>'; return; }
+
+  wrap.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>
+        ${list.map(p => `
+          <tr>
+            <td><b>${esc(p.nama)}</b></td>
+            <td>${esc(p.alamat || '-')}</td>
+            <td>${esc(p.no_hp || '-')}</td>
+            <td class="coord">${p.latitude ? p.latitude.toFixed(5)+', '+p.longitude.toFixed(5) : '-'}</td>
+            <td>
+              <button class="ghost" style="padding:5px 10px;font-size:12px" onclick="openDetail(${p.id})">Buka</button>
+              <button class="ghost" style="padding:5px 10px;font-size:12px" onclick="openPatientForm(${p.id})">Edit</button>
+              <button class="danger" style="padding:5px 10px;font-size:12px" onclick="deletePatient(${p.id})">Hapus</button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// =========================================================
+// DETAIL PASIEN + WAJIB SIMPAN KOORDINAT
+// =========================================================
+function openDetail(id) {
+  currentDetailId = id;
+  const p = patientsCache.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('patientDetail').innerHTML = `
+    <p><b>Nama:</b> ${esc(p.nama)}</p>
+    <p><b>Alamat:</b> ${esc(p.alamat || '-')}</p>
+    <p><b>No HP:</b> ${esc(p.no_hp || '-')}</p>
+    <p><b>Koordinat tersimpan:</b> <span class="coord">${p.latitude ? p.latitude+', '+p.longitude : 'belum ada'}</span></p>
+  `;
+  document.getElementById('detailModal').classList.remove('hidden');
+  document.getElementById('geoStatus').className = 'geo-status wait';
+  document.getElementById('geoStatus').textContent = '📡 Mengambil titik koordinat GPS Anda...';
+
+  // === WAJIB: simpan titik koordinat saat membuka data pasien ===
+  simpanKoordinatKunjungan(id);
+}
+
+function closeDetail() {
+  document.getElementById('detailModal').classList.add('hidden');
+  currentDetailId = null;
+}
+
+function simpanKoordinatKunjungan(patientId) {
+  const statusEl = document.getElementById('geoStatus');
+  if (!navigator.geolocation) {
+    statusEl.className = 'geo-status err';
+    statusEl.textContent = '❌ Geolocation tidak didukung browser ini.';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      const { error } = await sb.from('patient_visits').insert({
+        patient_id: patientId,
+        user_id: currentUser.id,
+        latitude, longitude
+      });
+      if (error) {
+        statusEl.className = 'geo-status err';
+        statusEl.textContent = '❌ Gagal simpan koordinat: ' + error.message;
+        return;
+      }
+      statusEl.className = 'geo-status ok';
+      statusEl.textContent = `✅ Kunjungan tersimpan. Koordinat: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+    },
+    (err) => {
+      statusEl.className = 'geo-status err';
+      statusEl.textContent = '❌ Gagal ambil lokasi: ' + err.message + '. Izinkan akses lokasi di browser.';
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+// =========================================================
+// FORM TAMBAH / EDIT PASIEN
+// =========================================================
+function openPatientForm(id) {
+  document.getElementById('formModal').classList.remove('hidden');
+  document.getElementById('formCoord').textContent = 'Belum ada koordinat';
+
+  if (id) {
+    const p = patientsCache.find(x => x.id === id);
+    document.getElementById('formTitle').textContent = 'Edit Pasien';
+    document.getElementById('fId').value = p.id;
+    document.getElementById('fNama').value = p.nama || '';
+    document.getElementById('fAlamat').value = p.alamat || '';
+    document.getElementById('fHp').value = p.no_hp || '';
+    document.getElementById('fLat').value = p.latitude || '';
+    document.getElementById('fLng').value = p.longitude || '';
+    if (p.latitude) document.getElementById('formCoord').textContent = p.latitude + ', ' + p.longitude;
+  } else {
+    document.getElementById('formTitle').textContent = 'Tambah Pasien';
+    ['fId','fNama','fAlamat','fHp','fLat','fLng'].forEach(i => document.getElementById(i).value = '');
+  }
+}
+
+function closeForm() { document.getElementById('formModal').classList.add('hidden'); }
+
+function ambilLokasiForm() {
+  if (!navigator.geolocation) return alert('Geolocation tidak didukung.');
+  document.getElementById('formCoord').textContent = 'Mengambil lokasi...';
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const { latitude, longitude } = pos.coords;
+      document.getElementById('fLat').value = latitude;
+      document.getElementById('fLng').value = longitude;
+      document.getElementById('formCoord').textContent = latitude.toFixed(6) + ', ' + longitude.toFixed(6);
+    },
+    (err) => document.getElementById('formCoord').textContent = 'Gagal: ' + err.message,
+    { enableHighAccuracy: true, timeout: 15000 }
+  );
+}
+
+async function savePatient() {
+  const id = document.getElementById('fId').value;
+  const payload = {
+    nama: document.getElementById('fNama').value.trim(),
+    alamat: document.getElementById('fAlamat').value.trim(),
+    no_hp: document.getElementById('fHp').value.trim(),
+    latitude: parseFloat(document.getElementById('fLat').value) || null,
+    longitude: parseFloat(document.getElementById('fLng').value) || null,
+    updated_at: new Date().toISOString(),
+  };
+  if (!payload.nama) return alert('Nama pasien wajib diisi.');
+
+  let error;
+  if (id) {
+    ({ error } = await sb.from('patients').update(payload).eq('id', id));
+  } else {
+    payload.recorded_by = currentUser.id;
+    ({ error } = await sb.from('patients').insert(payload));
+  }
+  if (error) return alert('Gagal simpan: ' + error.message);
+  closeForm();
+  await loadPatients();
+}
+
+async function deletePatient(id) {
+  if (!confirm('Yakin hapus pasien ini? Riwayat kunjungan juga akan terhapus.')) return;
+  const { error } = await sb.from('patients').delete().eq('id', id);
+  if (error) return alert('Gagal hapus: ' + error.message);
+  await loadPatients();
+}
+
+// =========================================================
+// PASIEN HARI INI
+// =========================================================
+async function loadToday() {
+  const wrap = document.getElementById('todayTableWrap');
+  wrap.innerHTML = '<div class="empty">Memuat...</div>';
+
+  // Awal & akhir hari ini (waktu lokal browser)
+  const start = new Date(); start.setHours(0,0,0,0);
+  const end = new Date(); end.setHours(23,59,59,999);
+
+  const { data, error } = await sb
+    .from('patient_visits')
+    .select('id, visited_at, latitude, longitude, patients(nama, alamat, no_hp), profiles:user_id(full_name)')
+    .gte('visited_at', start.toISOString())
+    .lte('visited_at', end.toISOString())
+    .order('visited_at', { ascending: false });
+
+  if (error) { wrap.innerHTML = '<div class="empty">Gagal memuat: ' + esc(error.message) + '</div>'; return; }
+  if (!data || !data.length) { wrap.innerHTML = '<div class="empty">Belum ada kunjungan hari ini.</div>'; return; }
+
+  wrap.innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Jam</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Petugas</th><th>Koordinat</th>
+      </tr></thead>
+      <tbody>
+        ${data.map(v => `
+          <tr>
+            <td>${new Date(v.visited_at).toLocaleTimeString('id-ID')}</td>
+            <td><b>${esc(v.patients?.nama || '-')}</b></td>
+            <td>${esc(v.patients?.alamat || '-')}</td>
+            <td>${esc(v.patients?.no_hp || '-')}</td>
+            <td>${esc(v.profiles?.full_name || '-')}</td>
+            <td class="coord">${v.latitude ? v.latitude.toFixed(5)+', '+v.longitude.toFixed(5) : '-'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+// =========================================================
+// USER
+// =========================================================
+async function loadUsers() {
+  const wrap = document.getElementById('usersTableWrap');
+  wrap.innerHTML = '<div class="empty">Memuat...</div>';
+  const { data, error } = await sb.from('profiles').select('*').order('full_name');
+  if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
+  if (!data || !data.length) { wrap.innerHTML = '<div class="empty">Belum ada user.</div>'; return; }
+
+  wrap.innerHTML = `
+    <table>
+      <thead><tr><th>Nama</th><th>Role</th><th>Terdaftar</th></tr></thead>
+      <tbody>
+        ${data.map(u => `
+          <tr>
+            <td><b>${esc(u.full_name || '-')}</b></td>
+            <td><span class="badge">${esc(u.role)}</span></td>
+            <td>${u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : '-'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+</script>
+</body>
+</html>
