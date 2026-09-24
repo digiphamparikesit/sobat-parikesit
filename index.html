@@ -9,14 +9,13 @@
   * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
   body { margin: 0; background: #f0f4f8; color: #1e293b; }
   .hidden { display: none !important; }
-
   #loginPage { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#0ea5e9,#0369a1); }
   .login-box { background: #fff; padding: 32px; border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,.2); width: 340px; }
   .login-box h1 { margin: 0 0 4px; color: #0369a1; font-size: 22px; }
   .login-box p { margin: 0 0 24px; color: #64748b; font-size: 13px; }
-
   input, textarea, button, select { font-size: 14px; }
-  input, textarea, select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; outline: none; }
+  input, textarea, select { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background:#fff; }
+  input[type=text], input[type=email], input[type=password], input[type=date], textarea, select { width: 100%; }
   input:focus, textarea:focus { border-color: #0ea5e9; }
   button { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 600; transition: .15s; }
   button:hover { background: #0284c7; }
@@ -27,15 +26,15 @@
   button.wa { background: #25D366; }
   button.wa:hover { background: #1da851; }
   button.tel { background: #0ea5e9; }
-  button.tel:hover { background: #0284c7; }
   button.maps { background: #6366f1; }
   button.maps:hover { background: #4f46e5; }
   button.update { background: #f59e0b; }
   button.update:hover { background: #d97706; }
   button.broadcast { background: #8b5cf6; }
   button.broadcast:hover { background: #7c3aed; }
-  button:disabled { opacity: .6; cursor: not-allowed; }
-
+  button.updown { background: #f1f5f9; color: #334155; padding: 4px 8px; font-size: 12px; }
+  button.updown:hover { background: #cbd5e1; }
+  button:disabled { opacity: .4; cursor: not-allowed; }
   #appPage { display: flex; min-height: 100vh; }
   .sidebar { width: 220px; background: #0f172a; color: #cbd5e1; padding: 20px 12px; }
   .sidebar h2 { color: #fff; font-size: 16px; margin: 0 0 4px 8px; }
@@ -45,17 +44,12 @@
   .nav-item.active { background: #0ea5e9; color: #fff; }
   .sidebar .user-info { margin-top: 24px; padding: 12px 8px; border-top: 1px solid #1e293b; font-size: 12px; }
   .sidebar .user-info b { color: #fff; display: block; margin-bottom: 8px; }
-
   .main { flex: 1; padding: 24px; overflow-x: auto; }
   .main h1 { margin: 0 0 20px; font-size: 22px; }
   .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-  .toolbar input { margin: 0; max-width: 260px; }
-
-  .loc-panel {
-    background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
-    padding: 14px 16px; margin-bottom: 16px; display: flex; gap: 12px;
-    align-items: center; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,.05);
-  }
+  .toolbar input, .toolbar select { width: auto; margin: 0; }
+  .toolbar input[type=text] { min-width: 220px; }
+  .loc-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
   .loc-panel .loc-icon { font-size: 22px; }
   .loc-panel .loc-body { flex: 1; min-width: 220px; }
   .loc-panel .loc-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
@@ -65,7 +59,6 @@
   .loc-panel.err { border-color: #fca5a5; background: #fef2f2; }
   .loc-panel.wait { border-color: #fde68a; background: #fefce8; }
   .loc-panel .loc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-
   table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; vertical-align: top; }
   th { background: #f8fafc; font-weight: 600; color: #475569; }
@@ -75,13 +68,13 @@
   td .actions button, td .actions a button { padding: 5px 10px; font-size: 12px; }
   .name-link { color: #0369a1; cursor: pointer; text-decoration: underline dotted; }
   .name-link:hover { color: #0ea5e9; }
-  .order-badge { display: inline-block; background: #f1f5f9; color: #475569; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 4px; }
-
+  .order-badge { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; background: #0ea5e9; color: #fff; font-size: 12px; font-weight: 700; border-radius: 50%; }
+  .move-cell { display: flex; gap: 2px; }
   .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
   .modal { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
   .modal.modal-wide { max-width: 620px; }
   .modal h3 { margin: 0 0 16px; }
-  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; flex-wrap: wrap; }
   .geo-status { padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
   .geo-status.ok { background: #dcfce7; color: #166534; }
   .geo-status.wait { background: #fef9c3; color: #854d0e; }
@@ -92,7 +85,6 @@
   .detail-actions { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
   .detail-actions button, .detail-actions a button { width: 100%; }
   .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 12px 0; }
-
   .bc-list { border: 1px solid #e2e8f0; border-radius: 8px; max-height: 300px; overflow-y: auto; }
   .bc-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
   .bc-item:last-child { border-bottom: none; }
@@ -101,6 +93,12 @@
   .bc-item .bc-name small { display: block; color: #94a3b8; font-size: 11px; }
   .bc-item button { padding: 5px 10px; font-size: 12px; }
   .bc-preview { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; white-space: pre-wrap; color: #334155; max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
+  .upload-zone { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 24px; text-align: center; background: #f8fafc; cursor: pointer; margin-bottom: 16px; }
+  .upload-zone:hover { border-color: #0ea5e9; background: #f0f9ff; }
+  .upload-zone input { display: none; }
+  .assign-select { padding: 4px 8px; font-size: 12px; border-radius: 6px; max-width: 160px; }
+  .status-done { color: #16a34a; font-weight: 600; }
+  .status-pending { color: #d97706; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -121,9 +119,10 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>Sobat Parikesit</h2>
-    <small>v1.3</small>
-    <div class="nav-item active" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
-    <div class="nav-item" data-page="today" onclick="showPage('today')">🕒 Pasien Hari Ini</div>
+    <small>v1.4</small>
+    <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian Hari Ini</div>
+    <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
+    <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat Kunjungan</div>
     <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
     <div class="user-info">
       <b id="userName">-</b>
@@ -133,7 +132,41 @@
   </div>
 
   <div class="main">
-    <div id="page-patients">
+    <!-- ============ ANTRIAN HARI INI ============ -->
+    <div id="page-queue">
+      <h1>Antrian Pengantaran Hari Ini</h1>
+
+      <div class="loc-panel wait" id="locPanel">
+        <div class="loc-icon">📍</div>
+        <div class="loc-body">
+          <div class="loc-title" id="locTitle">Lokasi Saya Belum Diambil</div>
+          <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> di awal shift. Link lokasi akan disertakan di setiap pesan WA.</div>
+        </div>
+        <div class="loc-actions">
+          <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
+          <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
+          <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <div class="toolbar" id="queueToolbarAdmin" style="display:none">
+        <input type="date" id="queueDate" onchange="loadQueue()">
+        <select id="queueFilter" onchange="loadQueue()">
+          <option value="all">Semua</option>
+          <option value="unassigned">Belum di-assign</option>
+        </select>
+        <label class="upload-zone" style="padding:8px 14px;margin:0;border-width:1px">
+          📤 Upload CSV
+          <input type="file" accept=".csv" onchange="handleCSVUpload(event)">
+        </label>
+        <button class="ghost" onclick="hapusAntrianHariIni()">🗑️ Hapus Antrian Tanggal Ini</button>
+      </div>
+
+      <div id="queueTableWrap"></div>
+    </div>
+
+    <!-- ============ DATA PASIEN (MASTER) ============ -->
+    <div id="page-patients" class="hidden">
       <h1>Data Utama Pasien</h1>
       <div class="toolbar">
         <input id="searchPatient" placeholder="Cari nama / alamat..." oninput="renderPatients()">
@@ -142,25 +175,14 @@
       <div id="patientsTableWrap"></div>
     </div>
 
-    <div id="page-today" class="hidden">
-      <h1>Daftar Pasien Hari Ini</h1>
-
-      <div id="locPanel" class="loc-panel wait">
-        <div class="loc-icon">📍</div>
-        <div class="loc-body">
-          <div class="loc-title" id="locTitle">Lokasi Saya Belum Diambil</div>
-          <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> sekali di awal shift. Link lokasi akan otomatis disertakan di setiap pesan WhatsApp.</div>
-        </div>
-        <div class="loc-actions">
-          <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
-          <button class="broadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
-          <button class="ghost" onclick="loadToday()">🔄 Refresh Data</button>
-        </div>
-      </div>
-
-      <div id="todayTableWrap"></div>
+    <!-- ============ RIWAYAT KUNJUNGAN ============ -->
+    <div id="page-history" class="hidden">
+      <h1>Riwayat Kunjungan</h1>
+      <button class="ghost" onclick="loadHistory()" style="margin-bottom:12px">🔄 Refresh</button>
+      <div id="historyTableWrap"></div>
     </div>
 
+    <!-- ============ USER ============ -->
     <div id="page-users" class="hidden">
       <h1>Daftar User</h1>
       <div id="usersTableWrap"></div>
@@ -168,33 +190,31 @@
   </div>
 </div>
 
-<!-- ===================== MODAL DETAIL PASIEN ===================== -->
-<div id="detailModal" class="modal-bg hidden">
+<!-- ===================== MODAL DETAIL ANTRIAN ===================== -->
+<div id="qDetailModal" class="modal-bg hidden">
   <div class="modal">
-    <h3>Detail Pasien</h3>
-    <div id="geoStatus" class="geo-status wait">📡 Mengambil titik koordinat GPS Anda...</div>
-    <div id="patientDetail"></div>
+    <h3>Detail Antrian Pasien</h3>
+    <div id="qGeoStatus" class="geo-status wait">📡 Merekam kunjungan Anda...</div>
+    <div id="qPatientDetail"></div>
     <div class="row">
-      <button class="ghost" onclick="closeDetail()">Tutup</button>
+      <button class="ghost" onclick="closeQDetail()">Tutup</button>
     </div>
   </div>
 </div>
 
-<!-- ===================== MODAL FORM PASIEN ===================== -->
+<!-- ===================== MODAL FORM PASIEN MASTER ===================== -->
 <div id="formModal" class="modal-bg hidden">
   <div class="modal">
     <h3 id="formTitle">Tambah Pasien</h3>
-    <input id="fNama" placeholder="Nama pasien">
+    <input id="fNama" type="text" placeholder="Nama pasien">
     <textarea id="fAlamat" rows="2" placeholder="Alamat"></textarea>
-    <input id="fHp" placeholder="No HP (contoh: 08123456789)">
+    <input id="fHp" type="text" placeholder="No HP (contoh: 08123456789)">
     <div style="font-size:12px;color:#64748b;margin-bottom:8px">
-      Koordinat (opsional, klik ambil lokasi):
+      Koordinat (opsional):
       <button class="ghost" style="padding:4px 10px;font-size:12px" onclick="ambilLokasiForm()">📡 Ambil Lokasi</button>
     </div>
     <div class="coord" id="formCoord">Belum ada koordinat</div>
-    <input type="hidden" id="fLat">
-    <input type="hidden" id="fLng">
-    <input type="hidden" id="fId">
+    <input type="hidden" id="fLat"><input type="hidden" id="fLng"><input type="hidden" id="fId">
     <div class="row">
       <button class="ghost" onclick="closeForm()">Batal</button>
       <button onclick="savePatient()">Simpan</button>
@@ -207,18 +227,14 @@
   <div class="modal modal-wide">
     <h3>📢 Broadcast WhatsApp</h3>
     <p style="color:#64748b;font-size:13px;margin-top:-8px">
-      Pesan akan dikirim ke semua pasien yang tercatat hari ini oleh Anda.
-      Klik tombol <b>💬 Kirim</b> pada setiap nama untuk membuka WhatsApp satu per satu.
+      Pesan dikirim ke semua pasien dalam antrian Anda hari ini.
     </p>
-
     <div style="font-size:12px;font-weight:600;color:#475569;margin:12px 0 6px">Preview pesan:</div>
     <div class="bc-preview" id="bcPreview"></div>
-
     <div style="font-size:12px;font-weight:600;color:#475569;margin:12px 0 6px">
       Daftar pasien (<span id="bcCount">0</span> orang):
     </div>
     <div class="bc-list" id="bcList"></div>
-
     <div class="row">
       <button class="ghost" onclick="copyBroadcastText()">📋 Salin Teks</button>
       <button class="ghost" onclick="closeBroadcast()">Tutup</button>
@@ -228,7 +244,7 @@
 
 <script>
 // =========================================================
-// KONFIGURASI SUPABASE
+// KONFIGURASI
 // =========================================================
 const SUPABASE_URL = 'https://vqglvkqyhxlukmzbmdal.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxZ2x2a3F5aHhsdWttemJtZGFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMjgxNzQsImV4cCI6MjEwNTgwNDE3NH0.4piz3ljW8SrZ3xBIfFVyNNKtnCq-b8Vg2rV0cGsz4Qg';
@@ -236,11 +252,12 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let currentProfile = null;
+let isAdmin = false;
 let patientsCache = [];
-let currentDetailId = null;
-
-let officerLocation = null;      // { lat, lng, time }
-let myTodayPatients = [];        // pasien yang ditangani user hari ini (urut kunjungan)
+let myQueue = [];             // antrian user yang login hari ini
+let allUsers = [];            // semua user (untuk assign di admin)
+let officerLocation = null;
+let currentQId = null;
 
 // =========================================================
 // UTILITAS
@@ -248,7 +265,6 @@ let myTodayPatients = [];        // pasien yang ditangani user hari ini (urut ku
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-
 function normalizePhone(raw) {
   if (!raw) return '';
   let n = String(raw).replace(/\D/g, '');
@@ -258,68 +274,49 @@ function normalizePhone(raw) {
   if (n.startsWith('8')) return '62' + n;
   return n;
 }
-
+function todayStr() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 function salamWaktu() {
-  const jam = new Date().getHours();
-  if (jam < 11) return 'pagi';
-  if (jam < 15) return 'siang';
-  if (jam < 18) return 'sore';
+  const j = new Date().getHours();
+  if (j < 11) return 'pagi';
+  if (j < 15) return 'siang';
+  if (j < 18) return 'sore';
   return 'malam';
 }
 
-// =========================================================
-// LOKASI PETUGAS
-// =========================================================
-function perbaruiLokasiSaya() {
-  const panel = document.getElementById('locPanel');
-  const title = document.getElementById('locTitle');
-  const sub = document.getElementById('locSub');
-
-  panel.className = 'loc-panel wait';
-  title.textContent = 'Mengambil lokasi...';
-  sub.textContent = 'Mohon tunggu, sedang membaca GPS Anda.';
-
-  if (!navigator.geolocation) {
-    panel.className = 'loc-panel err';
-    title.textContent = '❌ Geolocation tidak didukung';
-    sub.textContent = 'Browser ini tidak mendukung GPS.';
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      officerLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude, time: new Date() };
-      renderLocPanel();
-    },
-    (err) => {
-      panel.className = 'loc-panel err';
-      title.textContent = '❌ Gagal mengambil lokasi';
-      sub.textContent = err.message + ' — izinkan akses lokasi di browser.';
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-  );
-}
-
-function renderLocPanel() {
-  const panel = document.getElementById('locPanel');
-  const title = document.getElementById('locTitle');
-  const sub = document.getElementById('locSub');
-
-  if (!officerLocation) {
-    panel.className = 'loc-panel wait';
-    title.textContent = 'Lokasi Saya Belum Diambil';
-    sub.innerHTML = 'Klik <b>Perbarui Lokasi</b> sekali di awal shift. Link lokasi akan otomatis disertakan di setiap pesan WhatsApp.';
-    return;
-  }
-  const { lat, lng, time } = officerLocation;
-  const link = `https://www.google.com/maps?q=${lat},${lng}`;
-  const menit = Math.floor((Date.now() - time.getTime()) / 60000);
-
-  panel.className = 'loc-panel ok';
-  title.textContent = '✅ Lokasi Aktif — link akan disertakan di WA';
-  sub.innerHTML = `Koordinat: <span class="coord">${lat.toFixed(5)}, ${lng.toFixed(5)}</span>
-    · Diperbarui ${menit < 1 ? 'baru saja' : menit + ' menit lalu'}
-    · <a href="${link}" target="_blank">Lihat di Maps</a>`;
+// CSV parser (mendukung quoted field)
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (!lines.length) return [];
+  const delim = lines[0].includes('\t') ? '\t'
+              : (lines[0].includes(';') && !lines[0].includes(',')) ? ';'
+              : ',';
+  const parseLine = (line) => {
+    const result = []; let cur = ''; let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (ch === delim && !inQ) {
+        result.push(cur); cur = '';
+      } else cur += ch;
+    }
+    result.push(cur);
+    return result.map(s => s.trim());
+  };
+  const header = parseLine(lines[0]).map(h => h.toLowerCase().trim().replace(/\s+/g,'_'));
+  return lines.slice(1).map(line => {
+    const vals = parseLine(line);
+    const obj = {};
+    header.forEach((h, i) => obj[h] = vals[i] ?? '');
+    return obj;
+  });
 }
 
 // =========================================================
@@ -332,25 +329,20 @@ async function doLogin() {
   const btn = document.getElementById('btnLogin');
   msg.textContent = '';
   btn.disabled = true; btn.textContent = 'Memuat...';
-
   const { error } = await sb.auth.signInWithPassword({ email, password });
   btn.disabled = false; btn.textContent = 'Login';
   if (error) { msg.textContent = error.message; return; }
   await initApp();
 }
-
-async function doLogout() {
-  await sb.auth.signOut();
-  location.reload();
-}
+async function doLogout() { await sb.auth.signOut(); location.reload(); }
 
 async function initApp() {
   const { data: { user } } = await sb.auth.getUser();
   if (!user) { showLogin(); return; }
   currentUser = user;
-
   const { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
   currentProfile = prof || { full_name: user.email, role: 'petugas' };
+  isAdmin = currentProfile.role === 'admin';
 
   document.getElementById('userName').textContent = currentProfile.full_name || user.email;
   document.getElementById('userRole').textContent = currentProfile.role || 'petugas';
@@ -358,15 +350,24 @@ async function initApp() {
   document.getElementById('loginPage').classList.add('hidden');
   document.getElementById('appPage').classList.remove('hidden');
 
-  await loadPatients();
-  showPage('patients');
-}
+  // Tampilkan toolbar admin
+  if (isAdmin) {
+    document.getElementById('queueToolbarAdmin').style.display = 'flex';
+    document.getElementById('queueDate').value = todayStr();
+    // Ambil daftar user untuk dropdown assign
+    const { data: u } = await sb.from('profiles').select('id, full_name, role').order('full_name');
+    allUsers = u || [];
+  } else {
+    document.getElementById('btnBroadcast').style.display = '';
+  }
 
+  await loadPatients();
+  showPage('queue');
+}
 function showLogin() {
   document.getElementById('appPage').classList.add('hidden');
   document.getElementById('loginPage').classList.remove('hidden');
 }
-
 sb.auth.getSession().then(({ data: { session } }) => {
   if (session) initApp(); else showLogin();
 });
@@ -375,81 +376,444 @@ sb.auth.getSession().then(({ data: { session } }) => {
 // NAVIGASI
 // =========================================================
 function showPage(page) {
-  ['patients','today','users'].forEach(p => {
+  ['queue','patients','history','users'].forEach(p => {
     document.getElementById('page-' + p).classList.toggle('hidden', p !== page);
   });
   document.querySelectorAll('.nav-item').forEach(n => {
     n.classList.toggle('active', n.dataset.page === page);
   });
-  if (page === 'today') { renderLocPanel(); loadToday(); }
+  if (page === 'queue') { renderLocPanel(); loadQueue(); }
+  if (page === 'history') loadHistory();
   if (page === 'users') loadUsers();
 }
 
 // =========================================================
-// DATA PASIEN
+// LOKASI PETUGAS
 // =========================================================
-async function loadPatients() {
-  const { data, error } = await sb.from('patients').select('*').order('nama');
-  if (error) { alert('Gagal memuat pasien: ' + error.message); return; }
-  patientsCache = data || [];
-  renderPatients();
+function perbaruiLokasiSaya() {
+  const panel = document.getElementById('locPanel');
+  const title = document.getElementById('locTitle');
+  const sub = document.getElementById('locSub');
+  panel.className = 'loc-panel wait';
+  title.textContent = 'Mengambil lokasi...';
+  sub.textContent = 'Mohon tunggu, membaca GPS Anda.';
+  if (!navigator.geolocation) {
+    panel.className = 'loc-panel err';
+    title.textContent = '❌ Geolocation tidak didukung';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      officerLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude, time: new Date() };
+      renderLocPanel();
+    },
+    (err) => {
+      panel.className = 'loc-panel err';
+      title.textContent = '❌ Gagal mengambil lokasi';
+      sub.textContent = err.message + ' — izinkan akses lokasi.';
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+function renderLocPanel() {
+  const panel = document.getElementById('locPanel');
+  const title = document.getElementById('locTitle');
+  const sub = document.getElementById('locSub');
+  if (!officerLocation) {
+    panel.className = 'loc-panel wait';
+    title.textContent = 'Lokasi Saya Belum Diambil';
+    sub.innerHTML = 'Klik <b>Perbarui Lokasi</b> di awal shift. Link lokasi akan disertakan di setiap pesan WA.';
+    return;
+  }
+  const { lat, lng, time } = officerLocation;
+  const link = `https://www.google.com/maps?q=${lat},${lng}`;
+  const menit = Math.floor((Date.now() - time.getTime()) / 60000);
+  panel.className = 'loc-panel ok';
+  title.textContent = '✅ Lokasi Aktif';
+  sub.innerHTML = `Koordinat: <span class="coord">${lat.toFixed(5)}, ${lng.toFixed(5)}</span>
+    · Diperbarui ${menit < 1 ? 'baru saja' : menit + ' menit lalu'}
+    · <a href="${link}" target="_blank">Lihat di Maps</a>`;
 }
 
-function renderPatients() {
-  const q = document.getElementById('searchPatient').value.toLowerCase();
-  const list = patientsCache.filter(p =>
-    (p.nama || '').toLowerCase().includes(q) ||
-    (p.alamat || '').toLowerCase().includes(q)
-  );
-  const wrap = document.getElementById('patientsTableWrap');
-  if (!list.length) { wrap.innerHTML = '<div class="empty">Belum ada data pasien.</div>'; return; }
+// =========================================================
+// UPLOAD CSV (ADMIN)
+// =========================================================
+async function handleCSVUpload(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  const rows = parseCSV(text);
+  if (!rows.length) return alert('File CSV kosong atau format tidak dikenal.');
+
+  // Validasi header
+  const headers = Object.keys(rows[0]);
+  if (!headers.includes('nama')) {
+    return alert('CSV harus memiliki header "nama" (boleh juga: alamat, no_hp).\nHeader ditemukan: ' + headers.join(', '));
+  }
+
+  const dateVal = document.getElementById('queueDate').value || todayStr();
+  const valid = rows.filter(r => r.nama);
+  if (!valid.length) return alert('Tidak ada baris dengan nama.');
+
+  if (!confirm(`Akan mengimpor ${valid.length} pasien untuk tanggal ${dateVal}.\nLanjutkan?`)) {
+    ev.target.value = ''; return;
+  }
+
+  // Lookup koordinat dari master patients
+  const names = valid.map(r => r.nama);
+  const { data: masters } = await sb.from('patients').select('nama, latitude, longitude').in('nama', names);
+  const masterMap = Object.fromEntries((masters || []).map(m => [m.nama, m]));
+
+  // Siapkan payload
+  const payloads = valid.map(r => {
+    const m = masterMap[r.nama];
+    return {
+      delivery_date: dateVal,
+      nama: r.nama,
+      alamat: r.alamat || '',
+      no_hp: r.no_hp || '',
+      latitude: m?.latitude || null,
+      longitude: m?.longitude || null,
+      assigned_to: null,
+      urutan: 0,
+      status: 'pending',
+      created_by: currentUser.id
+    };
+  });
+
+  // Insert (batch)
+  const chunkSize = 200;
+  let total = 0;
+  for (let i = 0; i < payloads.length; i += chunkSize) {
+    const chunk = payloads.slice(i, i + chunkSize);
+    const { error } = await sb.from('daily_deliveries').insert(chunk);
+    if (error) { alert('Gagal insert: ' + error.message); break; }
+    total += chunk.length;
+  }
+
+  ev.target.value = '';
+  alert(`✅ ${total} pasien berhasil diimpor.\nSilakan assign ke petugas lewat dropdown di kolom "Petugas".`);
+  loadQueue();
+}
+
+// =========================================================
+// ANTRIAN HARI INI
+// =========================================================
+async function loadQueue() {
+  const wrap = document.getElementById('queueTableWrap');
+  wrap.innerHTML = '<div class="empty">Memuat...</div>';
+
+  const dateVal = isAdmin
+    ? (document.getElementById('queueDate').value || todayStr())
+    : todayStr();
+
+  let q = sb.from('daily_deliveries')
+    .select('*')
+    .eq('delivery_date', dateVal);
+
+  if (!isAdmin) {
+    q = q.eq('assigned_to', currentUser.id);
+  }
+
+  const { data, error } = await q
+    .order('urutan', { ascending: true })
+    .order('id', { ascending: true });
+
+  if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
+
+  const list = data || [];
+
+  // Simpan untuk broadcast (khusus user)
+  if (!isAdmin) {
+    myQueue = list.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
+  }
+
+  // Filter admin
+  let displayed = list;
+  if (isAdmin) {
+    const f = document.getElementById('queueFilter').value;
+    if (f === 'unassigned') displayed = list.filter(r => !r.assigned_to);
+  }
+
+  if (!displayed.length) {
+    wrap.innerHTML = `<div class="empty">
+      Belum ada data antrian untuk tanggal ${dateVal}.
+      ${isAdmin ? '<br><small>Upload CSV di toolbar atas untuk menambahkan.</small>' : '<br><small>Hubungi admin untuk assign pasien ke akun Anda.</small>'}
+    </div>`;
+    return;
+  }
+
+  // Render
+  if (isAdmin) renderQueueAdmin(displayed, dateVal);
+  else renderQueueUser(displayed);
+}
+
+function renderQueueAdmin(list, dateVal) {
+  const wrap = document.getElementById('queueTableWrap');
+  const userOptions = allUsers.map(u => `<option value="${u.id}">${esc(u.full_name || u.id)}</option>`).join('');
 
   wrap.innerHTML = `
+    <p style="font-size:13px;color:#64748b;margin:0 0 12px">
+      Menampilkan <b>${list.length}</b> baris · Tanggal <b>${dateVal}</b> ·
+      Belum di-assign: <b>${list.filter(r => !r.assigned_to).length}</b>
+    </p>
     <table>
       <thead><tr>
-        <th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th>
+        <th>No</th><th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Petugas</th><th>Aksi</th>
       </tr></thead>
       <tbody>
-        ${list.map(p => `
+        ${list.map((r, i) => {
+          const assignee = allUsers.find(u => u.id === r.assigned_to);
+          return `
           <tr>
-            <td><span class="name-link" onclick="openDetail(${p.id})"><b>${esc(p.nama)}</b></span></td>
-            <td>${esc(p.alamat || '-')}</td>
-            <td>${esc(p.no_hp || '-')}</td>
-            <td class="coord">${p.latitude ? p.latitude.toFixed(5)+', '+p.longitude.toFixed(5) : '-'}</td>
+            <td>${i+1}</td>
+            <td><b>${esc(r.nama)}</b></td>
+            <td>${esc(r.alamat || '-')}</td>
+            <td>${esc(r.no_hp || '-')}</td>
+            <td class="coord">${r.latitude ? r.latitude.toFixed(4)+', '+r.longitude.toFixed(4) : '-'}</td>
             <td>
-              <div class="actions">
-                <button class="ghost" onclick="openDetail(${p.id})">Buka</button>
-                <button class="ghost" onclick="openPatientForm(${p.id})">Edit</button>
-                <button class="danger" onclick="deletePatient(${p.id})">Hapus</button>
-              </div>
+              <select class="assign-select" onchange="assignTo(${r.id}, this.value)">
+                <option value="">— Belum —</option>
+                ${allUsers.map(u => `
+                  <option value="${u.id}" ${u.id === r.assigned_to ? 'selected' : ''}>
+                    ${esc(u.full_name || u.id)}${u.role === 'admin' ? ' (admin)' : ''}
+                  </option>`).join('')}
+              </select>
             </td>
-          </tr>
-        `).join('')}
+            <td>
+              <button class="danger" style="padding:5px 10px;font-size:12px" onclick="hapusAntrian(${r.id})">Hapus</button>
+            </td>
+          </tr>`;
+        }).join('')}
       </tbody>
     </table>`;
 }
 
+function renderQueueUser(list) {
+  const wrap = document.getElementById('queueTableWrap');
+  wrap.innerHTML = `
+    <p style="font-size:13px;color:#64748b;margin:0 0 12px">
+      Anda memiliki <b>${list.length}</b> pasien hari ini.
+      Urutkan dengan tombol <b>↑↓</b> sesuai rute perjalanan Anda.
+    </p>
+    <table>
+      <thead><tr>
+        <th>Urut</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Status</th><th>Aksi</th>
+      </tr></thead>
+      <tbody>
+        ${list.map((r, i) => {
+          const phone = normalizePhone(r.no_hp);
+          const waBtn = phone ? `<button class="wa" style="padding:5px 10px;font-size:12px" onclick="openWAFromQueue(${r.id})">💬 WA</button>` : '';
+          const telBtn = phone ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel" style="padding:5px 10px;font-size:12px">📞 Telepon</button></a>` : '';
+          const statusCls = r.status === 'delivered' ? 'status-done' : 'status-pending';
+          const statusText = r.status === 'delivered' ? '✓ Terkirim' : 'Menunggu';
+          return `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:6px">
+                <span class="order-badge">${i+1}</span>
+                <div class="move-cell">
+                  <button class="updown" ${i === 0 ? 'disabled' : ''} onclick="moveItem(${i}, -1)">↑</button>
+                  <button class="updown" ${i === list.length-1 ? 'disabled' : ''} onclick="moveItem(${i}, 1)">↓</button>
+                </div>
+              </div>
+            </td>
+            <td><span class="name-link" onclick="openQDetail(${r.id})"><b>${esc(r.nama)}</b></span></td>
+            <td>${esc(r.alamat || '-')}</td>
+            <td>${esc(r.no_hp || '-')}</td>
+            <td class="coord">${r.latitude ? r.latitude.toFixed(5)+', '+r.longitude.toFixed(5) : '-'}</td>
+            <td class="${statusCls}">${statusText}</td>
+            <td>
+              <div class="actions">
+                ${waBtn}
+                ${telBtn}
+              </div>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+// Assign / unassign (admin)
+async function assignTo(deliveryId, userId) {
+  if (!userId) {
+    const { error } = await sb.from('daily_deliveries')
+      .update({ assigned_to: null, urutan: 0 }).eq('id', deliveryId);
+    if (error) return alert('Gagal: ' + error.message);
+    loadQueue();
+    return;
+  }
+  // Ambil urutan maksimal user tsb hari ini
+  const dateVal = document.getElementById('queueDate').value || todayStr();
+  const { data: maxRow } = await sb.from('daily_deliveries')
+    .select('urutan')
+    .eq('assigned_to', userId)
+    .eq('delivery_date', dateVal)
+    .order('urutan', { ascending: false })
+    .limit(1);
+  const nextUrut = (maxRow?.[0]?.urutan || 0) + 1;
+
+  const { error } = await sb.from('daily_deliveries')
+    .update({ assigned_to: userId, urutan: nextUrut }).eq('id', deliveryId);
+  if (error) return alert('Gagal: ' + error.message);
+  loadQueue();
+}
+
+async function hapusAntrian(id) {
+  if (!confirm('Hapus baris ini dari antrian?')) return;
+  const { error } = await sb.from('daily_deliveries').delete().eq('id', id);
+  if (error) return alert('Gagal: ' + error.message);
+  loadQueue();
+}
+
+async function hapusAntrianHariIni() {
+  const dateVal = document.getElementById('queueDate').value || todayStr();
+  if (!confirm(`Hapus SEMUA antrian tanggal ${dateVal}? Tidak bisa dibatalkan.`)) return;
+  const { error } = await sb.from('daily_deliveries').delete().eq('delivery_date', dateVal);
+  if (error) return alert('Gagal: ' + error.message);
+  loadQueue();
+}
+
+// Reorder (user): geser item ke atas/bawah
+async function moveItem(index, dir) {
+  const target = index + dir;
+  if (target < 0 || target >= myQueue.length) return;
+  const list = [...myQueue];
+  [list[index], list[target]] = [list[target], list[index]];
+  // Simpan urutan baru 1..N
+  try {
+    await Promise.all(list.map((item, i) =>
+      sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', item.id)
+    ));
+  } catch (e) { alert('Gagal menyimpan urutan: ' + e.message); }
+  await loadQueue();
+}
+
 // =========================================================
-// SUSUN TEKS WA (dipakai individual & broadcast)
+// DETAIL ANTRIAN (dengan GPS auto + navigasi)
+// =========================================================
+function openQDetail(id) {
+  currentQId = id;
+  const r = myQueue.find(x => x.id === id);
+  if (!r) return;
+
+  const hasCoord = r.latitude && r.longitude;
+  const mapsUrl = hasCoord
+    ? `https://www.google.com/maps?q=${r.latitude},${r.longitude}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((r.alamat || '') + ' ' + (r.nama || ''))}`;
+
+  document.getElementById('qPatientDetail').innerHTML = `
+    <div class="info-box">
+      <p><b>Nama:</b> ${esc(r.nama)}</p>
+      <p><b>Alamat:</b> ${esc(r.alamat || '-')}</p>
+      <p><b>No HP:</b> ${esc(r.no_hp || '-')}</p>
+      <p><b>Koordinat:</b><br><span class="coord">${hasCoord ? r.latitude+', '+r.longitude : 'belum ada'}</span></p>
+    </div>
+    <div class="detail-actions">
+      <a href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none">
+        <button class="maps">🗺️ Navigasi ke Lokasi</button>
+      </a>
+      <button class="update" id="btnUpdateQCoord" onclick="updateQCoord(${r.id})">
+        🎯 Update Koordinat di Lokasi Saya
+      </button>
+    </div>
+  `;
+
+  document.getElementById('qDetailModal').classList.remove('hidden');
+  document.getElementById('qGeoStatus').className = 'geo-status wait';
+  document.getElementById('qGeoStatus').textContent = '📡 Merekam kunjungan Anda...';
+
+  recordDelivery(r.id);
+}
+
+function closeQDetail() {
+  document.getElementById('qDetailModal').classList.add('hidden');
+  currentQId = null;
+}
+
+function recordDelivery(deliveryId) {
+  const statusEl = document.getElementById('qGeoStatus');
+  if (!navigator.geolocation) {
+    statusEl.className = 'geo-status err';
+    statusEl.textContent = '❌ Geolocation tidak didukung browser.';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      const { error } = await sb.from('daily_deliveries').update({
+        latitude, longitude,
+        status: 'delivered',
+        delivered_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }).eq('id', deliveryId);
+
+      if (error) {
+        statusEl.className = 'geo-status err';
+        statusEl.textContent = '❌ Gagal simpan: ' + error.message;
+        return;
+      }
+      statusEl.className = 'geo-status ok';
+      statusEl.textContent = `✅ Kunjungan tersimpan (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
+      loadQueue();
+    },
+    (err) => {
+      statusEl.className = 'geo-status err';
+      statusEl.textContent = '❌ Gagal ambil lokasi: ' + err.message;
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+function updateQCoord(deliveryId) {
+  if (!navigator.geolocation) return alert('Geolocation tidak didukung.');
+  if (!confirm('Update koordinat pasien ini dengan lokasi Anda sekarang?')) return;
+  const btn = document.getElementById('btnUpdateQCoord');
+  if (btn) { btn.disabled = true; btn.textContent = '📡 Mengambil lokasi...'; }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      const { error } = await sb.from('daily_deliveries').update({
+        latitude, longitude,
+        updated_at: new Date().toISOString()
+      }).eq('id', deliveryId);
+
+      if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya'; }
+      if (error) return alert('Gagal update: ' + error.message);
+
+      alert('✅ Koordinat tersimpan:\n' + latitude.toFixed(6) + ', ' + longitude.toFixed(6));
+      await loadQueue();
+      openQDetail(deliveryId);
+    },
+    (err) => {
+      if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya'; }
+      alert('Gagal ambil lokasi: ' + err.message);
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+// =========================================================
+// WA
 // =========================================================
 function buildWAText(patient) {
   const petugas = currentProfile?.full_name || 'Petugas';
   const salam = salamWaktu();
 
-  // Daftar nama pasien milik user ini hari ini (urut kunjungan)
   let listPart = '';
-  if (myTodayPatients.length > 1) {
-    const daftar = myTodayPatients.map((p, i) => `${i+1}. ${p.nama}`).join('\n');
+  if (myQueue.length > 1) {
+    const daftar = myQueue.map((p, i) => `${i+1}. ${p.nama}`).join('\n');
     listPart = `\nDaftar pasien yang akan saya antar hari ini (urut pengantaran):\n${daftar}\n`;
   }
 
-  // Link lokasi petugas
   let locPart = '';
   if (officerLocation) {
     const link = `https://www.google.com/maps?q=${officerLocation.lat},${officerLocation.lng}`;
     locPart = `\n📍 Link lokasi saya (untuk tracking):\n${link}\n`;
   } else {
-    locPart = `\n📍 Lokasi saya belum tersedia. Mohon minta petugas klik "Perbarui Lokasi" di aplikasi.\n`;
+    locPart = `\n📍 Lokasi saya belum tersedia. Mohon minta petugas klik "Perbarui Lokasi".\n`;
   }
 
   return `Assalamualaikum selamat ${salam} Bpk/Ibu ${patient.nama},\n\n` +
@@ -460,192 +824,95 @@ function buildWAText(patient) {
     `Terima kasih.`;
 }
 
-// =========================================================
-// KIRIM WA INDIVIDUAL
-// =========================================================
-function openWA(patientId) {
-  const p = patientsCache.find(x => x.id === patientId);
-  if (!p) return alert('Data pasien tidak ditemukan.');
-  const phone = normalizePhone(p.no_hp);
-  if (!phone) return alert('Nomor HP pasien tidak tersedia.');
-
-  const pesan = buildWAText(p);
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(pesan)}`;
-  window.open(url, '_blank');
+function openWAFromQueue(deliveryId) {
+  const r = myQueue.find(x => x.id === deliveryId);
+  if (!r) return alert('Data tidak ditemukan.');
+  const phone = normalizePhone(r.no_hp);
+  if (!phone) return alert('Nomor HP tidak tersedia.');
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildWAText(r))}`, '_blank');
 }
 
-// =========================================================
-// BROADCAST WA
-// =========================================================
 function openBroadcast() {
-  if (!myTodayPatients.length) {
-    return alert('Belum ada pasien yang tercatat hari ini oleh Anda.\nBuka dulu beberapa pasien di menu Data Pasien untuk merekam kunjungan.');
+  if (!myQueue.length) {
+    return alert('Belum ada pasien dalam antrian Anda hari ini.');
   }
-
   const preview = buildWAText({ nama: '[nama pasien]' });
   document.getElementById('bcPreview').textContent = preview;
-  document.getElementById('bcCount').textContent = myTodayPatients.length;
-
-  document.getElementById('bcList').innerHTML = myTodayPatients.map((p, i) => {
+  document.getElementById('bcCount').textContent = myQueue.length;
+  document.getElementById('bcList').innerHTML = myQueue.map((p, i) => {
     const phone = normalizePhone(p.no_hp);
     const disabled = phone ? '' : 'disabled';
     return `
       <div class="bc-item">
         <div class="bc-num">${i+1}</div>
-        <div class="bc-name">
-          <b>${esc(p.nama)}</b>
-          <small>${esc(p.no_hp || 'tanpa nomor HP')}</small>
-        </div>
+        <div class="bc-name"><b>${esc(p.nama)}</b><small>${esc(p.no_hp || 'tanpa nomor HP')}</small></div>
         <button class="wa" ${disabled} onclick="kirimKePasien(${p.id})">💬 Kirim</button>
       </div>`;
   }).join('');
-
   document.getElementById('bcModal').classList.remove('hidden');
 }
-
-function kirimKePasien(patientId) {
-  const p = myTodayPatients.find(x => x.id === patientId);
-  if (!p) return;
-  const phone = normalizePhone(p.no_hp);
+function kirimKePasien(deliveryId) {
+  const r = myQueue.find(x => x.id === deliveryId);
+  if (!r) return;
+  const phone = normalizePhone(r.no_hp);
   if (!phone) return alert('Nomor HP tidak tersedia.');
-  const pesan = buildWAText(p);
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(pesan)}`, '_blank');
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildWAText(r))}`, '_blank');
 }
-
-function closeBroadcast() {
-  document.getElementById('bcModal').classList.add('hidden');
-}
-
+function closeBroadcast() { document.getElementById('bcModal').classList.add('hidden'); }
 function copyBroadcastText() {
-  const preview = document.getElementById('bcPreview').textContent;
-  navigator.clipboard.writeText(preview).then(
-    () => alert('✅ Teks pesan disalin. Tinggal paste di WhatsApp.'),
-    () => alert('Gagal menyalin. Salin manual dari preview.')
+  const t = document.getElementById('bcPreview').textContent;
+  navigator.clipboard.writeText(t).then(
+    () => alert('✅ Teks disalin.'),
+    () => alert('Gagal menyalin, salin manual.')
   );
 }
 
 // =========================================================
-// DETAIL PASIEN
+// DATA PASIEN (MASTER)
 // =========================================================
-function openDetail(id) {
-  currentDetailId = id;
-  const p = patientsCache.find(x => x.id === id);
-  if (!p) return;
+async function loadPatients() {
+  const { data, error } = await sb.from('patients').select('*').order('nama').limit(5000);
+  if (error) { alert('Gagal memuat pasien: ' + error.message); return; }
+  patientsCache = data || [];
+  renderPatients();
+}
+function renderPatients() {
+  const q = (document.getElementById('searchPatient').value || '').toLowerCase();
+  const list = patientsCache.filter(p =>
+    (p.nama || '').toLowerCase().includes(q) ||
+    (p.alamat || '').toLowerCase().includes(q)
+  ).slice(0, 300);
 
-  const hasCoord = p.latitude && p.longitude;
-  const mapsUrl = hasCoord
-    ? `https://www.google.com/maps?q=${p.latitude},${p.longitude}`
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.alamat || '') + ' ' + (p.nama || ''))}`;
-
-  document.getElementById('patientDetail').innerHTML = `
-    <div class="info-box">
-      <p><b>Nama:</b> ${esc(p.nama)}</p>
-      <p><b>Alamat:</b> ${esc(p.alamat || '-')}</p>
-      <p><b>No HP:</b> ${esc(p.no_hp || '-')}</p>
-      <p><b>Koordinat tersimpan:</b><br>
-         <span class="coord">${hasCoord ? p.latitude+', '+p.longitude : 'belum ada'}</span></p>
-    </div>
-
-    <div class="detail-actions">
-      <a href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none">
-        <button class="maps">🗺️ Navigasi ke Lokasi (Google Maps)</button>
-      </a>
-      <button class="update" id="btnUpdateCoord" onclick="updateKoordinatPasien(${p.id})">
-        🎯 Update Koordinat di Lokasi Saya Sekarang
-      </button>
-    </div>
-    <p style="font-size:12px;color:#94a3b8;margin-top:8px">
-      Tips: klik <b>Navigasi</b> untuk menuju rumah pasien. Setelah tiba, klik <b>Update Koordinat</b> agar titik tersimpan lebih akurat.
+  const wrap = document.getElementById('patientsTableWrap');
+  if (!list.length) { wrap.innerHTML = '<div class="empty">Data tidak ditemukan.</div>'; return; }
+  wrap.innerHTML = `
+    <p style="font-size:13px;color:#64748b;margin:0 0 12px">
+      Total: <b>${patientsCache.length}</b> · Menampilkan: <b>${list.length}</b> (perbaiki kata kunci untuk memfilter)
     </p>
-  `;
-
-  document.getElementById('detailModal').classList.remove('hidden');
-  document.getElementById('geoStatus').className = 'geo-status wait';
-  document.getElementById('geoStatus').textContent = '📡 Merekam kunjungan Anda...';
-
-  simpanKoordinatKunjungan(id);
+    <table>
+      <thead><tr><th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th></tr></thead>
+      <tbody>
+        ${list.map(p => `
+          <tr>
+            <td><b>${esc(p.nama)}</b></td>
+            <td>${esc(p.alamat || '-')}</td>
+            <td>${esc(p.no_hp || '-')}</td>
+            <td class="coord">${p.latitude ? p.latitude.toFixed(5)+', '+p.longitude.toFixed(5) : '-'}</td>
+            <td>
+              <div class="actions">
+                <button class="ghost" onclick="openPatientForm(${p.id})">Edit</button>
+                <button class="danger" onclick="deletePatient(${p.id})">Hapus</button>
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
 }
 
-function closeDetail() {
-  document.getElementById('detailModal').classList.add('hidden');
-  currentDetailId = null;
-}
-
-function simpanKoordinatKunjungan(patientId) {
-  const statusEl = document.getElementById('geoStatus');
-  if (!navigator.geolocation) {
-    statusEl.className = 'geo-status err';
-    statusEl.textContent = '❌ Geolocation tidak didukung browser ini.';
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      const { error } = await sb.from('patient_visits').insert({
-        patient_id: patientId,
-        user_id: currentUser.id,
-        latitude, longitude
-      });
-      if (error) {
-        statusEl.className = 'geo-status err';
-        statusEl.textContent = '❌ Gagal simpan kunjungan: ' + error.message;
-        return;
-      }
-      statusEl.className = 'geo-status ok';
-      statusEl.textContent = `✅ Kunjungan tersimpan (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
-      // Refresh daftar pasien milik user ini
-      loadToday();
-    },
-    (err) => {
-      statusEl.className = 'geo-status err';
-      statusEl.textContent = '❌ Gagal ambil lokasi: ' + err.message + '. Izinkan akses lokasi di browser.';
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-  );
-}
-
-// =========================================================
-// UPDATE KOORDINAT PASIEN
-// =========================================================
-function updateKoordinatPasien(patientId) {
-  if (!navigator.geolocation) return alert('Geolocation tidak didukung browser.');
-  if (!confirm('Update koordinat pasien ini dengan lokasi Anda sekarang?')) return;
-
-  const btn = document.getElementById('btnUpdateCoord');
-  if (btn) { btn.disabled = true; btn.textContent = '📡 Mengambil lokasi...'; }
-
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      const { error } = await sb.from('patients').update({
-        latitude, longitude,
-        updated_at: new Date().toISOString()
-      }).eq('id', patientId);
-
-      if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya Sekarang'; }
-
-      if (error) return alert('Gagal update koordinat: ' + error.message);
-
-      alert('✅ Koordinat pasien berhasil diperbarui:\n' + latitude.toFixed(6) + ', ' + longitude.toFixed(6));
-      await loadPatients();
-      openDetail(patientId);
-    },
-    (err) => {
-      if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya Sekarang'; }
-      alert('Gagal ambil lokasi: ' + err.message + '\nPastikan GPS aktif dan izin lokasi diberikan.');
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-  );
-}
-
-// =========================================================
-// FORM TAMBAH / EDIT PASIEN
-// =========================================================
 function openPatientForm(id) {
   document.getElementById('formModal').classList.remove('hidden');
   document.getElementById('formCoord').textContent = 'Belum ada koordinat';
-
   if (id) {
     const p = patientsCache.find(x => x.id === id);
     document.getElementById('formTitle').textContent = 'Edit Pasien';
@@ -661,24 +928,20 @@ function openPatientForm(id) {
     ['fId','fNama','fAlamat','fHp','fLat','fLng'].forEach(i => document.getElementById(i).value = '');
   }
 }
-
 function closeForm() { document.getElementById('formModal').classList.add('hidden'); }
-
 function ambilLokasiForm() {
   if (!navigator.geolocation) return alert('Geolocation tidak didukung.');
   document.getElementById('formCoord').textContent = 'Mengambil lokasi...';
   navigator.geolocation.getCurrentPosition(
     (pos) => {
-      const { latitude, longitude } = pos.coords;
-      document.getElementById('fLat').value = latitude;
-      document.getElementById('fLng').value = longitude;
-      document.getElementById('formCoord').textContent = latitude.toFixed(6) + ', ' + longitude.toFixed(6);
+      document.getElementById('fLat').value = pos.coords.latitude;
+      document.getElementById('fLng').value = pos.coords.longitude;
+      document.getElementById('formCoord').textContent = pos.coords.latitude.toFixed(6) + ', ' + pos.coords.longitude.toFixed(6);
     },
     (err) => document.getElementById('formCoord').textContent = 'Gagal: ' + err.message,
     { enableHighAccuracy: true, timeout: 15000 }
   );
 }
-
 async function savePatient() {
   const id = document.getElementById('fId').value;
   const payload = {
@@ -689,102 +952,64 @@ async function savePatient() {
     longitude: parseFloat(document.getElementById('fLng').value) || null,
     updated_at: new Date().toISOString(),
   };
-  if (!payload.nama) return alert('Nama pasien wajib diisi.');
-
+  if (!payload.nama) return alert('Nama wajib diisi.');
   let error;
-  if (id) {
-    ({ error } = await sb.from('patients').update(payload).eq('id', id));
-  } else {
-    payload.recorded_by = currentUser.id;
-    ({ error } = await sb.from('patients').insert(payload));
-  }
-  if (error) return alert('Gagal simpan: ' + error.message);
+  if (id) ({ error } = await sb.from('patients').update(payload).eq('id', id));
+  else { payload.recorded_by = currentUser.id; ({ error } = await sb.from('patients').insert(payload)); }
+  if (error) return alert('Gagal: ' + error.message);
   closeForm();
   await loadPatients();
 }
-
 async function deletePatient(id) {
-  if (!confirm('Yakin hapus pasien ini? Riwayat kunjungan juga akan terhapus.')) return;
+  if (!confirm('Hapus pasien master ini?')) return;
   const { error } = await sb.from('patients').delete().eq('id', id);
-  if (error) return alert('Gagal hapus: ' + error.message);
+  if (error) return alert('Gagal: ' + error.message);
   await loadPatients();
 }
 
 // =========================================================
-// PASIEN HARI INI (per user yang login)
+// RIWAYAT KUNJUNGAN (dari daily_deliveries yang delivered)
 // =========================================================
-async function loadToday() {
-  const wrap = document.getElementById('todayTableWrap');
+async function loadHistory() {
+  const wrap = document.getElementById('historyTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat...</div>';
 
-  const start = new Date(); start.setHours(0,0,0,0);
+  // 7 hari terakhir
   const end = new Date(); end.setHours(23,59,59,999);
+  const start = new Date(); start.setDate(start.getDate() - 6); start.setHours(0,0,0,0);
+  const startStr = start.toISOString().split('T')[0];
+  const endStr = end.toISOString().split('T')[0];
 
-  // Hanya kunjungan oleh user yang login, urut waktu kunjungan
-  const { data, error } = await sb
-    .from('patient_visits')
-    .select('id, visited_at, latitude, longitude, patient_id, patients(id, nama, alamat, no_hp)')
-    .eq('user_id', currentUser.id)
-    .gte('visited_at', start.toISOString())
-    .lte('visited_at', end.toISOString())
-    .order('visited_at', { ascending: true });
+  let q = sb.from('daily_deliveries')
+    .select('id, delivery_date, nama, alamat, no_hp, urutan, status, delivered_at, assigned_to')
+    .eq('status', 'delivered')
+    .gte('delivery_date', startStr)
+    .lte('delivery_date', endStr)
+    .order('delivered_at', { ascending: false })
+    .limit(500);
 
-  if (error) { wrap.innerHTML = '<div class="empty">Gagal memuat: ' + esc(error.message) + '</div>'; return; }
-  if (!data || !data.length) {
-    wrap.innerHTML = '<div class="empty">Belum ada pasien yang Anda kunjungi hari ini.<br><small>Buka pasien dari menu <b>Data Pasien</b> untuk merekam kunjungan.</small></div>';
-    myTodayPatients = [];
-    return;
-  }
+  if (!isAdmin) q = q.eq('assigned_to', currentUser.id);
 
-  // Deduplikasi: satu pasien hanya tampil sekali (kunjungan pertama)
-  const seen = new Set();
-  const uniqueVisits = [];
-  for (const v of data) {
-    if (!v.patients) continue;
-    const pid = v.patients.id;
-    if (seen.has(pid)) continue;
-    seen.add(pid);
-    uniqueVisits.push({ visit: v, patient: v.patients });
-  }
-
-  // Simpan untuk broadcast
-  myTodayPatients = uniqueVisits.map(x => x.patient);
+  const { data, error } = await q;
+  if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
+  if (!data?.length) { wrap.innerHTML = '<div class="empty">Belum ada kunjungan tercatat dalam 7 hari terakhir.</div>'; return; }
 
   wrap.innerHTML = `
     <p style="font-size:13px;color:#64748b;margin:0 0 12px">
-      Menampilkan <b>${uniqueVisits.length}</b> pasien yang Anda tangani hari ini (urut kunjungan).
+      ${data.length} kunjungan dalam 7 hari terakhir.
     </p>
     <table>
-      <thead><tr>
-        <th>Urut</th><th>Jam</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th>
-      </tr></thead>
+      <thead><tr><th>Tanggal</th><th>Jam</th><th>Pasien</th><th>Alamat</th><th>No HP</th></tr></thead>
       <tbody>
-        ${uniqueVisits.map((x, i) => {
-          const v = x.visit;
-          const p = x.patient;
-          const phone = normalizePhone(p.no_hp);
-          const waBtn = phone
-            ? `<button class="wa" onclick="openWA(${p.id})">💬 WA</button>`
-            : '';
-          const telBtn = phone
-            ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞 Telepon</button></a>`
-            : '';
-          return `
+        ${data.map(r => `
           <tr>
-            <td><span class="order-badge">#${i+1}</span></td>
-            <td>${new Date(v.visited_at).toLocaleTimeString('id-ID')}</td>
-            <td><b>${esc(p.nama)}</b></td>
-            <td>${esc(p.alamat || '-')}</td>
-            <td>${esc(p.no_hp || '-')}</td>
-            <td class="coord">${v.latitude ? v.latitude.toFixed(5)+', '+v.longitude.toFixed(5) : '-'}</td>
-            <td>
-              <div class="actions">
-                ${waBtn}
-                ${telBtn}
-              </div>
-            </td>
-          </tr>`;
-        }).join('')}
+            <td>${r.delivery_date || '-'}</td>
+            <td>${r.delivered_at ? new Date(r.delivered_at).toLocaleTimeString('id-ID') : '-'}</td>
+            <td><b>${esc(r.nama)}</b></td>
+            <td>${esc(r.alamat || '-')}</td>
+            <td>${esc(r.no_hp || '-')}</td>
+          </tr>
+        `).join('')}
       </tbody>
     </table>`;
 }
@@ -797,8 +1022,7 @@ async function loadUsers() {
   wrap.innerHTML = '<div class="empty">Memuat...</div>';
   const { data, error } = await sb.from('profiles').select('*').order('full_name');
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
-  if (!data || !data.length) { wrap.innerHTML = '<div class="empty">Belum ada user.</div>'; return; }
-
+  if (!data?.length) { wrap.innerHTML = '<div class="empty">Belum ada user.</div>'; return; }
   wrap.innerHTML = `
     <table>
       <thead><tr><th>Nama</th><th>Role</th><th>Terdaftar</th></tr></thead>
