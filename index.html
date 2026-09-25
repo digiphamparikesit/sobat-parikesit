@@ -10,263 +10,165 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
-    --green-950: #052e16;
-    --green-900: #064e3b;
-    --green-800: #065f46;
-    --green-700: #047857;
-    --green-600: #059669;
-    --green-500: #10b981;
-    --green-400: #34d399;
-    --green-100: #d1fae5;
-    --green-50: #ecfdf5;
-    --bg: #ecfdf5;
-    --ink: #052e16;
-    --ink-soft: #064e3b;
+    --green-950:#052e16; --green-900:#064e3b; --green-800:#065f46; --green-700:#047857;
+    --green-600:#059669; --green-500:#10b981; --green-400:#34d399;
+    --green-100:#d1fae5; --green-50:#ecfdf5;
+    --bg:#ecfdf5; --ink:#052e16;
   }
-  * { box-sizing: border-box; font-family: 'Manrope', system-ui, -apple-system, sans-serif; font-weight: 600; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-weight: 600; }
-  .hidden { display: none !important; }
-
-  /* ============ LOGIN ============ */
-  #loginPage {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #052e16 0%, #065f46 50%, #047857 100%);
-    padding: 20px;
+  * { box-sizing:border-box; font-family:'Manrope',system-ui,-apple-system,sans-serif; font-weight:600; }
+  body { margin:0; background:var(--bg); color:var(--ink); }
+  .hidden { display:none !important; }
+  #loginPage { min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#052e16 0%,#065f46 50%,#047857 100%); padding:20px; }
+  .login-box { background:#fff; padding:36px 32px; border-radius:16px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35); width:100%; max-width:380px; border-top:5px solid var(--green-600); }
+  .login-box h1 { margin:0 0 6px; color:var(--green-800); font-size:24px; font-weight:800; letter-spacing:-.5px; }
+  .login-box p { margin:0 0 26px; color:#64748b; font-size:13px; }
+  input,textarea,button,select { font-size:14px; font-family:inherit; }
+  input,textarea,select { padding:11px 14px; border:2px solid var(--green-100); border-radius:9px;
+    outline:none; background:#fff; color:var(--ink); font-weight:600; }
+  input[type=text],input[type=email],input[type=password],input[type=date],input[type=number],textarea,select { width:100%; }
+  input:focus,textarea:focus,select:focus { border-color:var(--green-500); box-shadow:0 0 0 3px rgba(16,185,129,.15); }
+  button { cursor:pointer; padding:11px 18px; border:none; border-radius:9px; background:var(--green-600);
+    color:#fff; font-weight:700; transition:all .15s; }
+  button:hover { background:var(--green-700); }
+  button.ghost { background:var(--green-100); color:var(--green-800); }
+  button.ghost:hover { background:var(--green-400); color:#fff; }
+  button.danger { background:#dc2626; } button.danger:hover { background:#b91c1c; }
+  button.wa { background:#25D366; } button.wa:hover { background:#1da851; }
+  button.tel { background:var(--green-600); }
+  button.maps { background:var(--green-800); } button.maps:hover { background:var(--green-900); }
+  button.update { background:#ca8a04; } button.update:hover { background:#a16207; }
+  button.broadcast { background:#7c3aed; } button.broadcast:hover { background:#6d28d9; }
+  button.save-master { background:var(--green-500); } button.save-master:hover { background:var(--green-600); }
+  button.updown { background:var(--green-100); color:var(--green-800); padding:4px 8px; font-size:13px; font-weight:800; }
+  button.updown:hover { background:var(--green-400); color:#fff; }
+  button:disabled { opacity:.35; cursor:not-allowed; }
+  #appPage { display:flex; min-height:100vh; }
+  .sidebar { width:240px; background:linear-gradient(180deg,#052e16 0%,#064e3b 100%);
+    color:#d1fae5; padding:24px 14px; flex-shrink:0; display:flex; flex-direction:column; }
+  .sidebar h2 { color:#fff; font-size:17px; margin:0 0 4px 10px; font-weight:800; letter-spacing:-.3px; }
+  .sidebar small { display:block; margin:0 0 22px 10px; color:#6ee7b7; font-size:11px; letter-spacing:1px; }
+  .nav-item { padding:12px 14px; border-radius:10px; cursor:pointer; font-size:14px; margin-bottom:4px;
+    color:#a7f3d0; transition:all .15s; }
+  .nav-item:hover { background:rgba(16,185,129,.15); color:#fff; }
+  .nav-item.active { background:var(--green-500); color:#052e16; font-weight:800; }
+  .sidebar .user-info { margin-top:auto; padding-top:20px; border-top:1px solid rgba(16,185,129,.25); font-size:12px; }
+  .sidebar .user-info b { color:#fff; display:block; margin-bottom:8px; font-weight:700; font-size:14px; }
+  .sidebar .user-info .badge { background:var(--green-500); color:#052e16; }
+  .main { flex:1; padding:28px; overflow-x:hidden; min-width:0; }
+  .main h1 { margin:0 0 22px; font-size:24px; font-weight:800; letter-spacing:-.4px; color:var(--green-900); }
+  .toolbar { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+  .toolbar input,.toolbar select { width:auto; margin:0; }
+  .toolbar input[type=text] { min-width:220px; }
+  .loc-panel { background:#fff; border:2px solid var(--green-100); border-radius:12px;
+    padding:16px 18px; margin-bottom:16px; display:flex; gap:14px; align-items:center;
+    flex-wrap:wrap; box-shadow:0 2px 8px rgba(5,46,22,.06); }
+  .loc-panel .loc-icon { font-size:24px; }
+  .loc-panel .loc-body { flex:1; min-width:220px; }
+  .loc-panel .loc-title { font-weight:800; font-size:14px; margin-bottom:3px; color:var(--green-900); }
+  .loc-panel .loc-sub { font-size:12px; color:#047857; }
+  .loc-panel .loc-sub a { color:var(--green-700); font-weight:700; }
+  .loc-panel.ok { border-color:var(--green-400); background:#ecfdf5; }
+  .loc-panel.err { border-color:#fca5a5; background:#fef2f2; }
+  .loc-panel.wait { border-color:#fde68a; background:#fefce8; }
+  .loc-panel .loc-actions { display:flex; gap:6px; flex-wrap:wrap; }
+  .table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px;
+    overflow:hidden; box-shadow:0 2px 8px rgba(5,46,22,.08); min-width:780px; }
+  th,td { padding:12px 14px; text-align:left; border-bottom:1px solid var(--green-100); font-size:13px; vertical-align:top; }
+  th { background:var(--green-50); font-weight:800; color:var(--green-800); text-transform:uppercase; font-size:11px; letter-spacing:.8px; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#f7fefb; }
+  .badge { background:var(--green-100); color:var(--green-800); padding:3px 10px; border-radius:999px; font-size:11px; display:inline-block; font-weight:800; }
+  td .actions { display:flex; flex-wrap:wrap; gap:4px; }
+  td .actions button,td .actions a button { padding:6px 11px; font-size:12px; }
+  .name-link { color:var(--green-800); cursor:pointer; font-weight:700; }
+  .name-link:hover { color:var(--green-500); text-decoration:underline; }
+  .order-badge { display:inline-flex; width:28px; height:28px; align-items:center; justify-content:center;
+    background:var(--green-600); color:#fff; font-size:13px; font-weight:800; border-radius:50%; }
+  .move-cell { display:flex; gap:3px; align-items:center; }
+  .move-input { width:44px !important; padding:5px 6px !important; font-size:12px; text-align:center; margin:0; font-weight:700; }
+  .move-input::-webkit-outer-spin-button,.move-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .move-input[type=number] { -moz-appearance:textfield; }
+  .modal-bg { position:fixed; inset:0; background:rgba(5,46,22,.7); display:flex; align-items:center;
+    justify-content:center; z-index:100; padding:16px; backdrop-filter:blur(3px); }
+  .modal { background:#fff; padding:26px; border-radius:14px; width:100%; max-width:480px;
+    max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.4); border-top:5px solid var(--green-500); }
+  .modal.modal-wide { max-width:640px; }
+  .modal h3 { margin:0 0 18px; font-weight:800; color:var(--green-900); font-size:18px; letter-spacing:-.3px; }
+  .modal .row { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
+  .geo-status { padding:11px 14px; border-radius:9px; font-size:13px; margin-bottom:14px; font-weight:700; }
+  .geo-status.ok { background:var(--green-100); color:var(--green-800); }
+  .geo-status.wait { background:#fef9c3; color:#854d0e; }
+  .geo-status.err { background:#fee2e2; color:#991b1b; }
+  .coord { font-family:'Courier New',monospace; font-size:12px; color:var(--green-800); font-weight:700; }
+  .empty { text-align:center; padding:48px 20px; color:#6ee7b7; font-weight:700; font-size:14px; }
+  .modal p { margin:8px 0; font-size:14px; }
+  .modal p b { font-weight:800; color:var(--green-900); }
+  .detail-actions { display:flex; flex-direction:column; gap:9px; margin:18px 0 0; }
+  .detail-actions button,.detail-actions a button { width:100%; padding:13px; }
+  .info-box { background:var(--green-50); border:1px solid var(--green-100); border-radius:10px; padding:14px; margin:12px 0; }
+  .bc-list { border:1px solid var(--green-100); border-radius:10px; max-height:320px; overflow-y:auto; }
+  .bc-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid #f1f5f9; }
+  .bc-item:last-child { border-bottom:none; }
+  .bc-item .bc-num { width:26px; height:26px; border-radius:50%; background:var(--green-100);
+    color:var(--green-800); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; }
+  .bc-item .bc-name { flex:1; font-size:13px; font-weight:700; }
+  .bc-item .bc-name small { display:block; color:#94a3b8; font-size:11px; }
+  .bc-item button { padding:7px 12px; font-size:12px; }
+  .bc-preview { background:var(--green-50); border:1px solid var(--green-100); border-radius:10px;
+    padding:14px; font-family:'Courier New',monospace; font-size:12px; white-space:pre-wrap;
+    color:var(--green-900); max-height:220px; overflow-y:auto; margin-bottom:14px; }
+  .upload-zone { border:2px dashed var(--green-400); border-radius:10px; padding:22px; text-align:center;
+    background:var(--green-50); cursor:pointer; margin-bottom:16px; color:var(--green-700); }
+  .upload-zone:hover { border-color:var(--green-600); background:var(--green-100); }
+  .upload-zone input { display:none; }
+  .assign-select { padding:6px 10px; font-size:12px; border-radius:7px; max-width:170px; }
+  .status-done { color:var(--green-600); font-weight:800; }
+  .status-pending { color:#ca8a04; font-weight:800; }
+  .status-synced { color:var(--green-700); font-weight:800; font-size:11px; }
+  .hint { font-size:12px; color:#854d0e; background:#fefce8; border:1px solid #fde68a;
+    padding:10px 14px; border-radius:9px; margin-bottom:14px; }
+  .viewas-banner { background:var(--green-100); border:1px solid var(--green-400); color:var(--green-900);
+    padding:12px 16px; border-radius:10px; margin-bottom:14px; font-size:13px; }
+  .viewas-banner b { color:var(--green-950); font-weight:800; }
+  @media (max-width:768px) {
+    #appPage { flex-direction:column; }
+    .sidebar { width:100%; padding:14px 10px; position:sticky; top:0; z-index:50; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .sidebar h2 { font-size:15px; margin:0 0 3px 6px; }
+    .sidebar small { margin:0 0 12px 6px; font-size:10px; }
+    .nav-row { display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; }
+    .nav-item { flex:0 0 auto; padding:9px 14px; font-size:12px; margin-bottom:0; white-space:nowrap; }
+    .sidebar .user-info { margin-top:6px; padding:10px; display:flex; align-items:center; gap:10px;
+      flex-wrap:wrap; border-top:1px solid rgba(16,185,129,.2); }
+    .sidebar .user-info b { margin:0; font-size:13px; }
+    .sidebar .user-info button { width:auto !important; font-size:11px !important; padding:7px 12px !important; margin:0 !important; margin-left:auto !important; }
+    .main { padding:16px 12px; }
+    .main h1 { font-size:18px; margin-bottom:16px; }
+    .loc-panel { padding:12px; gap:10px; }
+    .loc-panel .loc-actions { width:100%; }
+    .loc-panel .loc-actions button { flex:1; font-size:12px; padding:9px 10px; }
+    .toolbar { gap:6px; }
+    .toolbar input[type=text],.toolbar select#viewAsUser { min-width:0; flex:1; }
+    table { min-width:680px; }
+    th,td { padding:9px 10px; font-size:12px; }
+    .order-badge { width:24px; height:24px; font-size:11px; }
+    .move-input { width:38px !important; font-size:11px; }
+    button.updown { padding:3px 7px; font-size:11px; }
+    td .actions button,td .actions a button { padding:5px 9px; font-size:11px; }
+    .modal { padding:20px 16px; }
+    .modal h3 { font-size:16px; }
+    .modal .row button { flex:1; min-width:90px; }
   }
-  .login-box {
-    background: #fff; padding: 36px 32px; border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.35); width: 100%; max-width: 380px;
-    border-top: 5px solid var(--green-600);
-  }
-  .login-box h1 { margin: 0 0 6px; color: var(--green-800); font-size: 24px; font-weight: 800; letter-spacing: -.5px; }
-  .login-box p { margin: 0 0 26px; color: #64748b; font-size: 13px; font-weight: 500; }
-
-  /* ============ FORM ELEMENTS ============ */
-  input, textarea, button, select { font-size: 14px; font-family: inherit; }
-  input, textarea, select {
-    padding: 11px 14px; border: 2px solid #d1fae5; border-radius: 9px;
-    outline: none; background: #fff; color: var(--ink); font-weight: 600;
-  }
-  input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], textarea, select { width: 100%; }
-  input:focus, textarea:focus, select:focus { border-color: var(--green-500); box-shadow: 0 0 0 3px rgba(16,185,129,.15); }
-  button {
-    cursor: pointer; padding: 11px 18px; border: none; border-radius: 9px;
-    background: var(--green-600); color: #fff; font-weight: 700; letter-spacing: .2px;
-    transition: all .15s;
-  }
-  button:hover { background: var(--green-700); }
-  button.ghost { background: var(--green-100); color: var(--green-800); }
-  button.ghost:hover { background: var(--green-400); color: #fff; }
-  button.danger { background: #dc2626; }
-  button.danger:hover { background: #b91c1c; }
-  button.wa { background: #25D366; }
-  button.wa:hover { background: #1da851; }
-  button.tel { background: var(--green-600); }
-  button.maps { background: var(--green-800); }
-  button.maps:hover { background: var(--green-900); }
-  button.update { background: #ca8a04; }
-  button.update:hover { background: #a16207; }
-  button.broadcast { background: #7c3aed; }
-  button.broadcast:hover { background: #6d28d9; }
-  button.save-master { background: var(--green-500); }
-  button.save-master:hover { background: var(--green-600); }
-  button.updown { background: var(--green-100); color: var(--green-800); padding: 4px 8px; font-size: 13px; font-weight: 800; }
-  button.updown:hover { background: var(--green-400); color: #fff; }
-  button:disabled { opacity: .35; cursor: not-allowed; }
-
-  /* ============ LAYOUT ============ */
-  #appPage { display: flex; min-height: 100vh; }
-  .sidebar {
-    width: 240px; background: linear-gradient(180deg, #052e16 0%, #064e3b 100%);
-    color: #d1fae5; padding: 24px 14px; flex-shrink: 0;
-    display: flex; flex-direction: column;
-  }
-  .sidebar h2 { color: #fff; font-size: 17px; margin: 0 0 4px 10px; font-weight: 800; letter-spacing: -.3px; }
-  .sidebar small { display: block; margin: 0 0 22px 10px; color: #6ee7b7; font-size: 11px; font-weight: 600; letter-spacing: 1px; }
-  .nav-item {
-    padding: 12px 14px; border-radius: 10px; cursor: pointer; font-size: 14px;
-    margin-bottom: 4px; font-weight: 600; color: #a7f3d0;
-    transition: all .15s;
-  }
-  .nav-item:hover { background: rgba(16,185,129,.15); color: #fff; }
-  .nav-item.active { background: var(--green-500); color: #052e16; font-weight: 800; }
-  .sidebar .user-info {
-    margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(16,185,129,.25);
-    font-size: 12px;
-  }
-  .sidebar .user-info b { color: #fff; display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; }
-  .sidebar .user-info .badge { background: var(--green-500); color: #052e16; }
-
-  .main { flex: 1; padding: 28px; overflow-x: hidden; min-width: 0; }
-  .main h1 { margin: 0 0 22px; font-size: 24px; font-weight: 800; letter-spacing: -.4px; color: var(--green-900); }
-  .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-  .toolbar input, .toolbar select { width: auto; margin: 0; }
-  .toolbar input[type=text] { min-width: 220px; }
-  .toolbar select#viewAsUser { min-width: 220px; }
-
-  /* ============ LOCATION PANEL ============ */
-  .loc-panel {
-    background: #fff; border: 2px solid var(--green-100); border-radius: 12px;
-    padding: 16px 18px; margin-bottom: 16px; display: flex; gap: 14px;
-    align-items: center; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(5,46,22,.06);
-  }
-  .loc-panel .loc-icon { font-size: 24px; }
-  .loc-panel .loc-body { flex: 1; min-width: 220px; }
-  .loc-panel .loc-title { font-weight: 800; font-size: 14px; margin-bottom: 3px; color: var(--green-900); }
-  .loc-panel .loc-sub { font-size: 12px; color: #047857; font-weight: 600; }
-  .loc-panel .loc-sub a { color: var(--green-700); font-weight: 700; }
-  .loc-panel.ok { border-color: var(--green-400); background: #ecfdf5; }
-  .loc-panel.err { border-color: #fca5a5; background: #fef2f2; }
-  .loc-panel.wait { border-color: #fde68a; background: #fefce8; }
-  .loc-panel .loc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-
-  /* ============ TABLES ============ */
-  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
-  table {
-    width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px;
-    overflow: hidden; box-shadow: 0 2px 8px rgba(5,46,22,.08); min-width: 720px;
-  }
-  th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--green-100); font-size: 13px; vertical-align: top; font-weight: 600; }
-  th { background: var(--green-50); font-weight: 800; color: var(--green-800); text-transform: uppercase; font-size: 11px; letter-spacing: .8px; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #f7fefb; }
-  .badge { background: var(--green-100); color: var(--green-800); padding: 3px 10px; border-radius: 999px; font-size: 11px; display: inline-block; font-weight: 800; letter-spacing: .3px; }
-  td .actions { display: flex; flex-wrap: wrap; gap: 4px; }
-  td .actions button, td .actions a button { padding: 6px 11px; font-size: 12px; }
-  .name-link { color: var(--green-800); cursor: pointer; font-weight: 700; }
-  .name-link:hover { color: var(--green-500); text-decoration: underline; }
-  .order-badge {
-    display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center;
-    background: var(--green-600); color: #fff; font-size: 13px; font-weight: 800; border-radius: 50%;
-  }
-  .move-cell { display: flex; gap: 3px; align-items: center; }
-  .move-input { width: 44px !important; padding: 5px 6px !important; font-size: 12px; text-align: center; margin: 0; font-weight: 700; }
-  .move-input::-webkit-outer-spin-button, .move-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .move-input[type=number] { -moz-appearance: textfield; }
-
-  /* ============ MODAL ============ */
-  .modal-bg {
-    position: fixed; inset: 0; background: rgba(5,46,22,.7); display: flex;
-    align-items: center; justify-content: center; z-index: 100; padding: 16px;
-    backdrop-filter: blur(3px);
-  }
-  .modal {
-    background: #fff; padding: 26px; border-radius: 14px; width: 100%;
-    max-width: 480px; max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,.4); border-top: 5px solid var(--green-500);
-  }
-  .modal.modal-wide { max-width: 640px; }
-  .modal h3 { margin: 0 0 18px; font-weight: 800; color: var(--green-900); font-size: 18px; letter-spacing: -.3px; }
-  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
-  .geo-status { padding: 11px 14px; border-radius: 9px; font-size: 13px; margin-bottom: 14px; font-weight: 700; }
-  .geo-status.ok { background: var(--green-100); color: var(--green-800); }
-  .geo-status.wait { background: #fef9c3; color: #854d0e; }
-  .geo-status.err { background: #fee2e2; color: #991b1b; }
-  .coord { font-family: 'Courier New', monospace; font-size: 12px; color: var(--green-800); font-weight: 700; }
-  .empty { text-align: center; padding: 48px 20px; color: #6ee7b7; font-weight: 700; font-size: 14px; }
-  .modal p { margin: 8px 0; font-size: 14px; font-weight: 600; }
-  .modal p b { font-weight: 800; color: var(--green-900); }
-  .detail-actions { display: flex; flex-direction: column; gap: 9px; margin: 18px 0 0; }
-  .detail-actions button, .detail-actions a button { width: 100%; padding: 13px; }
-  .info-box { background: var(--green-50); border: 1px solid var(--green-100); border-radius: 10px; padding: 14px; margin: 12px 0; }
-
-  /* ============ BROADCAST ============ */
-  .bc-list { border: 1px solid var(--green-100); border-radius: 10px; max-height: 320px; overflow-y: auto; }
-  .bc-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #f1f5f9; }
-  .bc-item:last-child { border-bottom: none; }
-  .bc-item .bc-num {
-    width: 26px; height: 26px; border-radius: 50%; background: var(--green-100);
-    color: var(--green-800); display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 800;
-  }
-  .bc-item .bc-name { flex: 1; font-size: 13px; font-weight: 700; }
-  .bc-item .bc-name small { display: block; color: #94a3b8; font-size: 11px; font-weight: 600; }
-  .bc-item button { padding: 7px 12px; font-size: 12px; }
-  .bc-preview {
-    background: var(--green-50); border: 1px solid var(--green-100); border-radius: 10px;
-    padding: 14px; font-family: 'Courier New', monospace; font-size: 12px;
-    white-space: pre-wrap; color: var(--green-900); max-height: 220px; overflow-y: auto;
-    margin-bottom: 14px; font-weight: 600;
-  }
-
-  /* ============ UPLOAD & MISC ============ */
-  .upload-zone {
-    border: 2px dashed var(--green-400); border-radius: 10px; padding: 22px;
-    text-align: center; background: var(--green-50); cursor: pointer; margin-bottom: 16px;
-    font-weight: 700; color: var(--green-700);
-  }
-  .upload-zone:hover { border-color: var(--green-600); background: var(--green-100); }
-  .upload-zone input { display: none; }
-  .assign-select { padding: 6px 10px; font-size: 12px; border-radius: 7px; max-width: 170px; font-weight: 700; }
-  .status-done { color: var(--green-600); font-weight: 800; }
-  .status-pending { color: #ca8a04; font-weight: 800; }
-  .status-synced { color: var(--green-700); font-weight: 800; font-size: 11px; }
-  .hint {
-    font-size: 12px; color: #854d0e; background: #fefce8; border: 1px solid #fde68a;
-    padding: 10px 14px; border-radius: 9px; margin-bottom: 14px; font-weight: 700;
-  }
-  .viewas-banner {
-    background: var(--green-100); border: 1px solid var(--green-400); color: var(--green-900);
-    padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; font-size: 13px; font-weight: 700;
-  }
-  .viewas-banner b { color: var(--green-950); font-weight: 800; }
-
-  /* ============ MOBILE RESPONSIVE ============ */
-  @media (max-width: 768px) {
-    #appPage { flex-direction: column; }
-    .sidebar {
-      width: 100%; padding: 14px 10px; border-radius: 0;
-      position: sticky; top: 0; z-index: 50;
-      box-shadow: 0 4px 12px rgba(0,0,0,.15);
-    }
-    .sidebar h2 { font-size: 15px; margin: 0 0 3px 6px; }
-    .sidebar small { margin: 0 0 12px 6px; font-size: 10px; }
-    .nav-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
-    .nav-item { flex: 0 0 auto; padding: 9px 14px; font-size: 12px; margin-bottom: 0; white-space: nowrap; }
-    .sidebar .user-info {
-      margin-top: 6px; padding: 10px; display: flex; align-items: center; gap: 10px;
-      flex-wrap: wrap; border-top: 1px solid rgba(16,185,129,.2);
-    }
-    .sidebar .user-info b { margin: 0; font-size: 13px; }
-    .sidebar .user-info .badge { font-size: 10px; padding: 2px 8px; }
-    .sidebar .user-info button { width: auto !important; font-size: 11px !important; padding: 7px 12px !important; margin: 0 !important; }
-
-    .main { padding: 16px 12px; }
-    .main h1 { font-size: 18px; margin-bottom: 16px; }
-
-    .loc-panel { padding: 12px; gap: 10px; }
-    .loc-panel .loc-icon { font-size: 20px; }
-    .loc-panel .loc-actions { width: 100%; }
-    .loc-panel .loc-actions button { flex: 1; font-size: 12px; padding: 9px 10px; }
-
-    .toolbar { gap: 6px; }
-    .toolbar input, .toolbar select { font-size: 13px; }
-    .toolbar input[type=text], .toolbar select#viewAsUser { min-width: 0; flex: 1; }
-    .toolbar label.upload-zone { padding: 9px 12px !important; font-size: 12px; }
-
-    table { min-width: 640px; font-size: 12px; }
-    th, td { padding: 9px 10px; font-size: 12px; }
-    .order-badge { width: 24px; height: 24px; font-size: 11px; }
-    .move-input { width: 38px !important; font-size: 11px; }
-    button.updown { padding: 3px 7px; font-size: 11px; }
-    td .actions button, td .actions a button { padding: 5px 9px; font-size: 11px; }
-
-    .modal { padding: 20px 16px; border-radius: 12px; }
-    .modal h3 { font-size: 16px; margin-bottom: 14px; }
-    .modal .row button { flex: 1; min-width: 90px; }
-    .detail-actions button, .detail-actions a button { padding: 12px; font-size: 13px; }
-  }
-
-  @media (max-width: 420px) {
-    .main h1 { font-size: 16px; }
-    .sidebar h2 { font-size: 14px; }
-    .nav-item { padding: 8px 11px; font-size: 11px; }
+  @media (max-width:420px) {
+    .main h1 { font-size:16px; }
+    .nav-item { padding:8px 11px; font-size:11px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ===================== LOGIN ===================== -->
 <div id="loginPage">
   <div class="login-box">
     <h1>🌿 Sobat Parikesit</h1>
@@ -278,11 +180,10 @@
   </div>
 </div>
 
-<!-- ===================== APLIKASI ===================== -->
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v1.8</small>
+    <small>v1.9</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
@@ -355,19 +256,15 @@
   </div>
 </div>
 
-<!-- ===================== MODAL DETAIL ===================== -->
 <div id="qDetailModal" class="modal-bg hidden">
   <div class="modal">
     <h3 id="qDetailTitle">Detail Antrian Pasien</h3>
     <div id="qGeoStatus" class="geo-status wait">📡 Merekam kunjungan Anda...</div>
     <div id="qPatientDetail"></div>
-    <div class="row">
-      <button class="ghost" onclick="closeQDetail()">Tutup</button>
-    </div>
+    <div class="row"><button class="ghost" onclick="closeQDetail()">Tutup</button></div>
   </div>
 </div>
 
-<!-- ===================== MODAL FORM PASIEN ===================== -->
 <div id="formModal" class="modal-bg hidden">
   <div class="modal">
     <h3 id="formTitle">Tambah Pasien</h3>
@@ -387,7 +284,6 @@
   </div>
 </div>
 
-<!-- ===================== MODAL BROADCAST WA ===================== -->
 <div id="bcModal" class="modal-bg hidden">
   <div class="modal modal-wide">
     <h3>📢 Broadcast WhatsApp</h3>
@@ -406,29 +302,15 @@
 </div>
 
 <script>
-// =========================================================
-// KONFIGURASI
-// =========================================================
 const SUPABASE_URL = 'https://vqglvkqyhxlukmzbmdal.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxZ2x2a3F5aHhsdWttemJtZGFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMjgxNzQsImV4cCI6MjEwNTgwNDE3NH0.4piz3ljW8SrZ3xBIfFVyNNKtnCq-b8Vg2rV0cGsz4Qg';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentUser = null;
-let currentProfile = null;
-let isAdmin = false;
-let patientsCache = [];
-let myQueue = [];
-let allUsers = [];
-let officerLocation = null;
-let currentQId = null;
-let viewAsUserId = '';
+let currentUser = null, currentProfile = null, isAdmin = false;
+let patientsCache = [], myQueue = [], allUsers = [];
+let officerLocation = null, currentQId = null, viewAsUserId = '';
 
-// =========================================================
-// UTILITAS
-// =========================================================
-function esc(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function normalizePhone(raw) {
   if (!raw) return '';
   let n = String(raw).replace(/\D/g, '');
@@ -453,18 +335,15 @@ function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
   if (!lines.length) return [];
   const delim = lines[0].includes('\t') ? '\t'
-              : (lines[0].includes(';') && !lines[0].includes(',')) ? ';'
-              : ',';
+              : (lines[0].includes(';') && !lines[0].includes(',')) ? ';' : ',';
   const parseLine = (line) => {
     const result = []; let cur = ''; let inQ = false;
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
       if (ch === '"') {
-        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
-        else inQ = !inQ;
-      } else if (ch === delim && !inQ) {
-        result.push(cur); cur = '';
-      } else cur += ch;
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; } else inQ = !inQ;
+      } else if (ch === delim && !inQ) { result.push(cur); cur = ''; }
+      else cur += ch;
     }
     result.push(cur);
     return result.map(s => s.trim());
@@ -478,9 +357,7 @@ function parseCSV(text) {
   });
 }
 
-// =========================================================
-// AUTENTIKASI
-// =========================================================
+// ============ AUTH ============
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
@@ -502,12 +379,10 @@ async function initApp() {
   const { data: prof } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
   currentProfile = prof || { full_name: user.email, role: 'petugas' };
   isAdmin = currentProfile.role === 'admin';
-
   document.getElementById('userName').textContent = currentProfile.full_name || user.email;
   document.getElementById('userRole').textContent = currentProfile.role || 'petugas';
   document.getElementById('loginPage').classList.add('hidden');
   document.getElementById('appPage').classList.remove('hidden');
-
   if (isAdmin) {
     document.getElementById('queueToolbarAdmin').style.display = 'flex';
     document.getElementById('queueDate').value = todayStr();
@@ -517,7 +392,6 @@ async function initApp() {
     sel.innerHTML = '<option value="">— Lihat Semua Petugas —</option>' +
       allUsers.map(u => `<option value="${u.id}">${esc(u.full_name || u.id)}${u.role === 'admin' ? ' (admin)' : ''}</option>`).join('');
   }
-
   updateActionButtonsVisibility();
   await loadPatients();
   showPage('queue');
@@ -526,28 +400,16 @@ function showLogin() {
   document.getElementById('appPage').classList.add('hidden');
   document.getElementById('loginPage').classList.remove('hidden');
 }
-sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) initApp(); else showLogin();
-});
+sb.auth.getSession().then(({ data: { session } }) => { if (session) initApp(); else showLogin(); });
 
-// =========================================================
-// NAVIGASI
-// =========================================================
 function showPage(page) {
-  ['queue','patients','history','users'].forEach(p => {
-    document.getElementById('page-' + p).classList.toggle('hidden', p !== page);
-  });
-  document.querySelectorAll('.nav-item').forEach(n => {
-    n.classList.toggle('active', n.dataset.page === page);
-  });
+  ['queue','patients','history','users'].forEach(p => document.getElementById('page-' + p).classList.toggle('hidden', p !== page));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
   if (page === 'queue') { renderLocPanel(); loadQueue(); }
   if (page === 'history') loadHistory();
   if (page === 'users') loadUsers();
 }
 
-// =========================================================
-// VIEW AS USER (admin)
-// =========================================================
 function onViewAsChange() {
   viewAsUserId = document.getElementById('viewAsUser').value;
   updateActionButtonsVisibility();
@@ -559,9 +421,7 @@ function updateActionButtonsVisibility() {
   document.getElementById('btnSyncAll').style.display = show ? '' : 'none';
 }
 
-// =========================================================
-// LOKASI PETUGAS
-// =========================================================
+// ============ LOKASI PETUGAS ============
 function perbaruiLokasiSaya() {
   const panel = document.getElementById('locPanel');
   const title = document.getElementById('locTitle');
@@ -569,11 +429,7 @@ function perbaruiLokasiSaya() {
   panel.className = 'loc-panel wait';
   title.textContent = 'Mengambil lokasi...';
   sub.textContent = 'Mohon tunggu, membaca GPS Anda.';
-  if (!navigator.geolocation) {
-    panel.className = 'loc-panel err';
-    title.textContent = '❌ Geolocation tidak didukung';
-    return;
-  }
+  if (!navigator.geolocation) { panel.className = 'loc-panel err'; title.textContent = '❌ Geolocation tidak didukung'; return; }
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       officerLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude, time: new Date() };
@@ -607,9 +463,7 @@ function renderLocPanel() {
     · <a href="${link}" target="_blank">Lihat di Maps</a>`;
 }
 
-// =========================================================
-// UPLOAD CSV
-// =========================================================
+// ============ UPLOAD CSV — dengan kolom "petugas" opsional ============
 async function handleCSVUpload(ev) {
   const file = ev.target.files[0];
   if (!file) return;
@@ -621,39 +475,92 @@ async function handleCSVUpload(ev) {
   if (!headers.includes('nama')) {
     return alert('CSV harus punya header "nama". Ditemukan: ' + headers.join(', '));
   }
+  const hasPetugasCol = headers.includes('petugas');
+
   const dateVal = document.getElementById('queueDate').value || todayStr();
   const valid = rows.filter(r => r.nama);
   if (!valid.length) return alert('Tidak ada baris dengan nama.');
-  if (!confirm(`Akan mengimpor ${valid.length} pasien untuk tanggal ${dateVal}.\nLanjutkan?`)) {
+
+  // Validasi nama petugas (kalau kolom ada)
+  if (hasPetugasCol) {
+    const petugasSet = new Set(allUsers.map(u => String(u.full_name || '').trim().toUpperCase()));
+    const namaUnik = [...new Set(valid.map(r => String(r.petugas || '').trim().toUpperCase()).filter(Boolean))];
+    const tidakDikenal = namaUnik.filter(n => !petugasSet.has(n));
+    if (tidakDikenal.length) {
+      if (!confirm(`Nama petugas berikut tidak ada di daftar user:\n\n• ${tidakDikenal.join('\n• ')}\n\nBaris dengan petugas tsb akan tetap UNASSIGNED (bisa di-assign manual dari toolbar).\n\nLanjutkan?`)) {
+        ev.target.value = ''; return;
+      }
+    }
+  }
+
+  if (!confirm(`Akan mengimpor ${valid.length} pasien untuk tanggal ${dateVal}.\n${hasPetugasCol ? 'Petugas akan di-assign otomatis dari kolom "petugas".' : 'Kolom "petugas" tidak ada — semua baris akan unassigned.'}\n\nLanjutkan?`)) {
     ev.target.value = ''; return;
   }
 
+  // Lookup master untuk koordinat
   const names = valid.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
     .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
 
-  const keyNamaHp = (nama, hp) =>
-    String(nama || '').trim().toLowerCase() + '||' + (normalizePhone(hp) || '');
-  const keyNamaAlamat = (nama, alamat) =>
-    String(nama || '').trim().toLowerCase() + '||' + String(alamat || '').trim().toLowerCase();
-
+  const keyNamaHp = (nama, hp) => String(nama||'').trim().toLowerCase() + '||' + (normalizePhone(hp) || '');
+  const keyNamaAlamat = (nama, alamat) => String(nama||'').trim().toLowerCase() + '||' + String(alamat||'').trim().toLowerCase();
   const byNameHp = {}, byNameAlamat = {};
   for (const m of (masters || [])) {
     byNameHp[keyNamaHp(m.nama, m.no_hp)] = m;
     if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
   }
 
-  let matched = 0, unmatched = 0;
+  // Map nama petugas → user.id
+  const petugasMap = {};
+  for (const u of allUsers) {
+    const key = String(u.full_name || '').trim().toUpperCase();
+    if (key) petugasMap[key] = u.id;
+  }
+
+  // Hitung urutan existing per user hari ini
+  const urutPerUser = {};
+  for (const u of allUsers) urutPerUser[u.id] = 0;
+  const { data: existingRows } = await sb.from('daily_deliveries')
+    .select('assigned_to, urutan')
+    .eq('delivery_date', dateVal)
+    .not('assigned_to', 'is', null);
+  for (const e of (existingRows || [])) {
+    if (e.assigned_to) urutPerUser[e.assigned_to] = Math.max(urutPerUser[e.assigned_to] || 0, e.urutan || 0);
+  }
+
+  let matched = 0, unmatched = 0, assigned = 0, unassigned = 0;
   const payloads = valid.map(r => {
     let m = null;
     if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
     if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
     if (m) matched++; else unmatched++;
+
+    let assignedTo = null, urutan = 0;
+    if (hasPetugasCol) {
+      const namaPetugas = String(r.petugas || '').trim().toUpperCase();
+      if (namaPetugas && petugasMap[namaPetugas]) {
+        assignedTo = petugasMap[namaPetugas];
+        urutPerUser[assignedTo] = (urutPerUser[assignedTo] || 0) + 1;
+        urutan = urutPerUser[assignedTo];
+        assigned++;
+      } else {
+        unassigned++;
+      }
+    } else {
+      unassigned++;
+    }
+
     return {
       delivery_date: dateVal,
-      nama: r.nama, alamat: r.alamat || '', no_hp: r.no_hp || '',
-      latitude: m?.latitude || null, longitude: m?.longitude || null,
-      assigned_to: null, urutan: 0, status: 'pending', created_by: currentUser.id
+      nama: r.nama,
+      alamat: r.alamat || '',
+      no_hp: r.no_hp || '',
+      latitude: m?.latitude || null,
+      longitude: m?.longitude || null,
+      assigned_to: assignedTo,
+      urutan: urutan,
+      status: 'pending',
+      created_by: currentUser.id
     };
   });
 
@@ -664,32 +571,32 @@ async function handleCSVUpload(ev) {
     if (error) { alert('Gagal insert: ' + error.message); break; }
     total += Math.min(chunkSize, payloads.length - i);
   }
+
   ev.target.value = '';
-  alert(`✅ ${total} pasien diimpor.\n\n🎯 Koordinat ketemu: ${matched}\n❓ Tidak ketemu: ${unmatched}`);
+  alert(
+    `✅ ${total} pasien diimpor.\n\n` +
+    `🎯 Koordinat ketemu: ${matched}\n` +
+    `❓ Koordinat tidak ketemu: ${unmatched}\n\n` +
+    (hasPetugasCol
+      ? `👤 Auto-assign berhasil: ${assigned}\n⚠️ Tidak bisa assign: ${unassigned}`
+      : `ℹ️ Kolom "petugas" tidak ada — semua tetap unassigned.`)
+  );
   loadQueue();
 }
 
-// =========================================================
-// ANTRIAN HARI INI
-// =========================================================
+// ============ ANTRIAN ============
 async function loadQueue() {
   const wrap = document.getElementById('queueTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat...</div>';
-
-  const dateVal = isAdmin
-    ? (document.getElementById('queueDate').value || todayStr())
-    : todayStr();
-
+  const dateVal = isAdmin ? (document.getElementById('queueDate').value || todayStr()) : todayStr();
   const userSpecificView = !isAdmin || (isAdmin && viewAsUserId !== '');
   let q = sb.from('daily_deliveries').select('*').eq('delivery_date', dateVal);
   if (userSpecificView) {
     const targetUserId = isAdmin ? viewAsUserId : currentUser.id;
     q = q.eq('assigned_to', targetUserId);
   }
-
   const { data, error } = await q.order('urutan', { ascending: true }).order('id', { ascending: true });
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
-
   const list = data || [];
   if (userSpecificView) {
     myQueue = list.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
@@ -702,7 +609,7 @@ async function loadQueue() {
     if (!list.length) {
       const targetName = isAdmin ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini') : 'Anda';
       wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada tanggal ${dateVal}.
-        ${isAdmin ? '<br><small>Assign pasien dari mode "Lihat Semua Petugas".</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
+        ${isAdmin ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar, atau assign manual dari "Lihat Semua Petugas".</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
       return;
     }
     renderQueueUser(list);
@@ -755,7 +662,6 @@ function renderQueueUser(list) {
   const banner = isAdmin
     ? `<div class="viewas-banner">👁️ Anda melihat antrian sebagai <b>${esc(allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas')}</b> (mode admin).</div>`
     : '';
-
   wrap.innerHTML = `
     ${banner}
     <div class="hint">💡 <b>Ubah urutan:</b> klik <b>↑↓</b> atau ketik nomor posisi di kotak kecil → Enter.</div>
@@ -828,43 +734,32 @@ async function hapusAntrianHariIni() {
   loadQueue();
 }
 
-// =========================================================
-// REORDER
-// =========================================================
 async function moveItem(index, dir) {
   const target = index + dir;
   if (target < 0 || target >= myQueue.length) return;
   const list = [...myQueue];
   [list[index], list[target]] = [list[target], list[index]];
   try {
-    await Promise.all(list.map((item, i) =>
-      sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', item.id)
-    ));
+    await Promise.all(list.map((item, i) => sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', item.id)));
   } catch (e) { alert('Gagal menyimpan urutan: ' + e.message); }
   await loadQueue();
 }
 async function moveToPosition(fromIndex, targetInput) {
   const targetPos = parseInt(targetInput, 10);
   if (isNaN(targetPos)) return;
-  if (targetPos < 1 || targetPos > myQueue.length) {
-    return alert(`Posisi harus antara 1 sampai ${myQueue.length}.`);
-  }
+  if (targetPos < 1 || targetPos > myQueue.length) return alert(`Posisi harus antara 1 sampai ${myQueue.length}.`);
   const targetIndex = targetPos - 1;
   if (targetIndex === fromIndex) return;
   const list = [...myQueue];
   const [item] = list.splice(fromIndex, 1);
   list.splice(targetIndex, 0, item);
   try {
-    await Promise.all(list.map((it, i) =>
-      sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', it.id)
-    ));
+    await Promise.all(list.map((it, i) => sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', it.id)));
   } catch (e) { alert('Gagal menyimpan urutan: ' + e.message); }
   await loadQueue();
 }
 
-// =========================================================
-// SIMPAN KOORDINAT KE MASTER
-// =========================================================
+// ============ SIMPAN KE MASTER (nama, alamat, no_hp, koordinat SAJA) ============
 async function syncOneToMaster(deliveryId, silent = false) {
   const r = myQueue.find(x => x.id === deliveryId);
   if (!r) return { ok: false, msg: 'Data tidak ditemukan' };
@@ -883,8 +778,7 @@ async function syncOneToMaster(deliveryId, silent = false) {
   let existing = null;
   if (hpKey) {
     existing = (candidates || []).find(c =>
-      String(c.nama || '').trim().toLowerCase() === namaKey &&
-      normalizePhone(c.no_hp) === hpKey
+      String(c.nama || '').trim().toLowerCase() === namaKey && normalizePhone(c.no_hp) === hpKey
     );
   }
   if (!existing && alamatKey) {
@@ -896,9 +790,7 @@ async function syncOneToMaster(deliveryId, silent = false) {
 
   if (existing) {
     if (existing.latitude === r.latitude && existing.longitude === r.longitude) {
-      if (!r.synced_to_master) {
-        await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
-      }
+      if (!r.synced_to_master) await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
       return { ok: true, msg: 'sama' };
     }
     const { error } = await sb.from('patients').update({
@@ -909,9 +801,14 @@ async function syncOneToMaster(deliveryId, silent = false) {
     return { ok: true, msg: 'updated' };
   }
 
+  // Insert baru: hanya nama, alamat, no_hp, koordinat (tanpa petugas)
   const { error } = await sb.from('patients').insert({
-    nama: r.nama.trim(), alamat: r.alamat || null, no_hp: r.no_hp || null,
-    latitude: r.latitude, longitude: r.longitude, recorded_by: currentUser.id
+    nama: r.nama.trim(),
+    alamat: r.alamat || null,
+    no_hp: r.no_hp || null,
+    latitude: r.latitude,
+    longitude: r.longitude,
+    recorded_by: currentUser.id
   });
   if (error) return { ok: false, msg: error.message };
   await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
@@ -938,11 +835,9 @@ async function syncAllToMaster() {
   if (!myQueue.length) return alert('Antrian kosong.');
   const withCoord = myQueue.filter(r => r.latitude && r.longitude);
   if (!withCoord.length) return alert('Belum ada pasien yang punya koordinat.');
-  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?`)) return;
-
+  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?\n\nDisimpan: nama, alamat, no HP, koordinat saja.`)) return;
   const btn = document.getElementById('btnSyncAll');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
-
   let updated = 0, inserted = 0, same = 0, failed = 0;
   for (const r of withCoord) {
     const result = await syncOneToMaster(r.id, true);
@@ -958,24 +853,16 @@ async function syncAllToMaster() {
   await loadQueue();
 }
 
-// =========================================================
-// DETAIL ANTRIAN — dengan fallback fetch dari DB
-// =========================================================
+// ============ DETAIL ANTRIAN ============
 async function openQDetail(id) {
   currentQId = id;
-  console.log('[openQDetail] id=', id, 'myQueue length=', myQueue.length);
-
   let r = myQueue.find(x => x.id === id);
   if (!r) {
     const { data, error } = await sb.from('daily_deliveries').select('*').eq('id', id).maybeSingle();
-    if (error || !data) {
-      console.warn('[openQDetail] gagal ambil data:', error);
-      return alert('Data tidak ditemukan. Coba refresh halaman.');
-    }
+    if (error || !data) return alert('Data tidak ditemukan. Coba refresh halaman.');
     r = data;
     myQueue.push(r);
   }
-
   const adminViewAs = isAdmin && viewAsUserId !== '';
   const hasCoord = r.latitude && r.longitude;
   const mapsUrl = hasCoord
@@ -1008,7 +895,6 @@ async function openQDetail(id) {
     <div class="detail-actions">${actionsHtml}</div>
     ${adminViewAs ? '<p style="font-size:12px;color:#94a3b8;text-align:center;font-weight:700">Mode pratinjau admin: tidak merekam kunjungan.</p>' : ''}
   `;
-
   document.getElementById('qDetailModal').classList.remove('hidden');
   const geoEl = document.getElementById('qGeoStatus');
   if (adminViewAs) {
@@ -1020,75 +906,47 @@ async function openQDetail(id) {
     recordDelivery(r.id);
   }
 }
-
 function closeQDetail() {
   document.getElementById('qDetailModal').classList.add('hidden');
   currentQId = null;
 }
-
 function recordDelivery(deliveryId) {
   const statusEl = document.getElementById('qGeoStatus');
-  if (!navigator.geolocation) {
-    statusEl.className = 'geo-status err';
-    statusEl.textContent = '❌ Geolocation tidak didukung.';
-    return;
-  }
+  if (!navigator.geolocation) { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Geolocation tidak didukung.'; return; }
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       const { latitude, longitude } = pos.coords;
       const { error } = await sb.from('daily_deliveries').update({
         latitude, longitude, status: 'delivered',
-        delivered_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        delivered_at: new Date().toISOString(), updated_at: new Date().toISOString()
       }).eq('id', deliveryId);
-
-      if (error) {
-        statusEl.className = 'geo-status err';
-        statusEl.textContent = '❌ Gagal simpan: ' + error.message;
-        return;
-      }
+      if (error) { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Gagal simpan: ' + error.message; return; }
       statusEl.className = 'geo-status ok';
       statusEl.textContent = `✅ Kunjungan tersimpan (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
-
       const idx = myQueue.findIndex(x => x.id === deliveryId);
       if (idx >= 0) {
-        myQueue[idx].latitude = latitude;
-        myQueue[idx].longitude = longitude;
-        myQueue[idx].status = 'delivered';
-        myQueue[idx].synced_to_master = false;
-      }
-      const btn = document.getElementById('btnSaveMaster');
-      if (btn && !btn.textContent.includes('Simpan')) {
-        // refresh tombol save master kalau belum ada
+        myQueue[idx].latitude = latitude; myQueue[idx].longitude = longitude;
+        myQueue[idx].status = 'delivered'; myQueue[idx].synced_to_master = false;
       }
       loadQueue();
     },
-    (err) => {
-      statusEl.className = 'geo-status err';
-      statusEl.textContent = '❌ Gagal ambil lokasi: ' + err.message;
-    },
+    (err) => { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Gagal ambil lokasi: ' + err.message; },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
 }
-
 function updateQCoord(deliveryId) {
   if (!navigator.geolocation) return alert('Geolocation tidak didukung.');
   if (!confirm('Update koordinat pasien ini dengan lokasi Anda sekarang?')) return;
   const btn = document.getElementById('btnUpdateQCoord');
   if (btn) { btn.disabled = true; btn.textContent = '📡 Mengambil lokasi...'; }
-
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       const { latitude, longitude } = pos.coords;
       const { error } = await sb.from('daily_deliveries').update({
-        latitude, longitude,
-        updated_at: new Date().toISOString(),
-        synced_to_master: false
+        latitude, longitude, updated_at: new Date().toISOString(), synced_to_master: false
       }).eq('id', deliveryId);
-
       if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya'; }
       if (error) return alert('Gagal update: ' + error.message);
-
       alert('✅ Koordinat tersimpan:\n' + latitude.toFixed(6) + ', ' + longitude.toFixed(6) +
             '\n\nKlik "💾 Simpan Koordinat ke Data Pasien" untuk menyimpan ke master.');
       await loadQueue();
@@ -1102,9 +960,7 @@ function updateQCoord(deliveryId) {
   );
 }
 
-// =========================================================
-// WA
-// =========================================================
+// ============ WA ============
 function buildWAText(patient) {
   const petugas = isAdmin && viewAsUserId
     ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'Petugas')
@@ -1126,7 +982,6 @@ function buildWAText(patient) {
     listPart + locPart +
     `\nMohon maaf untuk pasien yang terakhir karena sedikit terlambat.\n\nTerima kasih.`;
 }
-
 function openWAFromQueue(deliveryId) {
   const r = myQueue.find(x => x.id === deliveryId);
   if (!r) return alert('Data tidak ditemukan.');
@@ -1134,7 +989,6 @@ function openWAFromQueue(deliveryId) {
   if (!phone) return alert('Nomor HP tidak tersedia.');
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildWAText(r))}`, '_blank');
 }
-
 function openBroadcast() {
   if (!myQueue.length) return alert('Belum ada pasien dalam antrian ini.');
   document.getElementById('bcPreview').textContent = buildWAText({ nama: '[nama pasien]' });
@@ -1164,9 +1018,7 @@ function copyBroadcastText() {
   );
 }
 
-// =========================================================
-// DATA PASIEN MASTER
-// =========================================================
+// ============ DATA PASIEN MASTER ============
 async function loadPatients() {
   const { data, error } = await sb.from('patients').select('*').order('nama').limit(5000);
   if (error) { alert('Gagal memuat pasien: ' + error.message); return; }
@@ -1176,8 +1028,7 @@ async function loadPatients() {
 function renderPatients() {
   const q = (document.getElementById('searchPatient').value || '').toLowerCase();
   const list = patientsCache.filter(p =>
-    (p.nama || '').toLowerCase().includes(q) ||
-    (p.alamat || '').toLowerCase().includes(q)
+    (p.nama || '').toLowerCase().includes(q) || (p.alamat || '').toLowerCase().includes(q)
   ).slice(0, 300);
   const wrap = document.getElementById('patientsTableWrap');
   if (!list.length) { wrap.innerHTML = '<div class="empty">Data tidak ditemukan.</div>'; return; }
@@ -1260,9 +1111,7 @@ async function deletePatient(id) {
   await loadPatients();
 }
 
-// =========================================================
-// RIWAYAT
-// =========================================================
+// ============ RIWAYAT ============
 async function loadHistory() {
   const wrap = document.getElementById('historyTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat...</div>';
@@ -1272,8 +1121,7 @@ async function loadHistory() {
   const endStr = end.toISOString().split('T')[0];
   let q = sb.from('daily_deliveries')
     .select('id, delivery_date, nama, alamat, no_hp, urutan, status, delivered_at, assigned_to')
-    .eq('status', 'delivered')
-    .gte('delivery_date', startStr).lte('delivery_date', endStr)
+    .eq('status', 'delivered').gte('delivery_date', startStr).lte('delivery_date', endStr)
     .order('delivered_at', { ascending: false }).limit(500);
   if (!isAdmin) q = q.eq('assigned_to', currentUser.id);
   const { data, error } = await q;
@@ -1297,9 +1145,7 @@ async function loadHistory() {
     </table></div>`;
 }
 
-// =========================================================
-// USER
-// =========================================================
+// ============ USER ============
 async function loadUsers() {
   const wrap = document.getElementById('usersTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat...</div>';
