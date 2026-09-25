@@ -1449,7 +1449,7 @@ async function loadPatients() {
   let from = 0;
   let keepFetching = true;
   let guard = 0;
-  while (keepFetching && guard < 50) {
+  while (keepFetching && guard < 300) {
     guard++;
     const { data, error } = await sb.from('patients').select('*')
       .order('nama', { ascending: true }).range(from, from + pageSize - 1);
@@ -1615,7 +1615,7 @@ async function loadSobatPatients() {
   let from = 0;
   let keep = true;
   let guard = 0;
-  while (keep && guard < 50) {
+  while (keep && guard < 300) {
     guard++;
     const { data, error } = await sb.from('patients_sobat').select('*')
       .order('tahun', { ascending: false }).order('bulan', { ascending: false }).order('nama')
@@ -1918,16 +1918,16 @@ async function handleDokCSVUpload(ev) {
 }
 
 // ============ DASHBOARD ============
-async function loadDashboard() {
+  async function loadDashboard() {
   const sumEl = document.getElementById('dashSummary');
-  sumEl.innerHTML = '<div class="dash-card"><div class="label">Memuat...</div><div class="value">-</div></div>';
+  sumEl.innerHTML = '<div class="dash-card" style="grid-column:1/-1;"><div class="label">Memuat data...</div><div class="value">Mohon tunggu, sedang membaca ribuan baris data...</div></div>';
 
   const pageSize = 1000;
   let all = [];
   let from = 0;
   let keep = true;
   let guard = 0;
-  while (keep && guard < 50) {
+  while (keep && guard < 300) {
     guard++;
     const { data, error } = await sb.from('patients_sobat').select('*')
       .order('tahun', { ascending: false }).order('bulan', { ascending: false })
