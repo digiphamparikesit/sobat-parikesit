@@ -373,10 +373,7 @@
           <select id="viewAsUser" onchange="onViewAsChange()">
             <option value="">— Lihat Semua Petugas —</option>
           </select>
-          <label class="upload-zone" style="padding:9px 14px;margin:0;border-width:1px">
-            📤 Upload CSV
-            <input type="file" accept=".csv" onchange="handleCSVUpload(event)">
-          </label>
+          <button class="broadcast" onclick="openPasteModal()">📋 Paste Data dari Excel</button>
           <button class="danger" onclick="hapusAntrianHariIni()">🗑️ Hapus Tanggal Ini</button>
         </div>
       </div>
@@ -615,7 +612,44 @@
     </div>
   </div>
 </div>
+<!-- ============ MODAL PASTE DATA ============ -->
+<div id="pasteModal" class="modal-bg hidden">
+  <div class="modal" style="max-width:900px;">
+    <h3>📋 Paste Data dari Excel</h3>
 
+    <div class="info-box" style="font-size:12px;">
+      <b>Cara pakai:</b>
+      <ol style="margin:6px 0 0 18px; padding:0; line-height:1.7;">
+        <li>Buka Excel / Google Sheets, blok data <b>termasuk baris header</b></li>
+        <li><b>Ctrl+C</b> (copy)</li>
+        <li>Klik kotak di bawah, tekan <b>Ctrl+V</b> (paste)</li>
+        <li>Klik <b>👁️ Preview</b> → cek data → <b>💾 Simpan ke Antrian</b></li>
+      </ol>
+      <p style="margin:8px 0 0; font-size:11px; color:#047857;">
+        Kolom yang dibutuhkan: <code>nama</code>, <code>alamat</code>, <code>no_hp</code>, <code>petugas</code> (opsional).
+        Urutan kolom bebas, asal ada header.
+      </p>
+    </div>
+
+    <textarea id="pasteArea" rows="8" placeholder="Paste dari Excel di sini (Ctrl+V)..."
+      style="font-family:'Courier New',monospace; font-size:12px; width:100%;"
+      oninput="document.getElementById('btnPasteSave').disabled = true; document.getElementById('pastePreviewWrap').innerHTML = '';"></textarea>
+
+    <div style="display:flex; gap:8px; margin:10px 0; flex-wrap:wrap; align-items:center;">
+      <label style="font-size:12px; font-weight:800; color:#047857;">Tanggal:</label>
+      <input type="date" id="pasteDate" style="max-width:180px;">
+      <button onclick="parsePastePreview()">👁️ Preview</button>
+      <button class="ghost" onclick="clearPaste()">✖ Bersihkan</button>
+    </div>
+
+    <div id="pastePreviewWrap"></div>
+
+    <div class="row">
+      <button class="ghost" onclick="closePasteModal()">Batal</button>
+      <button class="save-master" id="btnPasteSave" onclick="savePasteToQueue()" disabled>💾 Simpan ke Antrian</button>
+    </div>
+  </div>
+</div>
 <div id="bcModal" class="modal-bg hidden">
   <div class="modal modal-wide">
     <h3>📢 Broadcast WhatsApp</h3>
@@ -1052,7 +1086,258 @@ async function handleCSVUpload(ev) {
     (hasPetugasCol ? `👤 Auto-assign: ${assigned} · Gagal: ${unassigned}` : `ℹ️ Kolom "petugas" tidak ada.`));
   loadQueue();
 }
+// ============ PASTE DATA DARI EXCEL ============
+let pasteParsedData = null;
 
+function openPasteModal() {
+  document.getElementById('pasteModal').classList.remove('hidden');
+  document.getElementById('pasteArea').value = '';
+  document.getElementById('pasteDate').value =
+    document.getElementById('queueDate').value || todayStr();
+  document.getElementById('pastePreviewWrap').innerHTML = '';
+  document.getElementById('btnPasteSave').disabled = true;
+  pasteParsedData = null;
+  setTimeout(() => document.getElementById('pasteArea').focus(), 100);
+}
+
+function closePasteModal() {
+  document.getElementById('pasteModal').classList.add('hidden');
+  pasteParsedData = null;
+}
+
+function clearPaste() {
+  document.getElementById('pasteArea').value = '';
+  document.getElementById('pastePreviewWrap').innerHTML = '';
+  document.getElementById('btnPasteSave').disabled = true;
+  pasteParsedData = null;
+}
+
+function parsePastePreview() {
+  const raw = document.getElementById('pasteArea').value || '';
+  if (!raw.trim()) { alert('Kotak paste kosong. Silakan paste data dari Excel dulu.'); return; }
+
+  const lines = raw.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) { alert('Data minimal 2 baris (header + 1 baris data).'); return; }
+
+  // Deteksi delimiter otomatis
+  const firstLine = lines[0];
+  const delim = firstLine.includes('\t') ? '\t'
+              : firstLine.includes(';') ? ';'
+              : firstLine.includes('|') ? '|'
+              : firstLine.includes(',') ? ','
+              : '\t';
+
+  const splitLine = (line) => line.split(delim).map(s => s.trim().replace(/^"|"$/g, ''));
+
+  // Cek apakah baris pertama header
+  const firstCols = splitLine(firstLine).map(c => c.toLowerCase().trim().replace(/\s+/g, '_'));
+  const headerKeywords = ['nama', 'alamat', 'no_hp', 'nohp', 'petugas', 'telepon', 'hp', 'telp', 'nama_pasien'];
+  const isHeader = firstCols.some(c =>
+    headerKeywords.includes(c) ||
+    c.includes('nama') || c.includes('alamat') || c.includes('hp') || c.includes('petugas')
+  );
+
+  let headers, dataLines;
+  if (isHeader) {
+    headers = firstCols;
+    dataLines = lines.slice(1);
+  } else {
+    headers = ['nama', 'alamat', 'no_hp', 'petugas'];
+    dataLines = lines;
+  }
+
+  // Map header ke index kolom
+  const headerMap = {};
+  headers.forEach((h, i) => {
+    const hh = h.toLowerCase();
+    if (headerMap.nama === undefined && hh.includes('nama')) headerMap.nama = i;
+    else if (headerMap.alamat === undefined && hh.includes('alamat')) headerMap.alamat = i;
+    else if (headerMap.no_hp === undefined && (hh.includes('hp') || hh.includes('telp') || hh.includes('telepon') || hh.includes('phone'))) headerMap.no_hp = i;
+    else if (headerMap.petugas === undefined && hh.includes('petugas')) headerMap.petugas = i;
+  });
+
+  if (headerMap.nama === undefined) {
+    alert('Kolom "nama" tidak ditemukan.\n\nHeader terdeteksi: ' + headers.join(', '));
+    return;
+  }
+
+  // Parse setiap baris
+  const parsed = [];
+  for (const line of dataLines) {
+    const cols = splitLine(line);
+    const row = {
+      nama: headerMap.nama !== undefined ? (cols[headerMap.nama] || '').trim() : '',
+      alamat: headerMap.alamat !== undefined ? (cols[headerMap.alamat] || '').trim() : '',
+      no_hp: headerMap.no_hp !== undefined ? (cols[headerMap.no_hp] || '').trim() : '',
+      petugas: headerMap.petugas !== undefined ? (cols[headerMap.petugas] || '').trim().toUpperCase() : ''
+    };
+    if (row.nama) parsed.push(row);
+  }
+
+  if (!parsed.length) { alert('Tidak ada baris yang memiliki nama.'); return; }
+
+  pasteParsedData = parsed;
+  renderPastePreview(parsed, isHeader, headers);
+  document.getElementById('btnPasteSave').disabled = false;
+}
+
+function renderPastePreview(data, isHeader, headers) {
+  const wrap = document.getElementById('pastePreviewWrap');
+  const previewLimit = 15;
+  const shown = data.slice(0, previewLimit);
+
+  // Statistik petugas
+  const petugasCount = {};
+  data.forEach(r => {
+    const p = (r.petugas || '').trim().toUpperCase();
+    if (p) petugasCount[p] = (petugasCount[p] || 0) + 1;
+    else petugasCount['(KOSONG)'] = (petugasCount['(KOSONG)'] || 0) + 1;
+  });
+
+  const petugasSet = new Set(allUsers.map(u => String(u.full_name || '').trim().toUpperCase()));
+  const tidakCocok = Object.keys(petugasCount).filter(p => p !== '(KOSONG)' && !petugasSet.has(p));
+
+  wrap.innerHTML = `
+    <div class="info-box" style="background:#d1fae5;border-color:#34d399;margin-bottom:10px;">
+      <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px;">
+        <div><b>Total baris:</b> ${data.length}</div>
+        <div><b>Header terdeteksi:</b> ${isHeader ? 'Ya (' + headers.join(', ') + ')' : 'Tidak (asumsi: nama, alamat, no_hp, petugas)'}</div>
+      </div>
+      ${Object.keys(petugasCount).length ? `
+        <div style="margin-top:8px;font-size:12px;">
+          <b>Distribusi petugas:</b><br>
+          ${Object.entries(petugasCount).map(([k, v]) => {
+            const ok = k === '(KOSONG)' || petugasSet.has(k);
+            return `<span class="badge" style="margin:2px;${!ok ? 'background:#fecaca;color:#991b1b;' : ''}">${esc(k)}: ${v}</span>`;
+          }).join(' ')}
+        </div>` : ''}
+      ${tidakCocok.length ? `
+        <div style="margin-top:8px;padding:8px;background:#fef3c7;border-radius:6px;font-size:12px;color:#92400e;">
+          ⚠️ <b>Perhatian:</b> Petugas berikut tidak ada di daftar user:
+          <b>${tidakCocok.join(', ')}</b><br>
+          Baris tsb akan tersimpan tanpa assign (bisa di-assign manual dari mode admin setelah disimpan).
+        </div>` : ''}
+    </div>
+    <div style="font-size:12px;font-weight:800;color:var(--green-800);margin:10px 0 6px;">
+      Preview ${shown.length} baris pertama${data.length > previewLimit ? ` (dari total ${data.length})` : ''}:
+    </div>
+    <div class="table-wrap" style="max-height:320px;overflow-y:auto;border:2px solid var(--green-100);border-radius:8px;">
+      <table style="min-width:auto;box-shadow:none;border-radius:8px;">
+        <thead><tr>
+          <th>#</th><th>Nama</th><th>Alamat</th><th>No HP</th><th>Petugas</th>
+        </tr></thead>
+        <tbody>
+          ${shown.map((r, i) => {
+            const cod = hasCOD(r.alamat);
+            const petugasUp = (r.petugas || '').trim().toUpperCase();
+            const petugasOk = !petugasUp || petugasSet.has(petugasUp);
+            return `<tr>
+              <td>${i+1}</td>
+              <td><b>${esc(r.nama)}</b></td>
+              <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(r.alamat || '-')}</td>
+              <td>${esc(r.no_hp || '-')}</td>
+              <td>${r.petugas ? `<span class="badge" style="${petugasOk ? '' : 'background:#fecaca;color:#991b1b;'}">${esc(r.petugas)}</span>` : '<span style="color:#94a3b8;">-</span>'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    ${data.length > previewLimit ? `<p style="font-size:12px;color:#047857;margin:6px 0 0;text-align:center;">… dan ${data.length - previewLimit} baris lainnya</p>` : ''}
+  `;
+}
+
+async function savePasteToQueue() {
+  if (!pasteParsedData || !pasteParsedData.length) return alert('Belum ada data yang di-preview.');
+  const dateVal = document.getElementById('pasteDate').value
+    || document.getElementById('queueDate').value
+    || todayStr();
+
+  if (!confirm(`Simpan ${pasteParsedData.length} baris ke antrian tanggal ${dateVal}?`)) return;
+
+  const btn = document.getElementById('btnPasteSave');
+  btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
+
+  // Lookup koordinat dari master patients
+  const names = pasteParsedData.map(r => r.nama);
+  const { data: masters } = await sb.from('patients')
+    .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
+  const keyNamaHp = (nama, hp) => String(nama||'').trim().toLowerCase() + '||' + (normalizePhone(hp) || '');
+  const keyNamaAlamat = (nama, alamat) => String(nama||'').trim().toLowerCase() + '||' + String(alamat||'').trim().toLowerCase();
+  const byNameHp = {}, byNameAlamat = {};
+  for (const m of (masters || [])) {
+    byNameHp[keyNamaHp(m.nama, m.no_hp)] = m;
+    if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
+  }
+
+  const petugasMap = {};
+  for (const u of allUsers) {
+    const key = String(u.full_name || '').trim().toUpperCase();
+    if (key) petugasMap[key] = u.id;
+  }
+
+  // Hitung urutan existing per user hari ini
+  const urutPerUser = {};
+  for (const u of allUsers) urutPerUser[u.id] = 0;
+  const { data: existingRows } = await sb.from('daily_deliveries')
+    .select('assigned_to, urutan').eq('delivery_date', dateVal).not('assigned_to', 'is', null);
+  for (const e of (existingRows || [])) {
+    if (e.assigned_to) urutPerUser[e.assigned_to] = Math.max(urutPerUser[e.assigned_to] || 0, e.urutan || 0);
+  }
+
+  let matched = 0, unmatched = 0, assigned = 0, unassigned = 0;
+  const payloads = pasteParsedData.map(r => {
+    let m = null;
+    if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
+    if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
+    if (m) matched++; else unmatched++;
+
+    let assignedTo = null, urutan = 0;
+    const namaPetugas = String(r.petugas || '').trim().toUpperCase();
+    if (namaPetugas && petugasMap[namaPetugas]) {
+      assignedTo = petugasMap[namaPetugas];
+      urutPerUser[assignedTo] = (urutPerUser[assignedTo] || 0) + 1;
+      urutan = urutPerUser[assignedTo];
+      assigned++;
+    } else unassigned++;
+
+    return {
+      delivery_date: dateVal,
+      nama: r.nama,
+      alamat: r.alamat || '',
+      no_hp: r.no_hp || '',
+      latitude: m?.latitude || null,
+      longitude: m?.longitude || null,
+      assigned_to: assignedTo,
+      urutan: urutan,
+      status: 'pending',
+      created_by: currentUser.id
+    };
+  });
+
+  // Insert batch
+  let total = 0;
+  const chunkSize = 200;
+  let errorCount = 0, lastError = '';
+  for (let i = 0; i < payloads.length; i += chunkSize) {
+    const { error } = await sb.from('daily_deliveries').insert(payloads.slice(i, i + chunkSize));
+    if (error) { errorCount++; lastError = error.message; }
+    else total += Math.min(chunkSize, payloads.length - i);
+    btn.textContent = `⏳ Menyimpan... ${Math.min(i + chunkSize, payloads.length)}/${payloads.length}`;
+  }
+
+  btn.disabled = false; btn.textContent = '💾 Simpan ke Antrian';
+
+  if (errorCount) {
+    alert(`⚠️ Sebagian gagal disimpan.\n\n✅ Berhasil: ${total}\n❌ Gagal: ${errorCount} batch\n\nError: ${lastError}`);
+  } else {
+    alert(`✅ ${total} pasien disimpan ke antrian tanggal ${dateVal}.\n\n` +
+      `🎯 Koordinat ketemu: ${matched}\n❓ Tidak ketemu: ${unmatched}\n` +
+      `👤 Auto-assign: ${assigned}\n⚠️ Tidak bisa assign: ${unassigned}`);
+  }
+
+  closePasteModal();
+  loadQueue();
+}
 // ============ ANTRIAN ============
 async function loadQueue() {
   const wrap = document.getElementById('queueTableWrap');
