@@ -4,111 +4,264 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sobat Parikesit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-  body { margin: 0; background: #f0f4f8; color: #1e293b; }
+  :root {
+    --green-950: #052e16;
+    --green-900: #064e3b;
+    --green-800: #065f46;
+    --green-700: #047857;
+    --green-600: #059669;
+    --green-500: #10b981;
+    --green-400: #34d399;
+    --green-100: #d1fae5;
+    --green-50: #ecfdf5;
+    --bg: #ecfdf5;
+    --ink: #052e16;
+    --ink-soft: #064e3b;
+  }
+  * { box-sizing: border-box; font-family: 'Manrope', system-ui, -apple-system, sans-serif; font-weight: 600; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-weight: 600; }
   .hidden { display: none !important; }
-  #loginPage { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#0ea5e9,#0369a1); }
-  .login-box { background: #fff; padding: 32px; border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,.2); width: 340px; }
-  .login-box h1 { margin: 0 0 4px; color: #0369a1; font-size: 22px; }
-  .login-box p { margin: 0 0 24px; color: #64748b; font-size: 13px; }
-  input, textarea, button, select { font-size: 14px; }
-  input, textarea, select { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background:#fff; }
+
+  /* ============ LOGIN ============ */
+  #loginPage {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #052e16 0%, #065f46 50%, #047857 100%);
+    padding: 20px;
+  }
+  .login-box {
+    background: #fff; padding: 36px 32px; border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35); width: 100%; max-width: 380px;
+    border-top: 5px solid var(--green-600);
+  }
+  .login-box h1 { margin: 0 0 6px; color: var(--green-800); font-size: 24px; font-weight: 800; letter-spacing: -.5px; }
+  .login-box p { margin: 0 0 26px; color: #64748b; font-size: 13px; font-weight: 500; }
+
+  /* ============ FORM ELEMENTS ============ */
+  input, textarea, button, select { font-size: 14px; font-family: inherit; }
+  input, textarea, select {
+    padding: 11px 14px; border: 2px solid #d1fae5; border-radius: 9px;
+    outline: none; background: #fff; color: var(--ink); font-weight: 600;
+  }
   input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], textarea, select { width: 100%; }
-  input:focus, textarea:focus { border-color: #0ea5e9; }
-  button { cursor: pointer; padding: 10px 16px; border: none; border-radius: 8px; background: #0ea5e9; color: #fff; font-weight: 600; transition: .15s; }
-  button:hover { background: #0284c7; }
-  button.ghost { background: #e2e8f0; color: #334155; }
-  button.ghost:hover { background: #cbd5e1; }
-  button.danger { background: #ef4444; }
-  button.danger:hover { background: #dc2626; }
+  input:focus, textarea:focus, select:focus { border-color: var(--green-500); box-shadow: 0 0 0 3px rgba(16,185,129,.15); }
+  button {
+    cursor: pointer; padding: 11px 18px; border: none; border-radius: 9px;
+    background: var(--green-600); color: #fff; font-weight: 700; letter-spacing: .2px;
+    transition: all .15s;
+  }
+  button:hover { background: var(--green-700); }
+  button.ghost { background: var(--green-100); color: var(--green-800); }
+  button.ghost:hover { background: var(--green-400); color: #fff; }
+  button.danger { background: #dc2626; }
+  button.danger:hover { background: #b91c1c; }
   button.wa { background: #25D366; }
   button.wa:hover { background: #1da851; }
-  button.tel { background: #0ea5e9; }
-  button.maps { background: #6366f1; }
-  button.maps:hover { background: #4f46e5; }
-  button.update { background: #f59e0b; }
-  button.update:hover { background: #d97706; }
-  button.broadcast { background: #8b5cf6; }
-  button.broadcast:hover { background: #7c3aed; }
-  button.save-master { background: #10b981; }
-  button.save-master:hover { background: #059669; }
-  button.updown { background: #f1f5f9; color: #334155; padding: 4px 8px; font-size: 12px; }
-  button.updown:hover { background: #cbd5e1; }
-  button:disabled { opacity: .4; cursor: not-allowed; }
+  button.tel { background: var(--green-600); }
+  button.maps { background: var(--green-800); }
+  button.maps:hover { background: var(--green-900); }
+  button.update { background: #ca8a04; }
+  button.update:hover { background: #a16207; }
+  button.broadcast { background: #7c3aed; }
+  button.broadcast:hover { background: #6d28d9; }
+  button.save-master { background: var(--green-500); }
+  button.save-master:hover { background: var(--green-600); }
+  button.updown { background: var(--green-100); color: var(--green-800); padding: 4px 8px; font-size: 13px; font-weight: 800; }
+  button.updown:hover { background: var(--green-400); color: #fff; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ============ LAYOUT ============ */
   #appPage { display: flex; min-height: 100vh; }
-  .sidebar { width: 220px; background: #0f172a; color: #cbd5e1; padding: 20px 12px; }
-  .sidebar h2 { color: #fff; font-size: 16px; margin: 0 0 4px 8px; }
-  .sidebar small { display: block; margin: 0 0 20px 8px; color: #64748b; font-size: 11px; }
-  .nav-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-bottom: 4px; }
-  .nav-item:hover { background: #1e293b; }
-  .nav-item.active { background: #0ea5e9; color: #fff; }
-  .sidebar .user-info { margin-top: 24px; padding: 12px 8px; border-top: 1px solid #1e293b; font-size: 12px; }
-  .sidebar .user-info b { color: #fff; display: block; margin-bottom: 8px; }
-  .main { flex: 1; padding: 24px; overflow-x: auto; }
-  .main h1 { margin: 0 0 20px; font-size: 22px; }
+  .sidebar {
+    width: 240px; background: linear-gradient(180deg, #052e16 0%, #064e3b 100%);
+    color: #d1fae5; padding: 24px 14px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+  }
+  .sidebar h2 { color: #fff; font-size: 17px; margin: 0 0 4px 10px; font-weight: 800; letter-spacing: -.3px; }
+  .sidebar small { display: block; margin: 0 0 22px 10px; color: #6ee7b7; font-size: 11px; font-weight: 600; letter-spacing: 1px; }
+  .nav-item {
+    padding: 12px 14px; border-radius: 10px; cursor: pointer; font-size: 14px;
+    margin-bottom: 4px; font-weight: 600; color: #a7f3d0;
+    transition: all .15s;
+  }
+  .nav-item:hover { background: rgba(16,185,129,.15); color: #fff; }
+  .nav-item.active { background: var(--green-500); color: #052e16; font-weight: 800; }
+  .sidebar .user-info {
+    margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(16,185,129,.25);
+    font-size: 12px;
+  }
+  .sidebar .user-info b { color: #fff; display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; }
+  .sidebar .user-info .badge { background: var(--green-500); color: #052e16; }
+
+  .main { flex: 1; padding: 28px; overflow-x: hidden; min-width: 0; }
+  .main h1 { margin: 0 0 22px; font-size: 24px; font-weight: 800; letter-spacing: -.4px; color: var(--green-900); }
   .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
   .toolbar input, .toolbar select { width: auto; margin: 0; }
   .toolbar input[type=text] { min-width: 220px; }
   .toolbar select#viewAsUser { min-width: 220px; }
-  .loc-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
-  .loc-panel .loc-icon { font-size: 22px; }
+
+  /* ============ LOCATION PANEL ============ */
+  .loc-panel {
+    background: #fff; border: 2px solid var(--green-100); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 16px; display: flex; gap: 14px;
+    align-items: center; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(5,46,22,.06);
+  }
+  .loc-panel .loc-icon { font-size: 24px; }
   .loc-panel .loc-body { flex: 1; min-width: 220px; }
-  .loc-panel .loc-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-  .loc-panel .loc-sub { font-size: 12px; color: #64748b; }
-  .loc-panel .loc-sub a { color: #0ea5e9; }
-  .loc-panel.ok { border-color: #86efac; background: #f0fdf4; }
+  .loc-panel .loc-title { font-weight: 800; font-size: 14px; margin-bottom: 3px; color: var(--green-900); }
+  .loc-panel .loc-sub { font-size: 12px; color: #047857; font-weight: 600; }
+  .loc-panel .loc-sub a { color: var(--green-700); font-weight: 700; }
+  .loc-panel.ok { border-color: var(--green-400); background: #ecfdf5; }
   .loc-panel.err { border-color: #fca5a5; background: #fef2f2; }
   .loc-panel.wait { border-color: #fde68a; background: #fefce8; }
   .loc-panel .loc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; vertical-align: top; }
-  th { background: #f8fafc; font-weight: 600; color: #475569; }
+
+  /* ============ TABLES ============ */
+  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+  table {
+    width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px;
+    overflow: hidden; box-shadow: 0 2px 8px rgba(5,46,22,.08); min-width: 720px;
+  }
+  th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--green-100); font-size: 13px; vertical-align: top; font-weight: 600; }
+  th { background: var(--green-50); font-weight: 800; color: var(--green-800); text-transform: uppercase; font-size: 11px; letter-spacing: .8px; }
   tr:last-child td { border-bottom: none; }
-  .badge { background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 999px; font-size: 11px; display: inline-block; }
+  tr:hover td { background: #f7fefb; }
+  .badge { background: var(--green-100); color: var(--green-800); padding: 3px 10px; border-radius: 999px; font-size: 11px; display: inline-block; font-weight: 800; letter-spacing: .3px; }
   td .actions { display: flex; flex-wrap: wrap; gap: 4px; }
-  td .actions button, td .actions a button { padding: 5px 10px; font-size: 12px; }
-  .name-link { color: #0369a1; cursor: pointer; text-decoration: underline dotted; }
-  .name-link:hover { color: #0ea5e9; }
-  .order-badge { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; background: #0ea5e9; color: #fff; font-size: 12px; font-weight: 700; border-radius: 50%; }
-  .move-cell { display: flex; gap: 2px; align-items: center; }
-  .move-input { width: 42px !important; padding: 4px 6px !important; font-size: 12px; text-align: center; margin: 0; }
+  td .actions button, td .actions a button { padding: 6px 11px; font-size: 12px; }
+  .name-link { color: var(--green-800); cursor: pointer; font-weight: 700; }
+  .name-link:hover { color: var(--green-500); text-decoration: underline; }
+  .order-badge {
+    display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center;
+    background: var(--green-600); color: #fff; font-size: 13px; font-weight: 800; border-radius: 50%;
+  }
+  .move-cell { display: flex; gap: 3px; align-items: center; }
+  .move-input { width: 44px !important; padding: 5px 6px !important; font-size: 12px; text-align: center; margin: 0; font-weight: 700; }
   .move-input::-webkit-outer-spin-button, .move-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .move-input[type=number] { -moz-appearance: textfield; }
-  .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
-  .modal { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
-  .modal.modal-wide { max-width: 620px; }
-  .modal h3 { margin: 0 0 16px; }
-  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; flex-wrap: wrap; }
-  .geo-status { padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
-  .geo-status.ok { background: #dcfce7; color: #166534; }
+
+  /* ============ MODAL ============ */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(5,46,22,.7); display: flex;
+    align-items: center; justify-content: center; z-index: 100; padding: 16px;
+    backdrop-filter: blur(3px);
+  }
+  .modal {
+    background: #fff; padding: 26px; border-radius: 14px; width: 100%;
+    max-width: 480px; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4); border-top: 5px solid var(--green-500);
+  }
+  .modal.modal-wide { max-width: 640px; }
+  .modal h3 { margin: 0 0 18px; font-weight: 800; color: var(--green-900); font-size: 18px; letter-spacing: -.3px; }
+  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+  .geo-status { padding: 11px 14px; border-radius: 9px; font-size: 13px; margin-bottom: 14px; font-weight: 700; }
+  .geo-status.ok { background: var(--green-100); color: var(--green-800); }
   .geo-status.wait { background: #fef9c3; color: #854d0e; }
   .geo-status.err { background: #fee2e2; color: #991b1b; }
-  .coord { font-family: monospace; font-size: 12px; color: #475569; }
-  .empty { text-align: center; padding: 40px; color: #94a3b8; }
-  .modal p { margin: 6px 0; font-size: 14px; }
-  .detail-actions { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
-  .detail-actions button, .detail-actions a button { width: 100%; }
-  .info-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 12px 0; }
-  .bc-list { border: 1px solid #e2e8f0; border-radius: 8px; max-height: 300px; overflow-y: auto; }
-  .bc-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+  .coord { font-family: 'Courier New', monospace; font-size: 12px; color: var(--green-800); font-weight: 700; }
+  .empty { text-align: center; padding: 48px 20px; color: #6ee7b7; font-weight: 700; font-size: 14px; }
+  .modal p { margin: 8px 0; font-size: 14px; font-weight: 600; }
+  .modal p b { font-weight: 800; color: var(--green-900); }
+  .detail-actions { display: flex; flex-direction: column; gap: 9px; margin: 18px 0 0; }
+  .detail-actions button, .detail-actions a button { width: 100%; padding: 13px; }
+  .info-box { background: var(--green-50); border: 1px solid var(--green-100); border-radius: 10px; padding: 14px; margin: 12px 0; }
+
+  /* ============ BROADCAST ============ */
+  .bc-list { border: 1px solid var(--green-100); border-radius: 10px; max-height: 320px; overflow-y: auto; }
+  .bc-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #f1f5f9; }
   .bc-item:last-child { border-bottom: none; }
-  .bc-item .bc-num { width: 24px; height: 24px; border-radius: 50%; background: #e2e8f0; color: #475569; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
-  .bc-item .bc-name { flex: 1; font-size: 13px; }
-  .bc-item .bc-name small { display: block; color: #94a3b8; font-size: 11px; }
-  .bc-item button { padding: 5px 10px; font-size: 12px; }
-  .bc-preview { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; white-space: pre-wrap; color: #334155; max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
-  .upload-zone { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 24px; text-align: center; background: #f8fafc; cursor: pointer; margin-bottom: 16px; }
-  .upload-zone:hover { border-color: #0ea5e9; background: #f0f9ff; }
+  .bc-item .bc-num {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--green-100);
+    color: var(--green-800); display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800;
+  }
+  .bc-item .bc-name { flex: 1; font-size: 13px; font-weight: 700; }
+  .bc-item .bc-name small { display: block; color: #94a3b8; font-size: 11px; font-weight: 600; }
+  .bc-item button { padding: 7px 12px; font-size: 12px; }
+  .bc-preview {
+    background: var(--green-50); border: 1px solid var(--green-100); border-radius: 10px;
+    padding: 14px; font-family: 'Courier New', monospace; font-size: 12px;
+    white-space: pre-wrap; color: var(--green-900); max-height: 220px; overflow-y: auto;
+    margin-bottom: 14px; font-weight: 600;
+  }
+
+  /* ============ UPLOAD & MISC ============ */
+  .upload-zone {
+    border: 2px dashed var(--green-400); border-radius: 10px; padding: 22px;
+    text-align: center; background: var(--green-50); cursor: pointer; margin-bottom: 16px;
+    font-weight: 700; color: var(--green-700);
+  }
+  .upload-zone:hover { border-color: var(--green-600); background: var(--green-100); }
   .upload-zone input { display: none; }
-  .assign-select { padding: 4px 8px; font-size: 12px; border-radius: 6px; max-width: 160px; }
-  .status-done { color: #16a34a; font-weight: 600; }
-  .status-pending { color: #d97706; font-weight: 600; }
-  .status-synced { color: #0891b2; font-weight: 600; font-size: 11px; }
-  .hint { font-size: 12px; color: #64748b; background:#fefce8; border:1px solid #fde68a; padding:8px 12px; border-radius:8px; margin-bottom:12px; }
-  .viewas-banner { background:#e0e7ff; border:1px solid #c7d2fe; color:#3730a3; padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:13px; }
-  .viewas-banner b { color:#1e1b4b; }
+  .assign-select { padding: 6px 10px; font-size: 12px; border-radius: 7px; max-width: 170px; font-weight: 700; }
+  .status-done { color: var(--green-600); font-weight: 800; }
+  .status-pending { color: #ca8a04; font-weight: 800; }
+  .status-synced { color: var(--green-700); font-weight: 800; font-size: 11px; }
+  .hint {
+    font-size: 12px; color: #854d0e; background: #fefce8; border: 1px solid #fde68a;
+    padding: 10px 14px; border-radius: 9px; margin-bottom: 14px; font-weight: 700;
+  }
+  .viewas-banner {
+    background: var(--green-100); border: 1px solid var(--green-400); color: var(--green-900);
+    padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; font-size: 13px; font-weight: 700;
+  }
+  .viewas-banner b { color: var(--green-950); font-weight: 800; }
+
+  /* ============ MOBILE RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    #appPage { flex-direction: column; }
+    .sidebar {
+      width: 100%; padding: 14px 10px; border-radius: 0;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
+    .sidebar h2 { font-size: 15px; margin: 0 0 3px 6px; }
+    .sidebar small { margin: 0 0 12px 6px; font-size: 10px; }
+    .nav-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+    .nav-item { flex: 0 0 auto; padding: 9px 14px; font-size: 12px; margin-bottom: 0; white-space: nowrap; }
+    .sidebar .user-info {
+      margin-top: 6px; padding: 10px; display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; border-top: 1px solid rgba(16,185,129,.2);
+    }
+    .sidebar .user-info b { margin: 0; font-size: 13px; }
+    .sidebar .user-info .badge { font-size: 10px; padding: 2px 8px; }
+    .sidebar .user-info button { width: auto !important; font-size: 11px !important; padding: 7px 12px !important; margin: 0 !important; }
+
+    .main { padding: 16px 12px; }
+    .main h1 { font-size: 18px; margin-bottom: 16px; }
+
+    .loc-panel { padding: 12px; gap: 10px; }
+    .loc-panel .loc-icon { font-size: 20px; }
+    .loc-panel .loc-actions { width: 100%; }
+    .loc-panel .loc-actions button { flex: 1; font-size: 12px; padding: 9px 10px; }
+
+    .toolbar { gap: 6px; }
+    .toolbar input, .toolbar select { font-size: 13px; }
+    .toolbar input[type=text], .toolbar select#viewAsUser { min-width: 0; flex: 1; }
+    .toolbar label.upload-zone { padding: 9px 12px !important; font-size: 12px; }
+
+    table { min-width: 640px; font-size: 12px; }
+    th, td { padding: 9px 10px; font-size: 12px; }
+    .order-badge { width: 24px; height: 24px; font-size: 11px; }
+    .move-input { width: 38px !important; font-size: 11px; }
+    button.updown { padding: 3px 7px; font-size: 11px; }
+    td .actions button, td .actions a button { padding: 5px 9px; font-size: 11px; }
+
+    .modal { padding: 20px 16px; border-radius: 12px; }
+    .modal h3 { font-size: 16px; margin-bottom: 14px; }
+    .modal .row button { flex: 1; min-width: 90px; }
+    .detail-actions button, .detail-actions a button { padding: 12px; font-size: 13px; }
+  }
+
+  @media (max-width: 420px) {
+    .main h1 { font-size: 16px; }
+    .sidebar h2 { font-size: 14px; }
+    .nav-item { padding: 8px 11px; font-size: 11px; }
+  }
 </style>
 </head>
 <body>
@@ -116,28 +269,30 @@
 <!-- ===================== LOGIN ===================== -->
 <div id="loginPage">
   <div class="login-box">
-    <h1>Sobat Parikesit</h1>
+    <h1>🌿 Sobat Parikesit</h1>
     <p>Silakan login untuk melanjutkan</p>
     <input id="loginEmail" type="email" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
-    <button onclick="doLogin()" style="width:100%" id="btnLogin">Login</button>
-    <div id="loginMsg" style="color:#dc2626;font-size:13px;margin-top:10px"></div>
+    <button onclick="doLogin()" style="width:100%;padding:13px" id="btnLogin">Login</button>
+    <div id="loginMsg" style="color:#dc2626;font-size:13px;margin-top:12px;font-weight:700"></div>
   </div>
 </div>
 
 <!-- ===================== APLIKASI ===================== -->
 <div id="appPage" class="hidden">
   <div class="sidebar">
-    <h2>Sobat Parikesit</h2>
-    <small>v1.7</small>
-    <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian Hari Ini</div>
-    <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
-    <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat Kunjungan</div>
-    <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
+    <h2>🌿 Sobat Parikesit</h2>
+    <small>v1.8</small>
+    <div class="nav-row">
+      <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
+      <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
+      <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat</div>
+      <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
+    </div>
     <div class="user-info">
       <b id="userName">-</b>
       <div id="userRole" class="badge">-</div>
-      <button class="ghost" style="width:100%;margin-top:10px;font-size:12px" onclick="doLogout()">Logout</button>
+      <button class="ghost" style="margin-left:auto;padding:6px 12px;font-size:12px" onclick="doLogout()">Logout</button>
     </div>
   </div>
 
@@ -154,7 +309,7 @@
         <div class="loc-actions">
           <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
           <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
-          <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan Semua ke Data Pasien</button>
+          <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan Semua</button>
           <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
         </div>
       </div>
@@ -168,11 +323,11 @@
         <select id="viewAsUser" onchange="onViewAsChange()">
           <option value="">— Lihat Semua Petugas —</option>
         </select>
-        <label class="upload-zone" style="padding:8px 14px;margin:0;border-width:1px">
+        <label class="upload-zone" style="padding:9px 14px;margin:0;border-width:1px">
           📤 Upload CSV
           <input type="file" accept=".csv" onchange="handleCSVUpload(event)">
         </label>
-        <button class="ghost" onclick="hapusAntrianHariIni()">🗑️ Hapus Antrian Tanggal Ini</button>
+        <button class="danger" onclick="hapusAntrianHariIni()">🗑️ Hapus Tanggal Ini</button>
       </div>
 
       <div id="queueTableWrap"></div>
@@ -189,7 +344,7 @@
 
     <div id="page-history" class="hidden">
       <h1>Riwayat Kunjungan</h1>
-      <button class="ghost" onclick="loadHistory()" style="margin-bottom:12px">🔄 Refresh</button>
+      <button class="ghost" onclick="loadHistory()" style="margin-bottom:14px">🔄 Refresh</button>
       <div id="historyTableWrap"></div>
     </div>
 
@@ -200,7 +355,7 @@
   </div>
 </div>
 
-<!-- ===================== MODAL DETAIL ANTRIAN ===================== -->
+<!-- ===================== MODAL DETAIL ===================== -->
 <div id="qDetailModal" class="modal-bg hidden">
   <div class="modal">
     <h3 id="qDetailTitle">Detail Antrian Pasien</h3>
@@ -212,16 +367,16 @@
   </div>
 </div>
 
-<!-- ===================== MODAL FORM PASIEN MASTER ===================== -->
+<!-- ===================== MODAL FORM PASIEN ===================== -->
 <div id="formModal" class="modal-bg hidden">
   <div class="modal">
     <h3 id="formTitle">Tambah Pasien</h3>
     <input id="fNama" type="text" placeholder="Nama pasien">
     <textarea id="fAlamat" rows="2" placeholder="Alamat"></textarea>
     <input id="fHp" type="text" placeholder="No HP">
-    <div style="font-size:12px;color:#64748b;margin-bottom:8px">
+    <div style="font-size:12px;color:#047857;margin-bottom:8px;font-weight:700">
       Koordinat (opsional):
-      <button class="ghost" style="padding:4px 10px;font-size:12px" onclick="ambilLokasiForm()">📡 Ambil Lokasi</button>
+      <button class="ghost" style="padding:5px 12px;font-size:12px" onclick="ambilLokasiForm()">📡 Ambil Lokasi</button>
     </div>
     <div class="coord" id="formCoord">Belum ada koordinat</div>
     <input type="hidden" id="fLat"><input type="hidden" id="fLng"><input type="hidden" id="fId">
@@ -236,10 +391,10 @@
 <div id="bcModal" class="modal-bg hidden">
   <div class="modal modal-wide">
     <h3>📢 Broadcast WhatsApp</h3>
-    <p style="color:#64748b;font-size:13px;margin-top:-8px">Pesan dikirim ke semua pasien dalam antrian ini.</p>
-    <div style="font-size:12px;font-weight:600;color:#475569;margin:12px 0 6px">Preview pesan:</div>
+    <p style="color:#047857;font-size:13px;margin-top:-8px;font-weight:700">Pesan dikirim ke semua pasien dalam antrian ini.</p>
+    <div style="font-size:12px;font-weight:800;color:var(--green-800);margin:14px 0 6px">Preview pesan:</div>
     <div class="bc-preview" id="bcPreview"></div>
-    <div style="font-size:12px;font-weight:600;color:#475569;margin:12px 0 6px">
+    <div style="font-size:12px;font-weight:800;color:var(--green-800);margin:14px 0 6px">
       Daftar pasien (<span id="bcCount">0</span> orang):
     </div>
     <div class="bc-list" id="bcList"></div>
@@ -266,7 +421,7 @@ let myQueue = [];
 let allUsers = [];
 let officerLocation = null;
 let currentQId = null;
-let viewAsUserId = '';   // '' = semua (hanya berlaku untuk admin)
+let viewAsUserId = '';
 
 // =========================================================
 // UTILITAS
@@ -358,8 +513,6 @@ async function initApp() {
     document.getElementById('queueDate').value = todayStr();
     const { data: u } = await sb.from('profiles').select('id, full_name, role').order('full_name');
     allUsers = u || [];
-
-    // Isi dropdown "Lihat sebagai user"
     const sel = document.getElementById('viewAsUser');
     sel.innerHTML = '<option value="">— Lihat Semua Petugas —</option>' +
       allUsers.map(u => `<option value="${u.id}">${esc(u.full_name || u.id)}${u.role === 'admin' ? ' (admin)' : ''}</option>`).join('');
@@ -400,12 +553,7 @@ function onViewAsChange() {
   updateActionButtonsVisibility();
   loadQueue();
 }
-
 function updateActionButtonsVisibility() {
-  // Tombol Broadcast WA & Simpan Semua hanya berguna kalau ada antrian yang dilihat
-  // - Admin view "Semua" → sembunyikan (karena antrian bercampur semua petugas)
-  // - Admin view "user X" → tampilkan (biar bisa handle broadcast untuk user itu)
-  // - Petugas → tampilkan (antrian milik sendiri)
   const show = !isAdmin || viewAsUserId !== '';
   document.getElementById('btnBroadcast').style.display = show ? '' : 'none';
   document.getElementById('btnSyncAll').style.display = show ? '' : 'none';
@@ -473,27 +621,23 @@ async function handleCSVUpload(ev) {
   if (!headers.includes('nama')) {
     return alert('CSV harus punya header "nama". Ditemukan: ' + headers.join(', '));
   }
-
   const dateVal = document.getElementById('queueDate').value || todayStr();
   const valid = rows.filter(r => r.nama);
   if (!valid.length) return alert('Tidak ada baris dengan nama.');
-
   if (!confirm(`Akan mengimpor ${valid.length} pasien untuk tanggal ${dateVal}.\nLanjutkan?`)) {
     ev.target.value = ''; return;
   }
 
   const names = valid.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
-    .select('nama, alamat, no_hp, latitude, longitude')
-    .in('nama', names);
+    .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
 
   const keyNamaHp = (nama, hp) =>
     String(nama || '').trim().toLowerCase() + '||' + (normalizePhone(hp) || '');
   const keyNamaAlamat = (nama, alamat) =>
     String(nama || '').trim().toLowerCase() + '||' + String(alamat || '').trim().toLowerCase();
 
-  const byNameHp = {};
-  const byNameAlamat = {};
+  const byNameHp = {}, byNameAlamat = {};
   for (const m of (masters || [])) {
     byNameHp[keyNamaHp(m.nama, m.no_hp)] = m;
     if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
@@ -505,18 +649,11 @@ async function handleCSVUpload(ev) {
     if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
     if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
     if (m) matched++; else unmatched++;
-
     return {
       delivery_date: dateVal,
-      nama: r.nama,
-      alamat: r.alamat || '',
-      no_hp: r.no_hp || '',
-      latitude: m?.latitude || null,
-      longitude: m?.longitude || null,
-      assigned_to: null,
-      urutan: 0,
-      status: 'pending',
-      created_by: currentUser.id
+      nama: r.nama, alamat: r.alamat || '', no_hp: r.no_hp || '',
+      latitude: m?.latitude || null, longitude: m?.longitude || null,
+      assigned_to: null, urutan: 0, status: 'pending', created_by: currentUser.id
     };
   });
 
@@ -527,13 +664,8 @@ async function handleCSVUpload(ev) {
     if (error) { alert('Gagal insert: ' + error.message); break; }
     total += Math.min(chunkSize, payloads.length - i);
   }
-
   ev.target.value = '';
-  alert(
-    `✅ ${total} pasien diimpor.\n\n` +
-    `🎯 Koordinat ketemu (nama+HP / nama+alamat): ${matched}\n` +
-    `❓ Tidak ketemu (perlu update manual): ${unmatched}`
-  );
+  alert(`✅ ${total} pasien diimpor.\n\n🎯 Koordinat ketemu: ${matched}\n❓ Tidak ketemu: ${unmatched}`);
   loadQueue();
 }
 
@@ -548,14 +680,8 @@ async function loadQueue() {
     ? (document.getElementById('queueDate').value || todayStr())
     : todayStr();
 
-  // Tentukan mode:
-  // - Petugas → selalu view sendiri
-  // - Admin dengan viewAsUserId != '' → view petugas tsb (reorder aktif)
-  // - Admin dengan viewAsUserId == '' → view ringkasan semua
   const userSpecificView = !isAdmin || (isAdmin && viewAsUserId !== '');
-
   let q = sb.from('daily_deliveries').select('*').eq('delivery_date', dateVal);
-
   if (userSpecificView) {
     const targetUserId = isAdmin ? viewAsUserId : currentUser.id;
     q = q.eq('assigned_to', targetUserId);
@@ -565,32 +691,27 @@ async function loadQueue() {
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
 
   const list = data || [];
-
   if (userSpecificView) {
     myQueue = list.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
-    // Judul halaman
     if (isAdmin) {
       const u = allUsers.find(x => x.id === viewAsUserId);
-      document.getElementById('queueTitle').textContent = `Antrian Pengantaran Hari Ini — ${u?.full_name || 'Petugas'}`;
+      document.getElementById('queueTitle').textContent = `Antrian — ${u?.full_name || 'Petugas'}`;
     } else {
       document.getElementById('queueTitle').textContent = 'Antrian Pengantaran Hari Ini';
     }
     if (!list.length) {
       const targetName = isAdmin ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini') : 'Anda';
       wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada tanggal ${dateVal}.
-        ${isAdmin ? '<br><small>Assign pasien ke petugas ini dari mode "Lihat Semua Petugas".</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
+        ${isAdmin ? '<br><small>Assign pasien dari mode "Lihat Semua Petugas".</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
       return;
     }
     renderQueueUser(list);
   } else {
-    // Mode admin: view ringkasan semua petugas
-    myQueue = [];  // kosongkan supaya broadcast/sync batch tidak aktif
+    myQueue = [];
     document.getElementById('queueTitle').textContent = 'Antrian Pengantaran Hari Ini';
-
     let displayed = list;
     const f = document.getElementById('queueFilter').value;
     if (f === 'unassigned') displayed = list.filter(r => !r.assigned_to);
-
     if (!displayed.length) {
       wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Upload CSV di toolbar atas.</small></div>`;
       return;
@@ -602,11 +723,11 @@ async function loadQueue() {
 function renderQueueAdmin(list, dateVal) {
   const wrap = document.getElementById('queueTableWrap');
   wrap.innerHTML = `
-    <p style="font-size:13px;color:#64748b;margin:0 0 12px">
+    <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
       ${list.length} baris · ${dateVal} · Belum assign: <b>${list.filter(r => !r.assigned_to).length}</b>
-      <br><small>💡 Ingin mengatur urutan rute untuk petugas? Pilih nama petugas di dropdown <b>"Lihat Semua Petugas"</b> pada toolbar.</small>
+      <br><small>💡 Untuk atur urutan rute, pilih nama petugas di dropdown <b>"Lihat Semua Petugas"</b>.</small>
     </p>
-    <table>
+    <div class="table-wrap"><table>
       <thead><tr><th>No</th><th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Petugas</th><th>Aksi</th></tr></thead>
       <tbody>
         ${list.map((r, i) => `
@@ -622,39 +743,32 @@ function renderQueueAdmin(list, dateVal) {
                 ${allUsers.map(u => `<option value="${u.id}" ${u.id === r.assigned_to ? 'selected' : ''}>${esc(u.full_name || u.id)}${u.role==='admin'?' (admin)':''}</option>`).join('')}
               </select>
             </td>
-            <td><button class="danger" style="padding:5px 10px;font-size:12px" onclick="hapusAntrian(${r.id})">Hapus</button></td>
+            <td><button class="danger" style="padding:6px 11px;font-size:12px" onclick="hapusAntrian(${r.id})">Hapus</button></td>
           </tr>
         `).join('')}
       </tbody>
-    </table>`;
+    </table></div>`;
 }
 
 function renderQueueUser(list) {
   const wrap = document.getElementById('queueTableWrap');
   const banner = isAdmin
-    ? `<div class="viewas-banner">
-        👁️ Anda melihat antrian sebagai <b>${esc(allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas')}</b> (mode admin).
-        Anda bisa atur urutan. Klik nama pasien hanya untuk pratinjau — tidak merekam kunjungan.
-      </div>`
+    ? `<div class="viewas-banner">👁️ Anda melihat antrian sebagai <b>${esc(allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas')}</b> (mode admin).</div>`
     : '';
 
   wrap.innerHTML = `
     ${banner}
-    <div class="hint">
-      💡 <b>Ubah urutan:</b> klik tombol <b>↑↓</b> untuk geser satu langkah, atau ketik nomor tujuan di kotak kecil lalu tekan <b>Enter</b> (contoh: isi <b>4</b> untuk pindah ke posisi 4).
-    </div>
-    <p style="font-size:13px;color:#64748b;margin:0 0 12px">
-      Terdapat <b>${list.length}</b> pasien.
-    </p>
-    <table>
+    <div class="hint">💡 <b>Ubah urutan:</b> klik <b>↑↓</b> atau ketik nomor posisi di kotak kecil → Enter.</div>
+    <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">Terdapat <b>${list.length}</b> pasien.</p>
+    <div class="table-wrap"><table>
       <thead><tr>
         <th>Urut</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Status</th><th>Aksi</th>
       </tr></thead>
       <tbody>
         ${list.map((r, i) => {
           const phone = normalizePhone(r.no_hp);
-          const waBtn = phone ? `<button class="wa" style="padding:5px 10px;font-size:12px" onclick="openWAFromQueue(${r.id})">💬 WA</button>` : '';
-          const telBtn = phone ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel" style="padding:5px 10px;font-size:12px">📞</button></a>` : '';
+          const waBtn = phone ? `<button class="wa" onclick="openWAFromQueue(${r.id})">💬 WA</button>` : '';
+          const telBtn = phone ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞</button></a>` : '';
           const statusCls = r.status === 'delivered' ? 'status-done' : 'status-pending';
           const statusText = r.status === 'delivered' ? '✓ Terkirim' : 'Menunggu';
           const syncedMark = r.synced_to_master ? '<div class="status-synced">✓ tersimpan ke master</div>' : '';
@@ -666,11 +780,13 @@ function renderQueueUser(list) {
                 <button class="updown" ${i===0?'disabled':''} onclick="moveItem(${i}, -1)">↑</button>
                 <button class="updown" ${i===list.length-1?'disabled':''} onclick="moveItem(${i}, 1)">↓</button>
                 <input type="number" class="move-input" min="1" max="${list.length}" placeholder="→"
-                  title="Ketik nomor posisi tujuan lalu Enter"
                   onkeydown="if(event.key==='Enter'){ event.preventDefault(); moveToPosition(${i}, this.value); }">
               </div>
             </td>
-            <td><span class="name-link" onclick="openQDetail(${r.id})"><b>${esc(r.nama)}</b></span></td>
+            <td>
+              <button onclick="openQDetail(${r.id})" style="padding:6px 12px;font-size:12px;background:var(--green-600);color:#fff;border:none;border-radius:7px;font-weight:800;margin-right:6px">BUKA</button>
+              <b>${esc(r.nama)}</b>
+            </td>
             <td>${esc(r.alamat || '-')}</td>
             <td>${esc(r.no_hp || '-')}</td>
             <td class="coord">${r.latitude ? r.latitude.toFixed(5)+', '+r.longitude.toFixed(5) : '-'}</td>
@@ -679,7 +795,7 @@ function renderQueueUser(list) {
           </tr>`;
         }).join('')}
       </tbody>
-    </table>`;
+    </table></div>`;
 }
 
 async function assignTo(deliveryId, userId) {
@@ -704,7 +820,6 @@ async function hapusAntrian(id) {
   if (error) return alert('Gagal: ' + error.message);
   loadQueue();
 }
-
 async function hapusAntrianHariIni() {
   const dateVal = document.getElementById('queueDate').value || todayStr();
   if (!confirm(`Hapus SEMUA antrian tanggal ${dateVal}?`)) return;
@@ -728,7 +843,6 @@ async function moveItem(index, dir) {
   } catch (e) { alert('Gagal menyimpan urutan: ' + e.message); }
   await loadQueue();
 }
-
 async function moveToPosition(fromIndex, targetInput) {
   const targetPos = parseInt(targetInput, 10);
   if (isNaN(targetPos)) return;
@@ -737,11 +851,9 @@ async function moveToPosition(fromIndex, targetInput) {
   }
   const targetIndex = targetPos - 1;
   if (targetIndex === fromIndex) return;
-
   const list = [...myQueue];
   const [item] = list.splice(fromIndex, 1);
   list.splice(targetIndex, 0, item);
-
   try {
     await Promise.all(list.map((it, i) =>
       sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', it.id)
@@ -760,15 +872,12 @@ async function syncOneToMaster(deliveryId, silent = false) {
     if (!silent) alert('Koordinat belum ada.');
     return { ok: false, msg: 'Belum ada koordinat' };
   }
-
   const namaKey = String(r.nama || '').trim().toLowerCase();
   const hpKey = normalizePhone(r.no_hp);
   const alamatKey = String(r.alamat || '').trim().toLowerCase();
 
   const { data: candidates, error: e1 } = await sb.from('patients')
-    .select('id, nama, alamat, no_hp, latitude, longitude')
-    .ilike('nama', r.nama.trim());
-
+    .select('id, nama, alamat, no_hp, latitude, longitude').ilike('nama', r.nama.trim());
   if (e1) return { ok: false, msg: e1.message };
 
   let existing = null;
@@ -793,9 +902,7 @@ async function syncOneToMaster(deliveryId, silent = false) {
       return { ok: true, msg: 'sama' };
     }
     const { error } = await sb.from('patients').update({
-      latitude: r.latitude,
-      longitude: r.longitude,
-      updated_at: new Date().toISOString()
+      latitude: r.latitude, longitude: r.longitude, updated_at: new Date().toISOString()
     }).eq('id', existing.id);
     if (error) return { ok: false, msg: error.message };
     await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
@@ -803,12 +910,8 @@ async function syncOneToMaster(deliveryId, silent = false) {
   }
 
   const { error } = await sb.from('patients').insert({
-    nama: r.nama.trim(),
-    alamat: r.alamat || null,
-    no_hp: r.no_hp || null,
-    latitude: r.latitude,
-    longitude: r.longitude,
-    recorded_by: currentUser.id
+    nama: r.nama.trim(), alamat: r.alamat || null, no_hp: r.no_hp || null,
+    latitude: r.latitude, longitude: r.longitude, recorded_by: currentUser.id
   });
   if (error) return { ok: false, msg: error.message };
   await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
@@ -819,10 +922,8 @@ async function syncThisToMaster(deliveryId) {
   const r = myQueue.find(x => x.id === deliveryId);
   if (!r) return;
   if (!r.latitude || !r.longitude) return alert('Koordinat belum ada.');
-
   const result = await syncOneToMaster(deliveryId);
   if (!result.ok) return alert('Gagal: ' + result.msg);
-
   const msgMap = {
     'sama': '✅ Data di master sudah sama — tidak ada perubahan.',
     'updated': '✅ Koordinat diperbarui di Data Pasien.',
@@ -837,8 +938,7 @@ async function syncAllToMaster() {
   if (!myQueue.length) return alert('Antrian kosong.');
   const withCoord = myQueue.filter(r => r.latitude && r.longitude);
   if (!withCoord.length) return alert('Belum ada pasien yang punya koordinat.');
-
-  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?\n\n· Nama+HP/alamat sudah ada → koordinat diperbarui\n· Belum ada → ditambahkan baru\n· Sama persis → dilewati`)) return;
+  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?`)) return;
 
   const btn = document.getElementById('btnSyncAll');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
@@ -852,65 +952,71 @@ async function syncAllToMaster() {
       else same++;
     } else failed++;
   }
-
-  if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Semua ke Data Pasien'; }
-
-  alert(
-    `Selesai!\n\n🔄 Diperbarui: ${updated}\n➕ Ditambahkan: ${inserted}\n⏭️ Sudah sama: ${same}\n❌ Gagal: ${failed}`
-  );
+  if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Semua'; }
+  alert(`Selesai!\n\n🔄 Diperbarui: ${updated}\n➕ Ditambahkan: ${inserted}\n⏭️ Sudah sama: ${same}\n❌ Gagal: ${failed}`);
   await loadPatients();
   await loadQueue();
 }
 
 // =========================================================
-// DETAIL ANTRIAN
+// DETAIL ANTRIAN — dengan fallback fetch dari DB
 // =========================================================
-function openQDetail(id) {
+async function openQDetail(id) {
   currentQId = id;
-  const r = myQueue.find(x => x.id === id);
-  if (!r) return;
+  console.log('[openQDetail] id=', id, 'myQueue length=', myQueue.length);
 
-  // Mode read-only: admin sedang view-as-user
-  const readOnly = isAdmin && viewAsUserId !== '';
+  let r = myQueue.find(x => x.id === id);
+  if (!r) {
+    const { data, error } = await sb.from('daily_deliveries').select('*').eq('id', id).maybeSingle();
+    if (error || !data) {
+      console.warn('[openQDetail] gagal ambil data:', error);
+      return alert('Data tidak ditemukan. Coba refresh halaman.');
+    }
+    r = data;
+    myQueue.push(r);
+  }
 
+  const adminViewAs = isAdmin && viewAsUserId !== '';
   const hasCoord = r.latitude && r.longitude;
   const mapsUrl = hasCoord
     ? `https://www.google.com/maps?q=${r.latitude},${r.longitude}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((r.alamat || '') + ' ' + (r.nama || ''))}`;
 
-  document.getElementById('qDetailTitle').textContent = readOnly ? 'Detail Pasien (Pratinjau Admin)' : 'Detail Antrian Pasien';
+  let actionsHtml = `<a href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none"><button class="maps">🗺️ Navigasi ke Lokasi</button></a>`;
+  if (!adminViewAs) {
+    actionsHtml += `<button class="update" id="btnUpdateQCoord" onclick="updateQCoord(${r.id})">🎯 Update Koordinat di Lokasi Saya</button>`;
+  }
+  if (hasCoord) {
+    actionsHtml += `<button class="save-master" id="btnSaveMaster" onclick="syncThisToMaster(${r.id})">💾 Simpan Koordinat ke Data Pasien</button>`;
+  } else {
+    actionsHtml += `<p style="font-size:12px;color:#94a3b8;text-align:center;font-weight:700">Koordinat belum ada.${adminViewAs ? ' Petugas perlu update dulu.' : ' Klik <b>🎯 Update Koordinat</b> saat tiba di lokasi pasien.'}</p>`;
+  }
+
+  document.getElementById('qDetailTitle').textContent = adminViewAs
+    ? `Detail Pasien (Pratinjau — ${allUsers.find(x => x.id === viewAsUserId)?.full_name || 'Petugas'})`
+    : 'Detail Antrian Pasien';
+
   document.getElementById('qPatientDetail').innerHTML = `
     <div class="info-box">
       <p><b>Nama:</b> ${esc(r.nama)}</p>
       <p><b>Alamat:</b> ${esc(r.alamat || '-')}</p>
       <p><b>No HP:</b> ${esc(r.no_hp || '-')}</p>
-      <p><b>Koordinat:</b><br><span class="coord">${hasCoord ? r.latitude+', '+r.longitude : 'belum ada'}</span></p>
+      <p><b>Koordinat:</b><br><span class="coord">${hasCoord ? r.latitude + ', ' + r.longitude : 'belum ada'}</span></p>
       <p><b>Status:</b> ${r.status === 'delivered' ? '<span class="status-done">✓ Terkirim</span>' : '<span class="status-pending">Menunggu</span>'}</p>
       ${r.synced_to_master ? '<p class="status-synced">✓ Koordinat sudah disimpan ke Data Pasien</p>' : ''}
     </div>
-    ${readOnly ? '<p style="font-size:12px;color:#94a3b8">Mode pratinjau: aksi GPS dan simpan dinonaktifkan untuk admin.</p>' : `
-    <div class="detail-actions">
-      <a href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none">
-        <button class="maps">🗺️ Navigasi ke Lokasi</button>
-      </a>
-      <button class="update" id="btnUpdateQCoord" onclick="updateQCoord(${r.id})">
-        🎯 Update Koordinat di Lokasi Saya
-      </button>
-      <button class="save-master" id="btnSaveMaster" onclick="syncThisToMaster(${r.id})" ${!hasCoord ? 'disabled' : ''}>
-        💾 Simpan Koordinat ke Data Pasien
-      </button>
-    </div>
-    `}
+    <div class="detail-actions">${actionsHtml}</div>
+    ${adminViewAs ? '<p style="font-size:12px;color:#94a3b8;text-align:center;font-weight:700">Mode pratinjau admin: tidak merekam kunjungan.</p>' : ''}
   `;
 
   document.getElementById('qDetailModal').classList.remove('hidden');
-
-  if (readOnly) {
-    document.getElementById('qGeoStatus').style.display = 'none';
+  const geoEl = document.getElementById('qGeoStatus');
+  if (adminViewAs) {
+    geoEl.style.display = 'none';
   } else {
-    document.getElementById('qGeoStatus').style.display = '';
-    document.getElementById('qGeoStatus').className = 'geo-status wait';
-    document.getElementById('qGeoStatus').textContent = '📡 Merekam kunjungan Anda...';
+    geoEl.style.display = '';
+    geoEl.className = 'geo-status wait';
+    geoEl.textContent = '📡 Merekam kunjungan Anda...';
     recordDelivery(r.id);
   }
 }
@@ -931,8 +1037,7 @@ function recordDelivery(deliveryId) {
     async (pos) => {
       const { latitude, longitude } = pos.coords;
       const { error } = await sb.from('daily_deliveries').update({
-        latitude, longitude,
-        status: 'delivered',
+        latitude, longitude, status: 'delivered',
         delivered_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }).eq('id', deliveryId);
@@ -953,8 +1058,9 @@ function recordDelivery(deliveryId) {
         myQueue[idx].synced_to_master = false;
       }
       const btn = document.getElementById('btnSaveMaster');
-      if (btn) btn.disabled = false;
-
+      if (btn && !btn.textContent.includes('Simpan')) {
+        // refresh tombol save master kalau belum ada
+      }
       loadQueue();
     },
     (err) => {
@@ -1076,10 +1182,10 @@ function renderPatients() {
   const wrap = document.getElementById('patientsTableWrap');
   if (!list.length) { wrap.innerHTML = '<div class="empty">Data tidak ditemukan.</div>'; return; }
   wrap.innerHTML = `
-    <p style="font-size:13px;color:#64748b;margin:0 0 12px">
+    <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
       Total: <b>${patientsCache.length}</b> · Ditampilkan: <b>${list.length}</b>
     </p>
-    <table>
+    <div class="table-wrap"><table>
       <thead><tr><th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th></tr></thead>
       <tbody>
         ${list.map(p => `
@@ -1095,7 +1201,7 @@ function renderPatients() {
           </tr>
         `).join('')}
       </tbody>
-    </table>`;
+    </table></div>`;
 }
 function openPatientForm(id) {
   document.getElementById('formModal').classList.remove('hidden');
@@ -1167,17 +1273,15 @@ async function loadHistory() {
   let q = sb.from('daily_deliveries')
     .select('id, delivery_date, nama, alamat, no_hp, urutan, status, delivered_at, assigned_to')
     .eq('status', 'delivered')
-    .gte('delivery_date', startStr)
-    .lte('delivery_date', endStr)
-    .order('delivered_at', { ascending: false })
-    .limit(500);
+    .gte('delivery_date', startStr).lte('delivery_date', endStr)
+    .order('delivered_at', { ascending: false }).limit(500);
   if (!isAdmin) q = q.eq('assigned_to', currentUser.id);
   const { data, error } = await q;
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
   if (!data?.length) { wrap.innerHTML = '<div class="empty">Belum ada kunjungan tercatat (7 hari terakhir).</div>'; return; }
   wrap.innerHTML = `
-    <p style="font-size:13px;color:#64748b;margin:0 0 12px">${data.length} kunjungan dalam 7 hari terakhir.</p>
-    <table>
+    <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">${data.length} kunjungan dalam 7 hari terakhir.</p>
+    <div class="table-wrap"><table>
       <thead><tr><th>Tanggal</th><th>Jam</th><th>Pasien</th><th>Alamat</th><th>No HP</th></tr></thead>
       <tbody>
         ${data.map(r => `
@@ -1190,7 +1294,7 @@ async function loadHistory() {
           </tr>
         `).join('')}
       </tbody>
-    </table>`;
+    </table></div>`;
 }
 
 // =========================================================
@@ -1203,7 +1307,7 @@ async function loadUsers() {
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
   if (!data?.length) { wrap.innerHTML = '<div class="empty">Belum ada user.</div>'; return; }
   wrap.innerHTML = `
-    <table>
+    <div class="table-wrap"><table>
       <thead><tr><th>Nama</th><th>Role</th><th>Terdaftar</th></tr></thead>
       <tbody>
         ${data.map(u => `
@@ -1214,7 +1318,7 @@ async function loadUsers() {
           </tr>
         `).join('')}
       </tbody>
-    </table>`;
+    </table></div>`;
 }
 </script>
 </body>
