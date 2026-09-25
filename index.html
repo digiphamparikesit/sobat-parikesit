@@ -595,6 +595,12 @@ function renderMapMarkers() {
     const lat = parseFloat(p.latitude);
     const lng = parseFloat(p.longitude);
     return !isNaN(lat) && !isNaN(lng) && !(lat === 0 && lng === 0);
+  }).map(p => {
+    let lat = parseFloat(p.latitude);
+    let lng = parseFloat(p.longitude);
+    if (Math.abs(lat) > 90) lat = lat / 1000000;
+    if (Math.abs(lng) > 180) lng = lng / 1000000;
+    return { ...p, latitude: lat, longitude: lng };
   });
 
   if (q) {
@@ -620,8 +626,11 @@ function renderMapMarkers() {
 
   const bounds = [];
   displayed.forEach(p => {
-    const lat = parseFloat(p.latitude);
-    const lng = parseFloat(p.longitude);
+    let lat = parseFloat(p.latitude);
+    let lng = parseFloat(p.longitude);
+    // Pengaman: kalau nilai di luar range valid, asumsikan kena bug ribuan → bagi 1e6
+    if (Math.abs(lat) > 90) lat = lat / 1000000;
+    if (Math.abs(lng) > 180) lng = lng / 1000000;
     const cod = hasCOD(p.alamat);
     const color = cod ? '#dc2626' : '#059669';
 
