@@ -358,7 +358,7 @@
           </div>
           <div class="loc-actions">
             <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
-            <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
+            <button class="save-master" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
             <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan Semua</button>
             <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
           </div>
@@ -373,7 +373,7 @@
           <select id="viewAsUser" onchange="onViewAsChange()">
             <option value="">— Lihat Semua Petugas —</option>
           </select>
-          <button class="broadcast" onclick="openPasteModal()">📋 Paste Data dari Excel</button>
+          <button class="save-master" onclick="openPasteModal()">📋 Paste Data dari Excel</button>
           <button class="danger" onclick="hapusAntrianHariIni()">🗑️ Hapus Tanggal Ini</button>
         </div>
       </div>
@@ -1362,7 +1362,7 @@ async function loadQueue() {
     }
     if (!list.length) {
       const targetName = isAdmin ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini') : 'Anda';
-      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada ${dateVal}.
+      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Klik "📋 Paste Data dari Excel" di toolbar atas.</small></div>`;
         ${isAdmin ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar.</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
       return;
     }
