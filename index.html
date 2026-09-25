@@ -1851,37 +1851,8 @@ async function handleDokCSVUpload(ev) {
     ev.target.value = ''; return;
   }
 
-  const seen = new Set();
-  const uniqueRows = [];
-  let duplikatDiFile = 0;
-  for (const r of valid) {
-    const key = [String(r.nama||'').trim().toLowerCase(),
-                 normalizePhone(r.no_hp),
-                 r[bulanKey] || '', r[tahunKey] || ''].join('||');
-    if (seen.has(key)) { duplikatDiFile++; continue; }
-    seen.add(key);
-    uniqueRows.push(r);
-  }
-
-  const tahunBulanPairs = new Set();
-  uniqueRows.forEach(r => {
-    const t = parseTahun(tahunKey ? r[tahunKey] : null);
-    const b = parseBulan(bulanKey ? r[bulanKey] : null);
-    if (t && b) tahunBulanPairs.add(`${t}-${b}`);
-  });
-  const existingKeys = new Set();
-  for (const pair of tahunBulanPairs) {
-    const [t, b] = pair.split('-').map(Number);
-    const { data } = await sb.from('patients_sobat').select('nama, no_hp').eq('tahun', t).eq('bulan', b);
-    for (const row of (data || [])) {
-      const key = [String(row.nama||'').trim().toLowerCase(),
-                   normalizePhone(row.no_hp),
-                   String(b), String(t)].join('||');
-      existingKeys.add(key);
-    }
-  }
-
-  const names = uniqueRows.map(r => r.nama);
+  // Lookup koordinat dari master patients (nama + no_hp, fallback nama + alamat)
+  const names = valid.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
     .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
   const keyNamaHp = (nama, hp) => String(nama||'').trim().toLowerCase() + '||' + (normalizePhone(hp) || '');
@@ -1892,21 +1863,13 @@ async function handleDokCSVUpload(ev) {
     if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
   }
 
-  const payloads = [];
-  let dilewatiDuplikat = 0;
-  for (const r of uniqueRows) {
-    const b = parseBulan(bulanKey ? r[bulanKey] : null);
-    const t = parseTahun(tahunKey ? r[tahunKey] : null);
-    const dupKey = [String(r.nama||'').trim().toLowerCase(),
-                    normalizePhone(r.no_hp),
-                    String(b||''), String(t||'')].join('||');
-    if (existingKeys.has(dupKey)) { dilewatiDuplikat++; continue; }
-
+  // Bangun payload — semua baris diinsert, tidak ada dedup
+  const payloads = valid.map(r => {
     let m = null;
     if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
     if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
 
-    payloads.push({
+    return {
       nama: r.nama.trim(),
       alamat: r.alamat || '',
       no_hp: r.no_hp || '',
@@ -1914,29 +1877,31 @@ async function handleDokCSVUpload(ev) {
       pendapatan_rs: rsKey ? parseTarif(r[rsKey]) : 0,
       pendapatan_petugas: ptgKey ? parseTarif(r[ptgKey]) : 0,
       petugas: petugasKey ? (r[petugasKey] || '') : '',
-      bulan: b,
-      tahun: t,
+      bulan: parseBulan(bulanKey ? r[bulanKey] : null),
+      tahun: parseTahun(tahunKey ? r[tahunKey] : null),
       latitude: m?.latitude || null,
       longitude: m?.longitude || null,
       recorded_by: currentUser.id
-    });
-  }
+    };
+  });
 
   if (!payloads.length) {
-    resultEl.innerHTML = `<div class="info-box" style="background:#fef9c3;border-color:#fde68a">
-      ⚠️ Tidak ada baris baru.<br>Duplikat di file: <b>${duplikatDiFile}</b><br>Duplikat dengan DB: <b>${dilewatiDuplikat}</b>
-    </div>`;
+    resultEl.innerHTML = '<div class="info-box" style="background:#fef9c3;border-color:#fde68a">⚠️ Tidak ada data untuk diimpor.</div>';
     ev.target.value = ''; return;
   }
 
+  // Insert batch — semua baris diinsert
   let totalInserted = 0;
   const chunk = 200;
   let errors = 0;
+  let lastErrorMsg = '';
   for (let i = 0; i < payloads.length; i += chunk) {
     const slice = payloads.slice(i, i + chunk);
     const { error } = await sb.from('patients_sobat').insert(slice);
-    if (error) { errors++; console.error(error); }
+    if (error) { errors++; lastErrorMsg = error.message; console.error(error); }
     else totalInserted += slice.length;
+    // Update progress ke user
+    resultEl.innerHTML = `<div class="info-box">⏳ Mengimpor... ${Math.min(i + chunk, payloads.length)} / ${payloads.length}</div>`;
   }
 
   resultEl.innerHTML = `
@@ -1944,11 +1909,10 @@ async function handleDokCSVUpload(ev) {
       <div style="font-weight:800; font-size:15px; color:#065f46; margin-bottom:10px;">✅ Import selesai</div>
       <table style="width:100%; background:transparent; box-shadow:none; min-width:auto;">
         <tr><td>Total baris di file</td><td style="text-align:right;"><b>${valid.length}</b></td></tr>
-        <tr><td>Duplikat di dalam file</td><td style="text-align:right;"><b>${duplikatDiFile}</b></td></tr>
-        <tr><td>Duplikat dengan database</td><td style="text-align:right;"><b>${dilewatiDuplikat}</b></td></tr>
         <tr><td><b>Berhasil diimpor</b></td><td style="text-align:right;"><b style="color:#065f46;">${totalInserted}</b></td></tr>
-        ${errors ? `<tr><td>Batch gagal</td><td style="text-align:right; color:#dc2626;"><b>${errors}</b></td></tr>` : ''}
+        ${errors ? `<tr><td>Batch gagal</td><td style="text-align:right; color:#dc2626;"><b>${errors}</b> <br><small style="color:#666">${esc(lastErrorMsg)}</small></td></tr>` : ''}
       </table>
+      <p style="margin:10px 0 0; font-size:12px; color:#065f46;">ℹ️ Semua baris diimpor apa adanya — duplikat dibiarkan.</p>
     </div>`;
   ev.target.value = '';
 }
