@@ -1361,9 +1361,13 @@ async function loadQueue() {
       document.getElementById('queueTitle').textContent = 'Antrian Pengantaran Hari Ini';
     }
     if (!list.length) {
-      const targetName = isAdmin ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini') : 'Anda';
-      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Klik "📋 Paste Data dari Excel" di toolbar atas.</small></div>`;
-        ${isAdmin ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar.</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
+      const targetName = isAdmin
+        ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini')
+        : 'Anda';
+      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada ${dateVal}.
+        ${isAdmin
+          ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar.</small>'
+          : '<br><small>Hubungi admin.</small>'}</div>`;
       return;
     }
     renderQueueUser(list);
