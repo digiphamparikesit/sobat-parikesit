@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
@@ -75,7 +77,7 @@
   .loc-panel .loc-actions { display:flex; gap:6px; flex-wrap:wrap; }
   .table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
   table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px;
-    overflow:hidden; box-shadow:0 2px 8px rgba(5,46,22,.08); min-width:780px; }
+    overflow:hidden; box-shadow:0 2px 8px rgba(5,46,22,.08); min-width:820px; }
   th,td { padding:12px 14px; text-align:left; border-bottom:1px solid var(--green-100); font-size:13px; vertical-align:top; }
   th { background:var(--green-50); font-weight:800; color:var(--green-800); text-transform:uppercase; font-size:11px; letter-spacing:.8px; }
   tr:last-child td { border-bottom:none; }
@@ -87,12 +89,37 @@
   .name-link:hover { color:var(--green-500); text-decoration:underline; }
   .order-badge { display:inline-flex; width:28px; height:28px; align-items:center; justify-content:center;
     background:var(--green-600); color:#fff; font-size:13px; font-weight:800; border-radius:50%; }
-  .move-cell { display:flex; gap:3px; align-items:center; }
+  .move-cell { display:flex; gap:3px; align-items:center; flex-wrap:wrap; }
   .move-input { width:44px !important; padding:5px 6px !important; font-size:12px; text-align:center; margin:0; font-weight:700; }
   .move-input::-webkit-outer-spin-button,.move-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   .move-input[type=number] { -moz-appearance:textfield; }
+  .col-aksi { width:1%; white-space:nowrap; }
+  td.cod-cell {
+    background:#fee2e2 !important; color:#991b1b !important; font-weight:800 !important;
+    border-left:4px solid #dc2626;
+  }
+  tr:hover td.cod-cell { background:#fecaca !important; }
+  .cod-badge {
+    display:inline-block; background:#dc2626; color:#fff;
+    font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;
+    margin-right:6px; vertical-align:middle; letter-spacing:.5px;
+  }
+  .pagination {
+    display:flex; gap:10px; align-items:center; justify-content:center;
+    flex-wrap:wrap; margin:18px 0 8px; padding:14px;
+    background:#fff; border:2px solid var(--green-100); border-radius:12px;
+    box-shadow:0 2px 8px rgba(5,46,22,.06);
+  }
+  .pagination button { min-width:90px; }
+  .pagination .page-info {
+    font-size:13px; color:var(--green-800); font-weight:700; padding:0 10px;
+  }
+  .pagination .page-info b { font-weight:800; color:var(--green-900); font-size:15px; }
+  .pagination input.page-jump {
+    width:70px !important; text-align:center; font-weight:700; padding:9px 8px !important;
+  }
   .modal-bg { position:fixed; inset:0; background:rgba(5,46,22,.7); display:flex; align-items:center;
-    justify-content:center; z-index:100; padding:16px; backdrop-filter:blur(3px); }
+    justify-content:center; z-index:1000; padding:16px; backdrop-filter:blur(3px); }
   .modal { background:#fff; padding:26px; border-radius:14px; width:100%; max-width:480px;
     max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.4); border-top:5px solid var(--green-500); }
   .modal.modal-wide { max-width:640px; }
@@ -133,6 +160,44 @@
   .viewas-banner { background:var(--green-100); border:1px solid var(--green-400); color:var(--green-900);
     padding:12px 16px; border-radius:10px; margin-bottom:14px; font-size:13px; }
   .viewas-banner b { color:var(--green-950); font-weight:800; }
+
+  /* ============ MAP ============ */
+  #mapContainer {
+    height: 72vh; min-height: 480px; width: 100%;
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(5,46,22,.12);
+    border: 3px solid #fff;
+  }
+  .map-toolbar {
+    background: #fff; border: 2px solid var(--green-100);
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 14px; box-shadow: 0 2px 8px rgba(5,46,22,.06);
+  }
+  .map-toolbar input[type=text] { flex: 1; min-width: 200px; margin: 0; }
+  .map-toolbar .map-info {
+    font-size: 13px; color: var(--green-800); font-weight: 700;
+    padding: 6px 12px; background: var(--green-50); border-radius: 8px;
+    white-space: nowrap;
+  }
+  .map-toolbar .map-info b { color: var(--green-900); font-weight: 800; }
+  .map-legend {
+    display: flex; gap: 14px; flex-wrap: wrap; padding: 8px 12px;
+    background: var(--green-50); border-radius: 8px; font-size: 12px; font-weight: 700;
+    color: var(--green-800); margin-bottom: 12px;
+  }
+  .map-legend .dot { display: inline-block; width: 12px; height: 12px;
+    border-radius: 50%; margin-right: 5px; vertical-align: middle; border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+
+  /* Popup Leaflet override */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px; padding: 4px;
+    box-shadow: 0 8px 24px rgba(5,46,22,.25);
+  }
+  .leaflet-popup-content { margin: 12px 14px; }
+  .leaflet-popup-tip { box-shadow: 0 3px 8px rgba(5,46,22,.2); }
+
   @media (max-width:768px) {
     #appPage { flex-direction:column; }
     .sidebar { width:100%; padding:14px 10px; position:sticky; top:0; z-index:50; box-shadow:0 4px 12px rgba(0,0,0,.15); }
@@ -150,8 +215,8 @@
     .loc-panel .loc-actions { width:100%; }
     .loc-panel .loc-actions button { flex:1; font-size:12px; padding:9px 10px; }
     .toolbar { gap:6px; }
-    .toolbar input[type=text],.toolbar select#viewAsUser { min-width:0; flex:1; }
-    table { min-width:680px; }
+    .toolbar input[type=text],.toolbar select { min-width:0; flex:1; }
+    table { min-width:640px; }
     th,td { padding:9px 10px; font-size:12px; }
     .order-badge { width:24px; height:24px; font-size:11px; }
     .move-input { width:38px !important; font-size:11px; }
@@ -160,10 +225,20 @@
     .modal { padding:20px 16px; }
     .modal h3 { font-size:16px; }
     .modal .row button { flex:1; min-width:90px; }
+    .pagination button { padding:9px 14px; font-size:12px; min-width:70px; }
+    .pagination .page-info { font-size:12px; padding:0 6px; }
+    .pagination input.page-jump { width:60px !important; padding:8px 6px !important; }
+    #mapContainer { height: 60vh; min-height: 360px; }
+    .map-toolbar { padding: 10px; }
+    .map-toolbar input[type=text] { min-width: 0; font-size: 13px; padding: 9px 12px; }
+    .map-toolbar button { padding: 9px 12px; font-size: 12px; }
+    .map-info { font-size: 11px !important; }
   }
   @media (max-width:420px) {
     .main h1 { font-size:16px; }
     .nav-item { padding:8px 11px; font-size:11px; }
+    .pagination { padding:10px; gap:6px; }
+    .pagination button { min-width:60px; padding:8px 10px; font-size:11px; }
   }
 </style>
 </head>
@@ -183,10 +258,11 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v1.9</small>
+    <small>v2.1</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
+      <div class="nav-item" data-page="map" onclick="showPage('map')">🗺️ Peta Pasien</div>
       <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat</div>
       <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
     </div>
@@ -237,10 +313,33 @@
     <div id="page-patients" class="hidden">
       <h1>Data Utama Pasien</h1>
       <div class="toolbar">
-        <input id="searchPatient" placeholder="Cari nama / alamat..." oninput="renderPatients()">
+        <input id="searchPatient" placeholder="Cari nama / alamat / no HP..." oninput="onSearchPatient()">
         <button onclick="openPatientForm()">+ Tambah Pasien</button>
+        <select id="patientPageSize" onchange="onPatientPageSizeChange()" style="width:auto">
+          <option value="50">50 / halaman</option>
+          <option value="100" selected>100 / halaman</option>
+          <option value="200">200 / halaman</option>
+          <option value="500">500 / halaman</option>
+        </select>
       </div>
       <div id="patientsTableWrap"></div>
+      <div id="patientPagination"></div>
+    </div>
+
+    <!-- ============ PETA PASIEN ============ -->
+    <div id="page-map" class="hidden">
+      <h1>🗺️ Peta Pasien</h1>
+      <div class="map-toolbar">
+        <input id="mapSearch" type="text" placeholder="🔍 Ketik nama pasien (tidak harus lengkap)..." oninput="onMapSearchInput()">
+        <button class="ghost" onclick="clearMapSearch()">✖ Reset</button>
+        <div class="map-info" id="mapInfo">Memuat...</div>
+      </div>
+      <div class="map-legend">
+        <span><span class="dot" style="background:#059669;"></span>Pasien biasa</span>
+        <span><span class="dot" style="background:#dc2626;"></span>COD (bayar di tempat)</span>
+        <span style="color:#64748b; font-weight:600;">💡 Klik titik untuk lihat data & tombol rute</span>
+      </div>
+      <div id="mapContainer"></div>
     </div>
 
     <div id="page-history" class="hidden">
@@ -310,6 +409,16 @@ let currentUser = null, currentProfile = null, isAdmin = false;
 let patientsCache = [], myQueue = [], allUsers = [];
 let officerLocation = null, currentQId = null, viewAsUserId = '';
 
+let patientPage = 1;
+let patientPageSize = 100;
+let patientFilteredCache = [];
+
+// State peta
+let mapInstance = null;
+let markerLayer = null;
+let mapSearchTimeout = null;
+let mapInitialized = false;
+
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function normalizePhone(raw) {
   if (!raw) return '';
@@ -330,6 +439,10 @@ function salamWaktu() {
   if (j < 15) return 'siang';
   if (j < 18) return 'sore';
   return 'malam';
+}
+function hasCOD(text) {
+  if (!text) return false;
+  return /\bcod\b/i.test(String(text));
 }
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
@@ -403,9 +516,17 @@ function showLogin() {
 sb.auth.getSession().then(({ data: { session } }) => { if (session) initApp(); else showLogin(); });
 
 function showPage(page) {
-  ['queue','patients','history','users'].forEach(p => document.getElementById('page-' + p).classList.toggle('hidden', p !== page));
+  ['queue','patients','map','history','users'].forEach(p => document.getElementById('page-' + p).classList.toggle('hidden', p !== page));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
   if (page === 'queue') { renderLocPanel(); loadQueue(); }
+  if (page === 'map') {
+    // Beri delay sedikit agar container punya dimensi setelah visible
+    setTimeout(() => {
+      initMap();
+      if (mapInstance) mapInstance.invalidateSize();
+      renderMapMarkers();
+    }, 120);
+  }
   if (page === 'history') loadHistory();
   if (page === 'users') loadUsers();
 }
@@ -419,6 +540,130 @@ function updateActionButtonsVisibility() {
   const show = !isAdmin || viewAsUserId !== '';
   document.getElementById('btnBroadcast').style.display = show ? '' : 'none';
   document.getElementById('btnSyncAll').style.display = show ? '' : 'none';
+}
+
+// ============ PETA PASIEN ============
+function initMap() {
+  if (mapInstance) return;
+  const container = document.getElementById('mapContainer');
+  if (!container) return;
+  mapInstance = L.map(container, {
+    center: [-0.43, 116.97],
+    zoom: 12,
+    preferCanvas: true,
+    zoomControl: true
+  });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(mapInstance);
+  markerLayer = L.layerGroup().addTo(mapInstance);
+}
+
+function onMapSearchInput() {
+  clearTimeout(mapSearchTimeout);
+  mapSearchTimeout = setTimeout(() => renderMapMarkers(), 300);
+}
+
+function clearMapSearch() {
+  document.getElementById('mapSearch').value = '';
+  renderMapMarkers();
+}
+
+function renderMapMarkers() {
+  if (!mapInstance) initMap();
+  if (!mapInstance || !markerLayer) return;
+
+  const q = (document.getElementById('mapSearch').value || '').trim().toLowerCase();
+  const info = document.getElementById('mapInfo');
+
+  // Filter pasien yang punya koordinat valid
+  let list = patientsCache.filter(p =>
+    p.latitude != null && p.longitude != null &&
+    !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude))
+  );
+
+  if (q) {
+    list = list.filter(p => (p.nama || '').toLowerCase().includes(q));
+  }
+
+  const MAX_MARKERS = 800;
+  const truncated = list.length > MAX_MARKERS;
+  const displayed = truncated ? list.slice(0, MAX_MARKERS) : list;
+
+  info.innerHTML = q
+    ? `<b>${list.length}</b> hasil untuk "${esc(q)}"${truncated ? ` (menampilkan ${MAX_MARKERS})` : ''}`
+    : `<b>${list.length}</b> pasien berlokasi${truncated ? ` (menampilkan ${MAX_MARKERS})` : ''}`;
+
+  markerLayer.clearLayers();
+
+  if (!displayed.length) {
+    if (q) {
+      mapInstance.setView([-0.43, 116.97], 12);
+    }
+    return;
+  }
+
+  const bounds = [];
+  displayed.forEach(p => {
+    const lat = parseFloat(p.latitude);
+    const lng = parseFloat(p.longitude);
+    const cod = hasCOD(p.alamat);
+    const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+    const waUrl = p.no_hp ? `https://wa.me/${normalizePhone(p.no_hp)}` : '';
+
+    const icon = L.divIcon({
+      className: 'pt-marker',
+      html: `<div style="
+        background:${cod ? '#dc2626' : '#059669'};
+        width:22px;height:22px;border-radius:50%;
+        border:3px solid #fff;
+        box-shadow:0 2px 6px rgba(0,0,0,.35);
+        ${cod ? 'animation:pulseRed 1.8s infinite;' : ''}
+      "></div>`,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+      popupAnchor: [0, -12]
+    });
+
+    const marker = L.marker([lat, lng], { icon });
+    marker.bindPopup(`
+      <div style="font-family:'Manrope',sans-serif; min-width:230px;">
+        <div style="font-weight:800; font-size:14px; color:#064e3b; margin-bottom:8px; line-height:1.3;">
+          ${cod ? '<span style="background:#dc2626;color:#fff;font-size:10px;padding:2px 7px;border-radius:4px;margin-right:6px;font-weight:800;">COD</span>' : ''}
+          ${esc(p.nama)}
+        </div>
+        <div style="font-size:12px; color:#334155; margin-bottom:5px; line-height:1.4;">
+          <b style="color:#065f46;">Alamat:</b><br>${esc(p.alamat || '-')}
+        </div>
+        <div style="font-size:12px; color:#334155; margin-bottom:10px;">
+          <b style="color:#065f46;">No HP:</b> ${esc(p.no_hp || '-')}
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <a href="${mapsUrl}" target="_blank" rel="noopener"
+             style="background:#065f46; color:#fff; text-decoration:none; padding:9px 12px; border-radius:7px; font-size:12px; font-weight:800; flex:1; text-align:center; display:block;">
+            🗺️ Rute
+          </a>
+          ${waUrl ? `<a href="${waUrl}" target="_blank" rel="noopener"
+             style="background:#25D366; color:#fff; text-decoration:none; padding:9px 12px; border-radius:7px; font-size:12px; font-weight:800; flex:1; text-align:center; display:block;">
+            💬 WA
+          </a>` : ''}
+        </div>
+      </div>
+    `);
+    markerLayer.addLayer(marker);
+    bounds.push([lat, lng]);
+  });
+
+  // Auto-fit
+  if (bounds.length === 1) {
+    mapInstance.setView(bounds[0], 16);
+  } else if (bounds.length > 1) {
+    if (q || !mapInitialized) {
+      mapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+      mapInitialized = true;
+    }
+  }
 }
 
 // ============ LOKASI PETUGAS ============
@@ -463,41 +708,35 @@ function renderLocPanel() {
     · <a href="${link}" target="_blank">Lihat di Maps</a>`;
 }
 
-// ============ UPLOAD CSV — dengan kolom "petugas" opsional ============
+// ============ UPLOAD CSV ============
 async function handleCSVUpload(ev) {
   const file = ev.target.files[0];
   if (!file) return;
   const text = await file.text();
   const rows = parseCSV(text);
   if (!rows.length) return alert('File CSV kosong.');
-
   const headers = Object.keys(rows[0]);
-  if (!headers.includes('nama')) {
-    return alert('CSV harus punya header "nama". Ditemukan: ' + headers.join(', '));
-  }
+  if (!headers.includes('nama')) return alert('CSV harus punya header "nama". Ditemukan: ' + headers.join(', '));
   const hasPetugasCol = headers.includes('petugas');
-
   const dateVal = document.getElementById('queueDate').value || todayStr();
   const valid = rows.filter(r => r.nama);
   if (!valid.length) return alert('Tidak ada baris dengan nama.');
 
-  // Validasi nama petugas (kalau kolom ada)
   if (hasPetugasCol) {
     const petugasSet = new Set(allUsers.map(u => String(u.full_name || '').trim().toUpperCase()));
     const namaUnik = [...new Set(valid.map(r => String(r.petugas || '').trim().toUpperCase()).filter(Boolean))];
     const tidakDikenal = namaUnik.filter(n => !petugasSet.has(n));
     if (tidakDikenal.length) {
-      if (!confirm(`Nama petugas berikut tidak ada di daftar user:\n\n• ${tidakDikenal.join('\n• ')}\n\nBaris dengan petugas tsb akan tetap UNASSIGNED (bisa di-assign manual dari toolbar).\n\nLanjutkan?`)) {
+      if (!confirm(`Nama petugas berikut tidak ada di daftar user:\n\n• ${tidakDikenal.join('\n• ')}\n\nBaris dengan petugas tsb akan tetap UNASSIGNED.\n\nLanjutkan?`)) {
         ev.target.value = ''; return;
       }
     }
   }
 
-  if (!confirm(`Akan mengimpor ${valid.length} pasien untuk tanggal ${dateVal}.\n${hasPetugasCol ? 'Petugas akan di-assign otomatis dari kolom "petugas".' : 'Kolom "petugas" tidak ada — semua baris akan unassigned.'}\n\nLanjutkan?`)) {
+  if (!confirm(`Akan mengimpor ${valid.length} pasien untuk tanggal ${dateVal}.\n${hasPetugasCol ? 'Petugas akan di-assign otomatis dari kolom "petugas".' : 'Kolom "petugas" tidak ada — semua baris unassigned.'}\n\nLanjutkan?`)) {
     ev.target.value = ''; return;
   }
 
-  // Lookup master untuk koordinat
   const names = valid.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
     .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
@@ -510,20 +749,16 @@ async function handleCSVUpload(ev) {
     if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
   }
 
-  // Map nama petugas → user.id
   const petugasMap = {};
   for (const u of allUsers) {
     const key = String(u.full_name || '').trim().toUpperCase();
     if (key) petugasMap[key] = u.id;
   }
 
-  // Hitung urutan existing per user hari ini
   const urutPerUser = {};
   for (const u of allUsers) urutPerUser[u.id] = 0;
   const { data: existingRows } = await sb.from('daily_deliveries')
-    .select('assigned_to, urutan')
-    .eq('delivery_date', dateVal)
-    .not('assigned_to', 'is', null);
+    .select('assigned_to, urutan').eq('delivery_date', dateVal).not('assigned_to', 'is', null);
   for (const e of (existingRows || [])) {
     if (e.assigned_to) urutPerUser[e.assigned_to] = Math.max(urutPerUser[e.assigned_to] || 0, e.urutan || 0);
   }
@@ -543,24 +778,13 @@ async function handleCSVUpload(ev) {
         urutPerUser[assignedTo] = (urutPerUser[assignedTo] || 0) + 1;
         urutan = urutPerUser[assignedTo];
         assigned++;
-      } else {
-        unassigned++;
-      }
-    } else {
-      unassigned++;
-    }
+      } else unassigned++;
+    } else unassigned++;
 
     return {
-      delivery_date: dateVal,
-      nama: r.nama,
-      alamat: r.alamat || '',
-      no_hp: r.no_hp || '',
-      latitude: m?.latitude || null,
-      longitude: m?.longitude || null,
-      assigned_to: assignedTo,
-      urutan: urutan,
-      status: 'pending',
-      created_by: currentUser.id
+      delivery_date: dateVal, nama: r.nama, alamat: r.alamat || '', no_hp: r.no_hp || '',
+      latitude: m?.latitude || null, longitude: m?.longitude || null,
+      assigned_to: assignedTo, urutan: urutan, status: 'pending', created_by: currentUser.id
     };
   });
 
@@ -571,15 +795,12 @@ async function handleCSVUpload(ev) {
     if (error) { alert('Gagal insert: ' + error.message); break; }
     total += Math.min(chunkSize, payloads.length - i);
   }
-
   ev.target.value = '';
   alert(
-    `✅ ${total} pasien diimpor.\n\n` +
-    `🎯 Koordinat ketemu: ${matched}\n` +
-    `❓ Koordinat tidak ketemu: ${unmatched}\n\n` +
+    `✅ ${total} pasien diimpor.\n\n🎯 Koordinat ketemu: ${matched}\n❓ Koordinat tidak ketemu: ${unmatched}\n\n` +
     (hasPetugasCol
       ? `👤 Auto-assign berhasil: ${assigned}\n⚠️ Tidak bisa assign: ${unassigned}`
-      : `ℹ️ Kolom "petugas" tidak ada — semua tetap unassigned.`)
+      : `ℹ️ Kolom "petugas" tidak ada — semua unassigned.`)
   );
   loadQueue();
 }
@@ -609,7 +830,7 @@ async function loadQueue() {
     if (!list.length) {
       const targetName = isAdmin ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini') : 'Anda';
       wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada tanggal ${dateVal}.
-        ${isAdmin ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar, atau assign manual dari "Lihat Semua Petugas".</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
+        ${isAdmin ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar.</small>' : '<br><small>Hubungi admin.</small>'}</div>`;
       return;
     }
     renderQueueUser(list);
@@ -635,13 +856,26 @@ function renderQueueAdmin(list, dateVal) {
       <br><small>💡 Untuk atur urutan rute, pilih nama petugas di dropdown <b>"Lihat Semua Petugas"</b>.</small>
     </p>
     <div class="table-wrap"><table>
-      <thead><tr><th>No</th><th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Petugas</th><th>Aksi</th></tr></thead>
+      <thead><tr>
+        <th>No</th>
+        <th class="col-aksi">Aksi</th>
+        <th>Nama</th>
+        <th>Alamat</th>
+        <th>No HP</th>
+        <th>Koordinat</th>
+        <th>Petugas</th>
+      </tr></thead>
       <tbody>
-        ${list.map((r, i) => `
+        ${list.map((r, i) => {
+          const cod = hasCOD(r.alamat);
+          return `
           <tr>
             <td>${i+1}</td>
+            <td class="col-aksi">
+              <button class="danger" style="padding:6px 11px;font-size:12px" onclick="hapusAntrian(${r.id})">Hapus</button>
+            </td>
             <td><b>${esc(r.nama)}</b></td>
-            <td>${esc(r.alamat || '-')}</td>
+            <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(r.alamat || '-')}</td>
             <td>${esc(r.no_hp || '-')}</td>
             <td class="coord">${r.latitude ? r.latitude.toFixed(4)+', '+r.longitude.toFixed(4) : '-'}</td>
             <td>
@@ -650,9 +884,8 @@ function renderQueueAdmin(list, dateVal) {
                 ${allUsers.map(u => `<option value="${u.id}" ${u.id === r.assigned_to ? 'selected' : ''}>${esc(u.full_name || u.id)}${u.role==='admin'?' (admin)':''}</option>`).join('')}
               </select>
             </td>
-            <td><button class="danger" style="padding:6px 11px;font-size:12px" onclick="hapusAntrian(${r.id})">Hapus</button></td>
-          </tr>
-        `).join('')}
+          </tr>`;
+        }).join('')}
       </tbody>
     </table></div>`;
 }
@@ -668,16 +901,23 @@ function renderQueueUser(list) {
     <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">Terdapat <b>${list.length}</b> pasien.</p>
     <div class="table-wrap"><table>
       <thead><tr>
-        <th>Urut</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Status</th><th>Aksi</th>
+        <th>Urut</th>
+        <th class="col-aksi">Aksi</th>
+        <th>Pasien</th>
+        <th>Alamat</th>
+        <th>No HP</th>
+        <th>Koordinat</th>
+        <th>Status</th>
       </tr></thead>
       <tbody>
         ${list.map((r, i) => {
           const phone = normalizePhone(r.no_hp);
-          const waBtn = phone ? `<button class="wa" onclick="openWAFromQueue(${r.id})">💬 WA</button>` : '';
+          const waBtn = phone ? `<button class="wa" onclick="openWAFromQueue(${r.id})">💬</button>` : '';
           const telBtn = phone ? `<a href="tel:+${phone}" style="text-decoration:none"><button class="tel">📞</button></a>` : '';
           const statusCls = r.status === 'delivered' ? 'status-done' : 'status-pending';
           const statusText = r.status === 'delivered' ? '✓ Terkirim' : 'Menunggu';
-          const syncedMark = r.synced_to_master ? '<div class="status-synced">✓ tersimpan ke master</div>' : '';
+          const syncedMark = r.synced_to_master ? '<div class="status-synced">✓ master</div>' : '';
+          const cod = hasCOD(r.alamat);
           return `
           <tr>
             <td>
@@ -689,15 +929,17 @@ function renderQueueUser(list) {
                   onkeydown="if(event.key==='Enter'){ event.preventDefault(); moveToPosition(${i}, this.value); }">
               </div>
             </td>
-            <td>
-              <button onclick="openQDetail(${r.id})" style="padding:6px 12px;font-size:12px;background:var(--green-600);color:#fff;border:none;border-radius:7px;font-weight:800;margin-right:6px">BUKA</button>
-              <b>${esc(r.nama)}</b>
+            <td class="col-aksi">
+              <div class="actions">
+                <button onclick="openQDetail(${r.id})" style="padding:6px 11px;font-size:12px;background:var(--green-600);color:#fff;border:none;border-radius:7px;font-weight:800">BUKA</button>
+                ${waBtn}${telBtn}
+              </div>
             </td>
-            <td>${esc(r.alamat || '-')}</td>
+            <td><b>${esc(r.nama)}</b></td>
+            <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(r.alamat || '-')}</td>
             <td>${esc(r.no_hp || '-')}</td>
             <td class="coord">${r.latitude ? r.latitude.toFixed(5)+', '+r.longitude.toFixed(5) : '-'}</td>
             <td class="${statusCls}">${statusText}${syncedMark}</td>
-            <td><div class="actions">${waBtn}${telBtn}</div></td>
           </tr>`;
         }).join('')}
       </tbody>
@@ -759,7 +1001,7 @@ async function moveToPosition(fromIndex, targetInput) {
   await loadQueue();
 }
 
-// ============ SIMPAN KE MASTER (nama, alamat, no_hp, koordinat SAJA) ============
+// ============ SIMPAN KE MASTER ============
 async function syncOneToMaster(deliveryId, silent = false) {
   const r = myQueue.find(x => x.id === deliveryId);
   if (!r) return { ok: false, msg: 'Data tidak ditemukan' };
@@ -770,7 +1012,6 @@ async function syncOneToMaster(deliveryId, silent = false) {
   const namaKey = String(r.nama || '').trim().toLowerCase();
   const hpKey = normalizePhone(r.no_hp);
   const alamatKey = String(r.alamat || '').trim().toLowerCase();
-
   const { data: candidates, error: e1 } = await sb.from('patients')
     .select('id, nama, alamat, no_hp, latitude, longitude').ilike('nama', r.nama.trim());
   if (e1) return { ok: false, msg: e1.message };
@@ -787,7 +1028,6 @@ async function syncOneToMaster(deliveryId, silent = false) {
       String(c.alamat || '').trim().toLowerCase() === alamatKey
     );
   }
-
   if (existing) {
     if (existing.latitude === r.latitude && existing.longitude === r.longitude) {
       if (!r.synced_to_master) await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
@@ -800,21 +1040,14 @@ async function syncOneToMaster(deliveryId, silent = false) {
     await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
     return { ok: true, msg: 'updated' };
   }
-
-  // Insert baru: hanya nama, alamat, no_hp, koordinat (tanpa petugas)
   const { error } = await sb.from('patients').insert({
-    nama: r.nama.trim(),
-    alamat: r.alamat || null,
-    no_hp: r.no_hp || null,
-    latitude: r.latitude,
-    longitude: r.longitude,
-    recorded_by: currentUser.id
+    nama: r.nama.trim(), alamat: r.alamat || null, no_hp: r.no_hp || null,
+    latitude: r.latitude, longitude: r.longitude, recorded_by: currentUser.id
   });
   if (error) return { ok: false, msg: error.message };
   await sb.from('daily_deliveries').update({ synced_to_master: true }).eq('id', r.id);
   return { ok: true, msg: 'inserted' };
 }
-
 async function syncThisToMaster(deliveryId) {
   const r = myQueue.find(x => x.id === deliveryId);
   if (!r) return;
@@ -822,7 +1055,7 @@ async function syncThisToMaster(deliveryId) {
   const result = await syncOneToMaster(deliveryId);
   if (!result.ok) return alert('Gagal: ' + result.msg);
   const msgMap = {
-    'sama': '✅ Data di master sudah sama — tidak ada perubahan.',
+    'sama': '✅ Data di master sudah sama.',
     'updated': '✅ Koordinat diperbarui di Data Pasien.',
     'inserted': '✅ Pasien baru ditambahkan ke Data Pasien.'
   };
@@ -830,12 +1063,11 @@ async function syncThisToMaster(deliveryId) {
   await loadPatients();
   await loadQueue();
 }
-
 async function syncAllToMaster() {
   if (!myQueue.length) return alert('Antrian kosong.');
   const withCoord = myQueue.filter(r => r.latitude && r.longitude);
   if (!withCoord.length) return alert('Belum ada pasien yang punya koordinat.');
-  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?\n\nDisimpan: nama, alamat, no HP, koordinat saja.`)) return;
+  if (!confirm(`Simpan ${withCoord.length} koordinat ke Data Pasien?`)) return;
   const btn = document.getElementById('btnSyncAll');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Menyimpan...'; }
   let updated = 0, inserted = 0, same = 0, failed = 0;
@@ -868,6 +1100,7 @@ async function openQDetail(id) {
   const mapsUrl = hasCoord
     ? `https://www.google.com/maps?q=${r.latitude},${r.longitude}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((r.alamat || '') + ' ' + (r.nama || ''))}`;
+  const cod = hasCOD(r.alamat);
 
   let actionsHtml = `<a href="${mapsUrl}" target="_blank" rel="noopener" style="text-decoration:none"><button class="maps">🗺️ Navigasi ke Lokasi</button></a>`;
   if (!adminViewAs) {
@@ -876,7 +1109,7 @@ async function openQDetail(id) {
   if (hasCoord) {
     actionsHtml += `<button class="save-master" id="btnSaveMaster" onclick="syncThisToMaster(${r.id})">💾 Simpan Koordinat ke Data Pasien</button>`;
   } else {
-    actionsHtml += `<p style="font-size:12px;color:#94a3b8;text-align:center;font-weight:700">Koordinat belum ada.${adminViewAs ? ' Petugas perlu update dulu.' : ' Klik <b>🎯 Update Koordinat</b> saat tiba di lokasi pasien.'}</p>`;
+    actionsHtml += `<p style="font-size:12px;color:#94a3b8;text-align:center;font-weight:700">Koordinat belum ada.${adminViewAs ? ' Petugas perlu update dulu.' : ' Klik <b>🎯 Update Koordinat</b> saat tiba.'}</p>`;
   }
 
   document.getElementById('qDetailTitle').textContent = adminViewAs
@@ -886,7 +1119,7 @@ async function openQDetail(id) {
   document.getElementById('qPatientDetail').innerHTML = `
     <div class="info-box">
       <p><b>Nama:</b> ${esc(r.nama)}</p>
-      <p><b>Alamat:</b> ${esc(r.alamat || '-')}</p>
+      <p><b>Alamat:</b> ${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(r.alamat || '-')}</p>
       <p><b>No HP:</b> ${esc(r.no_hp || '-')}</p>
       <p><b>Koordinat:</b><br><span class="coord">${hasCoord ? r.latitude + ', ' + r.longitude : 'belum ada'}</span></p>
       <p><b>Status:</b> ${r.status === 'delivered' ? '<span class="status-done">✓ Terkirim</span>' : '<span class="status-pending">Menunggu</span>'}</p>
@@ -1020,40 +1253,138 @@ function copyBroadcastText() {
 
 // ============ DATA PASIEN MASTER ============
 async function loadPatients() {
-  const { data, error } = await sb.from('patients').select('*').order('nama').limit(5000);
-  if (error) { alert('Gagal memuat pasien: ' + error.message); return; }
-  patientsCache = data || [];
+  const wrap = document.getElementById('patientsTableWrap');
+  if (wrap) wrap.innerHTML = '<div class="empty">Memuat data pasien... (mohon tunggu)</div>';
+  const pageSize = 1000;
+  let all = [];
+  let from = 0;
+  let keepFetching = true;
+  let guard = 0;
+  while (keepFetching && guard < 50) {
+    guard++;
+    const { data, error } = await sb
+      .from('patients').select('*')
+      .order('nama', { ascending: true })
+      .range(from, from + pageSize - 1);
+    if (error) {
+      alert('Gagal memuat pasien: ' + error.message);
+      patientsCache = all;
+      onSearchPatient();
+      return;
+    }
+    const batch = data || [];
+    all = all.concat(batch);
+    if (batch.length < pageSize) keepFetching = false;
+    else from += pageSize;
+  }
+  patientsCache = all;
+  patientPage = 1;
+  onSearchPatient();
+  // Refresh peta kalau sedang terbuka
+  if (mapInstance && !document.getElementById('page-map').classList.contains('hidden')) {
+    renderMapMarkers();
+  }
+}
+
+function onSearchPatient() {
+  const q = (document.getElementById('searchPatient').value || '').trim().toLowerCase();
+  if (!q) {
+    patientFilteredCache = patientsCache.slice();
+  } else {
+    patientFilteredCache = patientsCache.filter(p =>
+      (p.nama || '').toLowerCase().includes(q) ||
+      (p.alamat || '').toLowerCase().includes(q) ||
+      (p.no_hp || '').toLowerCase().includes(q)
+    );
+  }
+  patientPage = 1;
   renderPatients();
 }
+
+function onPatientPageSizeChange() {
+  patientPageSize = parseInt(document.getElementById('patientPageSize').value, 10) || 100;
+  patientPage = 1;
+  renderPatients();
+}
+
 function renderPatients() {
-  const q = (document.getElementById('searchPatient').value || '').toLowerCase();
-  const list = patientsCache.filter(p =>
-    (p.nama || '').toLowerCase().includes(q) || (p.alamat || '').toLowerCase().includes(q)
-  ).slice(0, 300);
   const wrap = document.getElementById('patientsTableWrap');
-  if (!list.length) { wrap.innerHTML = '<div class="empty">Data tidak ditemukan.</div>'; return; }
+  const pagEl = document.getElementById('patientPagination');
+
+  const total = patientFilteredCache.length;
+  const totalPages = Math.max(1, Math.ceil(total / patientPageSize));
+  if (patientPage > totalPages) patientPage = totalPages;
+  if (patientPage < 1) patientPage = 1;
+
+  const startIdx = (patientPage - 1) * patientPageSize;
+  const endIdx = Math.min(startIdx + patientPageSize, total);
+  const pageItems = patientFilteredCache.slice(startIdx, endIdx);
+
+  const q = (document.getElementById('searchPatient').value || '').trim();
+
+  if (!total) {
+    wrap.innerHTML = `<p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
+      Total master: <b>${patientsCache.length}</b> pasien${q ? ` · Pencarian "<b>${esc(q)}</b>" tidak ditemukan` : ''}
+    </p><div class="empty">Data tidak ditemukan.</div>`;
+    pagEl.innerHTML = '';
+    return;
+  }
+
   wrap.innerHTML = `
     <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
-      Total: <b>${patientsCache.length}</b> · Ditampilkan: <b>${list.length}</b>
+      Total master: <b>${patientsCache.length}</b> pasien
+      ${q ? ` · Hasil pencarian "<b>${esc(q)}</b>": <b>${total}</b>` : ''}
+      · Menampilkan <b>${startIdx+1}–${endIdx}</b> dari <b>${total}</b>
     </p>
     <div class="table-wrap"><table>
-      <thead><tr><th>Nama</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Aksi</th></tr></thead>
+      <thead><tr>
+        <th class="col-aksi">Aksi</th>
+        <th>Nama</th>
+        <th>Alamat</th>
+        <th>No HP</th>
+        <th>Koordinat</th>
+      </tr></thead>
       <tbody>
-        ${list.map(p => `
+        ${pageItems.map(p => {
+          const cod = hasCOD(p.alamat);
+          return `
           <tr>
-            <td><b>${esc(p.nama)}</b></td>
-            <td>${esc(p.alamat || '-')}</td>
-            <td>${esc(p.no_hp || '-')}</td>
-            <td class="coord">${p.latitude ? p.latitude.toFixed(5)+', '+p.longitude.toFixed(5) : '-'}</td>
-            <td><div class="actions">
+            <td class="col-aksi"><div class="actions">
               <button class="ghost" onclick="openPatientForm(${p.id})">Edit</button>
               <button class="danger" onclick="deletePatient(${p.id})">Hapus</button>
             </div></td>
-          </tr>
-        `).join('')}
+            <td><b>${esc(p.nama)}</b></td>
+            <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(p.alamat || '-')}</td>
+            <td>${esc(p.no_hp || '-')}</td>
+            <td class="coord">${p.latitude ? p.latitude.toFixed(5)+', '+p.longitude.toFixed(5) : '-'}</td>
+          </tr>`;
+        }).join('')}
       </tbody>
     </table></div>`;
+
+  const btnPrevDisabled = patientPage <= 1 ? 'disabled' : '';
+  const btnNextDisabled = patientPage >= totalPages ? 'disabled' : '';
+  pagEl.innerHTML = `
+    <div class="pagination">
+      <button class="ghost" ${btnPrevDisabled} onclick="gotoPatientPage(1)" title="Halaman pertama">« Awal</button>
+      <button class="ghost" ${btnPrevDisabled} onclick="gotoPatientPage(${patientPage-1})" title="Halaman sebelumnya">‹ Prev</button>
+      <div class="page-info">Halaman <b>${patientPage}</b> / <b>${totalPages}</b></div>
+      <button class="ghost" ${btnNextDisabled} onclick="gotoPatientPage(${patientPage+1})" title="Halaman berikutnya">Next ›</button>
+      <button class="ghost" ${btnNextDisabled} onclick="gotoPatientPage(${totalPages})" title="Halaman terakhir">Akhir »</button>
+      <input type="number" class="page-jump" min="1" max="${totalPages}" placeholder="Ke hal."
+        onkeydown="if(event.key==='Enter'){ event.preventDefault(); gotoPatientPage(parseInt(this.value,10)||1); }">
+    </div>`;
 }
+
+function gotoPatientPage(n) {
+  const totalPages = Math.max(1, Math.ceil(patientFilteredCache.length / patientPageSize));
+  if (n < 1) n = 1;
+  if (n > totalPages) n = totalPages;
+  patientPage = n;
+  renderPatients();
+  document.getElementById('patientsTableWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function openPatientForm(id) {
   document.getElementById('formModal').classList.remove('hidden');
   document.getElementById('formCoord').textContent = 'Belum ada koordinat';
@@ -1132,15 +1463,17 @@ async function loadHistory() {
     <div class="table-wrap"><table>
       <thead><tr><th>Tanggal</th><th>Jam</th><th>Pasien</th><th>Alamat</th><th>No HP</th></tr></thead>
       <tbody>
-        ${data.map(r => `
+        ${data.map(r => {
+          const cod = hasCOD(r.alamat);
+          return `
           <tr>
             <td>${r.delivery_date || '-'}</td>
             <td>${r.delivered_at ? new Date(r.delivered_at).toLocaleTimeString('id-ID') : '-'}</td>
             <td><b>${esc(r.nama)}</b></td>
-            <td>${esc(r.alamat || '-')}</td>
+            <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(r.alamat || '-')}</td>
             <td>${esc(r.no_hp || '-')}</td>
-          </tr>
-        `).join('')}
+          </tr>`;
+        }).join('')}
       </tbody>
     </table></div>`;
 }
