@@ -105,6 +105,9 @@
     font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;
     margin-right:6px; vertical-align:middle; letter-spacing:.5px;
   }
+  .rupiah { font-family:'Manrope',sans-serif; font-weight:800; color:#065f46; white-space:nowrap; }
+  .rupiah.rs { color:#0891b2; }
+  .rupiah.ptg { color:#7c3aed; }
   .pagination {
     display:flex; gap:10px; align-items:center; justify-content:center;
     flex-wrap:wrap; margin:18px 0 8px; padding:14px;
@@ -112,13 +115,9 @@
     box-shadow:0 2px 8px rgba(5,46,22,.06);
   }
   .pagination button { min-width:90px; }
-  .pagination .page-info {
-    font-size:13px; color:var(--green-800); font-weight:700; padding:0 10px;
-  }
+  .pagination .page-info { font-size:13px; color:var(--green-800); font-weight:700; padding:0 10px; }
   .pagination .page-info b { font-weight:800; color:var(--green-900); font-size:15px; }
-  .pagination input.page-jump {
-    width:70px !important; text-align:center; font-weight:700; padding:9px 8px !important;
-  }
+  .pagination input.page-jump { width:70px !important; text-align:center; font-weight:700; padding:9px 8px !important; }
   .modal-bg { position:fixed; inset:0; background:rgba(5,46,22,.7); display:flex; align-items:center;
     justify-content:center; z-index:1000; padding:16px; backdrop-filter:blur(3px); }
   .modal { background:#fff; padding:26px; border-radius:14px; width:100%; max-width:480px;
@@ -126,6 +125,7 @@
   .modal.modal-wide { max-width:640px; }
   .modal h3 { margin:0 0 18px; font-weight:800; color:var(--green-900); font-size:18px; letter-spacing:-.3px; }
   .modal .row { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
+  .modal label.field-label { display:block; font-size:12px; font-weight:800; color:var(--green-800); margin:6px 0 4px; text-transform:uppercase; letter-spacing:.4px; }
   .geo-status { padding:11px 14px; border-radius:9px; font-size:13px; margin-bottom:14px; font-weight:700; }
   .geo-status.ok { background:var(--green-100); color:var(--green-800); }
   .geo-status.wait { background:#fef9c3; color:#854d0e; }
@@ -161,89 +161,59 @@
   .viewas-banner { background:var(--green-100); border:1px solid var(--green-400); color:var(--green-900);
     padding:12px 16px; border-radius:10px; margin-bottom:14px; font-size:13px; }
   .viewas-banner b { color:var(--green-950); font-weight:800; }
+  .info-box code { background:#fff; padding:2px 6px; border-radius:4px; font-family:'Courier New',monospace; color:#065f46; }
 
-  /* MAP */
-  #mapContainer {
-    height: 72vh; min-height: 480px; width: 100%;
-    border-radius: 12px; overflow: hidden;
-    box-shadow: 0 2px 12px rgba(5,46,22,.12);
-    border: 3px solid #fff;
-  }
-  .map-toolbar {
-    background: #fff; border: 2px solid var(--green-100);
-    border-radius: 12px; padding: 12px 14px;
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-    margin-bottom: 14px; box-shadow: 0 2px 8px rgba(5,46,22,.06);
-  }
-  .map-toolbar input[type=text] { flex: 1; min-width: 200px; margin: 0; }
-  .map-toolbar .map-info {
-    font-size: 13px; color: var(--green-800); font-weight: 700;
-    padding: 6px 12px; background: var(--green-50); border-radius: 8px;
-    white-space: nowrap;
-  }
-  .map-toolbar .map-info b { color: var(--green-900); font-weight: 800; }
-  .map-legend {
-    display: flex; gap: 14px; flex-wrap: wrap; padding: 8px 12px;
-    background: var(--green-50); border-radius: 8px; font-size: 12px; font-weight: 700;
-    color: var(--green-800); margin-bottom: 12px;
-  }
-  .map-legend .dot { display: inline-block; width: 12px; height: 12px;
-    border-radius: 50%; margin-right: 5px; vertical-align: middle; border: 2px solid #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+  #mapContainer { height:72vh; min-height:480px; width:100%; border-radius:12px; overflow:hidden;
+    box-shadow:0 2px 12px rgba(5,46,22,.12); border:3px solid #fff; }
+  .map-toolbar { background:#fff; border:2px solid var(--green-100); border-radius:12px; padding:12px 14px;
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px; box-shadow:0 2px 8px rgba(5,46,22,.06); }
+  .map-toolbar input[type=text] { flex:1; min-width:200px; margin:0; }
+  .map-toolbar .map-info { font-size:13px; color:var(--green-800); font-weight:700;
+    padding:6px 12px; background:var(--green-50); border-radius:8px; white-space:nowrap; }
+  .map-toolbar .map-info b { color:var(--green-900); font-weight:800; }
+  .map-legend { display:flex; gap:14px; flex-wrap:wrap; padding:8px 12px;
+    background:var(--green-50); border-radius:8px; font-size:12px; font-weight:700;
+    color:var(--green-800); margin-bottom:12px; }
+  .map-legend .dot { display:inline-block; width:12px; height:12px; border-radius:50%;
+    margin-right:5px; vertical-align:middle; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.3); }
   @keyframes pulseRed {
-    0% { filter: drop-shadow(0 0 0 rgba(220,38,38,.9)); }
-    70% { filter: drop-shadow(0 0 8px rgba(220,38,38,.6)); }
-    100% { filter: drop-shadow(0 0 0 rgba(220,38,38,0)); }
+    0% { filter:drop-shadow(0 0 0 rgba(220,38,38,.9)); }
+    70% { filter:drop-shadow(0 0 8px rgba(220,38,38,.6)); }
+    100% { filter:drop-shadow(0 0 0 rgba(220,38,38,0)); }
   }
-  .cod-marker { animation: pulseRed 1.8s infinite; }
-  .normal-marker { filter: drop-shadow(0 1px 3px rgba(5,46,22,.4)); }
-  .leaflet-popup-content-wrapper {
-    border-radius: 12px; padding: 4px;
-    box-shadow: 0 8px 24px rgba(5,46,22,.25);
-  }
-  .leaflet-popup-content { margin: 12px 14px; }
-  .leaflet-popup-tip { box-shadow: 0 3px 8px rgba(5,46,22,.2); }
+  .cod-marker { animation:pulseRed 1.8s infinite; }
+  .normal-marker { filter:drop-shadow(0 1px 3px rgba(5,46,22,.4)); }
+  .leaflet-popup-content-wrapper { border-radius:12px; padding:4px; box-shadow:0 8px 24px rgba(5,46,22,.25); }
+  .leaflet-popup-content { margin:12px 14px; }
+  .leaflet-popup-tip { box-shadow:0 3px 8px rgba(5,46,22,.2); }
 
-  /* DASHBOARD */
-  .dash-filters {
-    background: #fff; border: 2px solid var(--green-100); border-radius: 12px;
-    padding: 14px 16px; margin-bottom: 16px;
-    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-    box-shadow: 0 2px 8px rgba(5,46,22,.06);
-  }
-  .dash-filters select { width: auto; min-width: 140px; }
-  .dash-filters label {
-    font-size: 12px; font-weight: 800; color: var(--green-800);
-    text-transform: uppercase; letter-spacing: .5px; margin-right: 4px;
-  }
-  .dash-summary {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px; margin-bottom: 16px;
-  }
-  .dash-card {
-    background: #fff; border: 2px solid var(--green-100); border-radius: 12px;
-    padding: 16px 18px; box-shadow: 0 2px 8px rgba(5,46,22,.06);
-  }
-  .dash-card .label {
-    font-size: 11px; font-weight: 800; color: var(--green-700);
-    text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px;
-  }
-  .dash-card .value {
-    font-size: 24px; font-weight: 800; color: var(--green-900);
-    letter-spacing: -.5px; word-break: break-all;
-  }
-  .chart-box {
-    background: #fff; border: 2px solid var(--green-100); border-radius: 12px;
-    padding: 18px; box-shadow: 0 2px 8px rgba(5,46,22,.06);
-    margin-bottom: 16px; position: relative;
-  }
-  .chart-box h3 {
-    margin: 0 0 14px; font-size: 15px; font-weight: 800;
-    color: var(--green-900); letter-spacing: -.2px;
-  }
-  .chart-box .chart-wrap { position: relative; height: 380px; width: 100%; }
+  .dash-filters { background:#fff; border:2px solid var(--green-100); border-radius:12px;
+    padding:14px 16px; margin-bottom:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    box-shadow:0 2px 8px rgba(5,46,22,.06); }
+  .dash-filters select { width:auto; min-width:140px; }
+  .dash-filters label { font-size:12px; font-weight:800; color:var(--green-800);
+    text-transform:uppercase; letter-spacing:.5px; margin-right:4px; }
+  .dash-summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr));
+    gap:12px; margin-bottom:16px; }
+  .dash-card { background:#fff; border:2px solid var(--green-100); border-radius:12px;
+    padding:16px 18px; box-shadow:0 2px 8px rgba(5,46,22,.06); }
+  .dash-card .label { font-size:11px; font-weight:800; color:var(--green-700);
+    text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px; }
+  .dash-card .value { font-size:22px; font-weight:800; color:var(--green-900);
+    letter-spacing:-.5px; word-break:break-all; line-height:1.2; }
+  .dash-card.rs { border-color:#67e8f9; }
+  .dash-card.rs .label { color:#0891b2; }
+  .dash-card.rs .value { color:#0e7490; }
+  .dash-card.ptg { border-color:#c4b5fd; }
+  .dash-card.ptg .label { color:#7c3aed; }
+  .dash-card.ptg .value { color:#6d28d9; }
+  .chart-box { background:#fff; border:2px solid var(--green-100); border-radius:12px;
+    padding:18px; box-shadow:0 2px 8px rgba(5,46,22,.06); margin-bottom:16px; position:relative; }
+  .chart-box h3 { margin:0 0 14px; font-size:15px; font-weight:800;
+    color:var(--green-900); letter-spacing:-.2px; }
+  .chart-box .chart-wrap { position:relative; height:360px; width:100%; }
   @media (max-width:768px) {
-    .chart-box .chart-wrap { height: 300px; }
+    .chart-box .chart-wrap { height:280px; }
   }
 
   @media (max-width:768px) {
@@ -276,15 +246,15 @@
     .pagination button { padding:9px 14px; font-size:12px; min-width:70px; }
     .pagination .page-info { font-size:12px; padding:0 6px; }
     .pagination input.page-jump { width:60px !important; padding:8px 6px !important; }
-    #mapContainer { height: 60vh; min-height: 360px; }
-    .map-toolbar { padding: 10px; }
-    .map-toolbar input[type=text] { min-width: 0; font-size: 13px; padding: 9px 12px; }
-    .map-toolbar button { padding: 9px 12px; font-size: 12px; }
-    .map-info { font-size: 11px !important; }
-    .dash-filters { padding: 10px; gap: 6px; }
-    .dash-filters select { min-width: 0; flex: 1; font-size: 12px; padding: 9px 10px; }
-    .dash-card { padding: 12px 14px; }
-    .dash-card .value { font-size: 18px; }
+    #mapContainer { height:60vh; min-height:360px; }
+    .map-toolbar { padding:10px; }
+    .map-toolbar input[type=text] { min-width:0; font-size:13px; padding:9px 12px; }
+    .map-toolbar button { padding:9px 12px; font-size:12px; }
+    .map-info { font-size:11px !important; }
+    .dash-filters { padding:10px; gap:6px; }
+    .dash-filters select { min-width:0; flex:1; font-size:12px; padding:9px 10px; }
+    .dash-card { padding:12px 14px; }
+    .dash-card .value { font-size:16px; }
   }
   @media (max-width:420px) {
     .main h1 { font-size:16px; }
@@ -310,7 +280,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.0</small>
+    <small>v3.1</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
@@ -331,7 +301,6 @@
   <div class="main">
     <div id="page-queue">
       <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
-
       <div class="loc-panel wait" id="locPanel">
         <div class="loc-icon">📍</div>
         <div class="loc-body">
@@ -345,7 +314,6 @@
           <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
         </div>
       </div>
-
       <div class="toolbar" id="queueToolbarAdmin" style="display:none">
         <input type="date" id="queueDate" onchange="loadQueue()">
         <select id="queueFilter" onchange="loadQueue()">
@@ -361,7 +329,6 @@
         </label>
         <button class="danger" onclick="hapusAntrianHariIni()">🗑️ Hapus Tanggal Ini</button>
       </div>
-
       <div id="queueTableWrap"></div>
     </div>
 
@@ -396,21 +363,14 @@
       <div id="mapContainer"></div>
     </div>
 
-    <!-- ============ DATA PASIEN SOBAT ============ -->
     <div id="page-sobat" class="hidden">
       <h1>💊 Data Pasien Sobat</h1>
       <div class="toolbar">
         <input id="searchSobat" placeholder="Cari nama / alamat / no HP..." oninput="onSearchSobat()">
         <button onclick="openSobatForm()">+ Tambah</button>
-        <select id="sobatFilterBulan" onchange="onSearchSobat()" style="width:auto">
-          <option value="">Semua Bulan</option>
-        </select>
-        <select id="sobatFilterTahun" onchange="onSearchSobat()" style="width:auto">
-          <option value="">Semua Tahun</option>
-        </select>
-        <select id="sobatFilterPetugas" onchange="onSearchSobat()" style="width:auto">
-          <option value="">Semua Petugas</option>
-        </select>
+        <select id="sobatFilterBulan" onchange="onSearchSobat()" style="width:auto"></select>
+        <select id="sobatFilterTahun" onchange="onSearchSobat()" style="width:auto"></select>
+        <select id="sobatFilterPetugas" onchange="onSearchSobat()" style="width:auto"></select>
         <select id="sobatPageSize" onchange="onSobatPageSizeChange()" style="width:auto">
           <option value="50">50 / hal</option>
           <option value="100" selected>100 / hal</option>
@@ -421,36 +381,36 @@
       <div id="sobatPagination"></div>
     </div>
 
-    <!-- ============ UPLOAD CSV DOK ============ -->
     <div id="page-uploadDok" class="hidden">
       <h1>📤 Upload CSV Dok</h1>
-      <div class="info-box" style="max-width: 720px;">
-        <p style="margin-top:0"><b>Format CSV yang dibutuhkan (baris pertama = header):</b></p>
-        <div style="background:#fff; padding:12px; border-radius:8px; font-family:'Courier New',monospace; font-size:12px; overflow-x:auto; margin:8px 0; color:#065f46; font-weight:700;">
-          nama,alamat,no_hp,tarif(rupiah),petugas,bulan,tahun<br>
-          A MUSNI,KEL LOA IPUH...,08123456789,150000,SUGENG,Januari,2025<br>
-          BUDI SANTOSO,JL MERDEKA...,08129876543,200000,SANDI,2,2025
+      <div class="info-box" style="max-width:820px;">
+        <p style="margin-top:0"><b>Format CSV (baris pertama = header):</b></p>
+        <div style="background:#fff; padding:12px; border-radius:8px; font-family:'Courier New',monospace; font-size:12px; overflow-x:auto; margin:8px 0; color:#065f46; font-weight:700; line-height:1.7;">
+          nama,alamat,no_hp,tarif(rupiah),pendapatan_rs,pendapatan_petugas,petugas,bulan,tahun<br>
+          A MUSNI,KEL LOA IPUH...,08123456789,150000,90000,60000,SUGENG,Januari,2025<br>
+          BUDI SANTOSO,JL MERDEKA...,08129876543,200000,120000,80000,SANDI,2,2025
         </div>
-        <ul style="margin:8px 0; padding-left:20px; font-size:13px; line-height:1.7;">
-          <li><b>tarif</b> — boleh dengan/tanpa "Rp", dengan/tanpa titik. Contoh: <code>150000</code>, <code>Rp 150.000</code></li>
-          <li><b>bulan</b> — bisa angka (1-12) atau nama (Januari, Feb, dll)</li>
+        <ul style="margin:8px 0; padding-left:20px; font-size:13px; line-height:1.75;">
+          <li><b>tarif</b> — total biaya. Boleh <code>150000</code> atau <code>Rp 150.000</code></li>
+          <li><b>pendapatan_rs</b> — bagian RS (opsional, default 0)</li>
+          <li><b>pendapatan_petugas</b> — bagian petugas (opsional, default 0)</li>
+          <li><b>petugas</b> — nama petugas (SUGENG/SANDI/VIONA)</li>
+          <li><b>bulan</b> — angka 1-12 atau nama (Januari, Feb, dst)</li>
           <li><b>tahun</b> — 4 digit (contoh 2025)</li>
-          <li><b>petugas</b> — nama petugas (SUGENG/SANDI/VIONA). Kalau tidak cocok, akan tetap disimpan sebagai teks</li>
-          <li>Baris duplikat (nama+no_hp+bulan+tahun sama) akan <b>otomatis dilewati</b></li>
+          <li>Baris duplikat (nama+no_hp+bulan+tahun) otomatis <b>dilewati</b></li>
         </ul>
       </div>
 
-      <label class="upload-zone" style="display:block; max-width:720px;">
+      <label class="upload-zone" style="display:block; max-width:820px;">
         <div style="font-size:32px; margin-bottom:8px;">📄</div>
         <div style="font-size:15px; font-weight:800;">Klik untuk pilih file CSV</div>
         <div style="font-size:12px; margin-top:4px; opacity:.8;">atau drag & drop file ke sini</div>
         <input type="file" accept=".csv" id="dokFileInput" onchange="handleDokCSVUpload(event)">
       </label>
 
-      <div id="dokUploadResult" style="max-width:720px; margin-top:16px;"></div>
+      <div id="dokUploadResult" style="max-width:820px; margin-top:16px;"></div>
     </div>
 
-    <!-- ============ DASHBOARD ============ -->
     <div id="page-dashboard" class="hidden">
       <h1>📊 Dashboard Laporan</h1>
 
@@ -483,12 +443,22 @@
       <div class="dash-summary" id="dashSummary"></div>
 
       <div class="chart-box">
-        <h3 id="chartTitle">Grafik Total Tarif</h3>
+        <h3 id="chartTitle">💰 Total Tarif</h3>
         <div class="chart-wrap"><canvas id="chartTarif"></canvas></div>
       </div>
 
       <div class="chart-box">
-        <h3 id="chartTitle2">Grafik Jumlah Pasien</h3>
+        <h3 id="chartTitleRs">🏥 Pendapatan RS</h3>
+        <div class="chart-wrap"><canvas id="chartRs"></canvas></div>
+      </div>
+
+      <div class="chart-box">
+        <h3 id="chartTitlePtg">👤 Pendapatan Petugas</h3>
+        <div class="chart-wrap"><canvas id="chartPtg"></canvas></div>
+      </div>
+
+      <div class="chart-box">
+        <h3 id="chartTitle2">👥 Jumlah Pasien</h3>
         <div class="chart-wrap"><canvas id="chartJumlah"></canvas></div>
       </div>
     </div>
@@ -541,10 +511,17 @@
     <input id="sfNama" type="text" placeholder="Nama pasien">
     <textarea id="sfAlamat" rows="2" placeholder="Alamat"></textarea>
     <input id="sfHp" type="text" placeholder="No HP">
-    <input id="sfTarif" type="number" placeholder="Tarif (angka, contoh 150000)">
+    <label class="field-label">Tarif Total (Rp)</label>
+    <input id="sfTarif" type="number" placeholder="Contoh: 150000">
+    <label class="field-label">Pendapatan RS (Rp)</label>
+    <input id="sfRs" type="number" placeholder="Contoh: 90000">
+    <label class="field-label">Pendapatan Petugas (Rp)</label>
+    <input id="sfPtg" type="number" placeholder="Contoh: 60000">
+    <label class="field-label">Petugas</label>
     <select id="sfPetugas">
       <option value="">— Pilih Petugas —</option>
     </select>
+    <label class="field-label">Bulan</label>
     <select id="sfBulan">
       <option value="">— Pilih Bulan —</option>
       <option value="1">Januari</option>
@@ -560,7 +537,8 @@
       <option value="11">November</option>
       <option value="12">Desember</option>
     </select>
-    <input id="sfTahun" type="number" placeholder="Tahun (contoh 2025)">
+    <label class="field-label">Tahun</label>
+    <input id="sfTahun" type="number" placeholder="Contoh: 2025">
     <input type="hidden" id="sfId">
     <div class="row">
       <button class="ghost" onclick="closeSobatForm()">Batal</button>
@@ -604,15 +582,15 @@ let markerLayer = null;
 let mapSearchTimeout = null;
 let mapInitialized = false;
 
-// Data Pasien Sobat
 let sobatCache = [];
 let sobatPage = 1;
 let sobatPageSize = 100;
 let sobatFilteredCache = [];
 
-// Dashboard
 let chartTarifInstance = null;
 let chartJumlahInstance = null;
+let chartRsInstance = null;
+let chartPtgInstance = null;
 
 const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const BULAN_SINGKAT = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
@@ -661,13 +639,15 @@ function formatRupiah(n) {
   const num = Math.round(Number(n));
   return 'Rp ' + num.toLocaleString('id-ID');
 }
+function formatRupiahShort(v) {
+  if (v >= 1000000000) return 'Rp ' + (v / 1000000000).toFixed(1) + 'M';
+  if (v >= 1000000) return 'Rp ' + (v / 1000000).toFixed(1) + 'jt';
+  if (v >= 1000) return 'Rp ' + (v / 1000).toFixed(0) + 'rb';
+  return 'Rp ' + v;
+}
 function parseTarif(v) {
   if (v == null || v === '') return 0;
-  // Buang semua kecuali digit dan koma/titik
-  let s = String(v).trim().replace(/[^\d.,]/g, '');
-  // Kalau ada koma → mungkin desimal gaya Indonesia (pemisah ribuan titik)
-  // Ambil pendekatan sederhana: hapus semua titik & koma, ambil angka
-  s = s.replace(/[^\d]/g, '');
+  let s = String(v).trim().replace(/[^\d]/g, '');
   const n = parseInt(s, 10);
   return isNaN(n) ? 0 : n;
 }
@@ -683,7 +663,6 @@ function parseTahun(v) {
   if (n < 1900 || n > 2200) return null;
   return n;
 }
-
 function parseCSV(text) {
   const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
   if (!lines.length) return [];
@@ -786,14 +765,12 @@ function updateActionButtonsVisibility() {
   document.getElementById('btnSyncAll').style.display = show ? '' : 'none';
 }
 
-// ============ PETA PASIEN ============
+// ============ PETA ============
 function initMap() {
   if (mapInstance) return;
   const container = document.getElementById('mapContainer');
   if (!container) return;
-  mapInstance = L.map(container, {
-    center: [-0.43, 116.97], zoom: 12, preferCanvas: true, zoomControl: true
-  });
+  mapInstance = L.map(container, { center: [-0.43, 116.97], zoom: 12, preferCanvas: true, zoomControl: true });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors', maxZoom: 19
   }).addTo(mapInstance);
@@ -831,8 +808,8 @@ function renderMapMarkers() {
   const truncated = list.length > MAX_MARKERS;
   const displayed = truncated ? list.slice(0, MAX_MARKERS) : list;
   info.innerHTML = q
-    ? `<b>${list.length}</b> hasil untuk "${esc(q)}"${truncated ? ` (menampilkan ${MAX_MARKERS})` : ''}`
-    : `<b>${list.length}</b> pasien berlokasi${truncated ? ` (menampilkan ${MAX_MARKERS})` : ''}`;
+    ? `<b>${list.length}</b> hasil untuk "${esc(q)}"${truncated ? ` (max ${MAX_MARKERS})` : ''}`
+    : `<b>${list.length}</b> pasien berlokasi${truncated ? ` (max ${MAX_MARKERS})` : ''}`;
   markerLayer.clearLayers();
   if (!displayed.length) {
     if (q) mapInstance.setView([-0.43, 116.97], 12);
@@ -863,13 +840,9 @@ function renderMapMarkers() {
         </div>
         <div style="display:flex; gap:6px; margin-top:8px;">
           <a href="${mapsUrl}" target="_blank" rel="noopener"
-             style="background:#065f46; color:#fff; text-decoration:none; padding:9px 12px; border-radius:7px; font-size:12px; font-weight:800; flex:1; text-align:center; display:block;">
-            🗺️ Rute
-          </a>
+             style="background:#065f46; color:#fff; text-decoration:none; padding:9px 12px; border-radius:7px; font-size:12px; font-weight:800; flex:1; text-align:center; display:block;">🗺️ Rute</a>
           ${waUrl ? `<a href="${waUrl}" target="_blank" rel="noopener"
-             style="background:#25D366; color:#fff; text-decoration:none; padding:9px 12px; border-radius:7px; font-size:12px; font-weight:800; flex:1; text-align:center; display:block;">
-            💬 WA
-          </a>` : ''}
+             style="background:#25D366; color:#fff; text-decoration:none; padding:9px 12px; border-radius:7px; font-size:12px; font-weight:800; flex:1; text-align:center; display:block;">💬 WA</a>` : ''}
         </div>
       </div>
     `);
@@ -888,7 +861,7 @@ function renderMapMarkers() {
   }
 }
 
-// ============ LOKASI PETUGAS ============
+// ============ LOKASI ============
 function perbaruiLokasiSaya() {
   const panel = document.getElementById('locPanel');
   const title = document.getElementById('locTitle');
@@ -938,7 +911,7 @@ async function handleCSVUpload(ev) {
   const rows = parseCSV(text);
   if (!rows.length) return alert('File CSV kosong.');
   const headers = Object.keys(rows[0]);
-  if (!headers.includes('nama')) return alert('CSV harus punya header "nama". Ditemukan: ' + headers.join(', '));
+  if (!headers.includes('nama')) return alert('CSV harus punya header "nama".');
   const hasPetugasCol = headers.includes('petugas');
   const dateVal = document.getElementById('queueDate').value || todayStr();
   const valid = rows.filter(r => r.nama);
@@ -949,7 +922,7 @@ async function handleCSVUpload(ev) {
     const namaUnik = [...new Set(valid.map(r => String(r.petugas || '').trim().toUpperCase()).filter(Boolean))];
     const tidakDikenal = namaUnik.filter(n => !petugasSet.has(n));
     if (tidakDikenal.length) {
-      if (!confirm(`Nama petugas berikut tidak ada di daftar user:\n\n• ${tidakDikenal.join('\n• ')}\n\nBaris dengan petugas tsb akan tetap UNASSIGNED.\n\nLanjutkan?`)) {
+      if (!confirm(`Nama petugas berikut tidak ada di daftar user:\n\n• ${tidakDikenal.join('\n• ')}\n\nBaris tsb akan tetap UNASSIGNED.\n\nLanjutkan?`)) {
         ev.target.value = ''; return;
       }
     }
@@ -1006,7 +979,7 @@ async function handleCSVUpload(ev) {
   const chunkSize = 200;
   for (let i = 0; i < payloads.length; i += chunkSize) {
     const { error } = await sb.from('daily_deliveries').insert(payloads.slice(i, i + chunkSize));
-    if (error) { alert('Gagal insert: ' + error.message); break; }
+    if (error) { alert('Gagal: ' + error.message); break; }
     total += Math.min(chunkSize, payloads.length - i);
   }
   ev.target.value = '';
@@ -1163,7 +1136,7 @@ async function moveItem(index, dir) {
   [list[index], list[target]] = [list[target], list[index]];
   try {
     await Promise.all(list.map((item, i) => sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', item.id)));
-  } catch (e) { alert('Gagal simpan urutan: ' + e.message); }
+  } catch (e) { alert('Gagal: ' + e.message); }
   await loadQueue();
 }
 async function moveToPosition(fromIndex, targetInput) {
@@ -1177,7 +1150,7 @@ async function moveToPosition(fromIndex, targetInput) {
   list.splice(targetIndex, 0, item);
   try {
     await Promise.all(list.map((it, i) => sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', it.id)));
-  } catch (e) { alert('Gagal simpan urutan: ' + e.message); }
+  } catch (e) { alert('Gagal: ' + e.message); }
   await loadQueue();
 }
 
@@ -1320,7 +1293,7 @@ function recordDelivery(deliveryId) {
       }
       loadQueue();
     },
-    (err) => { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Gagal ambil lokasi: ' + err.message; },
+    (err) => { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Gagal: ' + err.message; },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
 }
@@ -1336,13 +1309,13 @@ function updateQCoord(deliveryId) {
         latitude, longitude, updated_at: new Date().toISOString(), synced_to_master: false
       }).eq('id', deliveryId);
       if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya'; }
-      if (error) return alert('Gagal update: ' + error.message);
+      if (error) return alert('Gagal: ' + error.message);
       alert('✅ Koordinat tersimpan:\n' + latitude.toFixed(6) + ', ' + longitude.toFixed(6));
       await loadQueue(); openQDetail(deliveryId);
     },
     (err) => {
       if (btn) { btn.disabled = false; btn.textContent = '🎯 Update Koordinat di Lokasi Saya'; }
-      alert('Gagal ambil lokasi: ' + err.message);
+      alert('Gagal: ' + err.message);
     },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
@@ -1405,7 +1378,7 @@ function copyBroadcastText() {
 // ============ DATA PASIEN MASTER ============
 async function loadPatients() {
   const wrap = document.getElementById('patientsTableWrap');
-  if (wrap) wrap.innerHTML = '<div class="empty">Memuat data pasien... (mohon tunggu)</div>';
+  if (wrap) wrap.innerHTML = '<div class="empty">Memuat data pasien...</div>';
   const pageSize = 1000;
   let all = [];
   let from = 0;
@@ -1559,22 +1532,19 @@ async function deletePatient(id) {
   await loadPatients();
 }
 
-// =========================================================
-// DATA PASIEN SOBAT
-// =========================================================
+// ============ DATA PASIEN SOBAT ============
 async function loadSobatPatients() {
   const wrap = document.getElementById('sobatTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat data pasien sobat...</div>';
 
-  // Setup filter dropdowns (bulan & tahun)
   const bulanSel = document.getElementById('sobatFilterBulan');
   if (bulanSel.options.length <= 1) {
+    bulanSel.innerHTML = '<option value="">Semua Bulan</option>';
     for (let i = 1; i <= 12; i++) {
       const o = document.createElement('option'); o.value = i; o.textContent = BULAN_NAMA[i]; bulanSel.appendChild(o);
     }
   }
 
-  // Ambil semua data sobat (paginasi 1000 per batch)
   const pageSize = 1000;
   let all = [];
   let from = 0;
@@ -1593,7 +1563,6 @@ async function loadSobatPatients() {
   }
   sobatCache = all;
 
-  // Update dropdown tahun
   const tahunSel = document.getElementById('sobatFilterTahun');
   const years = [...new Set(all.map(d => d.tahun).filter(Boolean))].sort((a, b) => b - a);
   const currentVal = tahunSel.value;
@@ -1601,7 +1570,6 @@ async function loadSobatPatients() {
     years.map(y => `<option value="${y}">${y}</option>`).join('');
   tahunSel.value = currentVal;
 
-  // Update dropdown petugas
   const petugasSel = document.getElementById('sobatFilterPetugas');
   const petugasList = [...new Set(all.map(d => d.petugas).filter(Boolean))].sort();
   const currentP = petugasSel.value;
@@ -1609,7 +1577,6 @@ async function loadSobatPatients() {
     petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
   petugasSel.value = currentP;
 
-  // Update modal form
   const sfPetugas = document.getElementById('sfPetugas');
   sfPetugas.innerHTML = '<option value="">— Pilih Petugas —</option>' +
     (petugasList.length ? petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('')
@@ -1665,17 +1632,22 @@ function renderSobatPatients() {
   }
 
   const totalTarif = sobatFilteredCache.reduce((s, r) => s + (Number(r.tarif) || 0), 0);
+  const totalRs = sobatFilteredCache.reduce((s, r) => s + (Number(r.pendapatan_rs) || 0), 0);
+  const totalPtg = sobatFilteredCache.reduce((s, r) => s + (Number(r.pendapatan_petugas) || 0), 0);
 
   wrap.innerHTML = `
     <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
-      Total: <b>${sobatCache.length}</b> baris · Filter: <b>${total}</b> ·
-      Total Tarif (filter): <b style="color:#065f46;">${formatRupiah(totalTarif)}</b>
+      Total: <b>${sobatCache.length}</b> · Filter: <b>${total}</b>
+      · Total Tarif: <span class="rupiah">${formatRupiah(totalTarif)}</span>
+      · RS: <span class="rupiah rs">${formatRupiah(totalRs)}</span>
+      · Petugas: <span class="rupiah ptg">${formatRupiah(totalPtg)}</span>
       · Menampilkan <b>${startIdx+1}–${endIdx}</b>
     </p>
     <div class="table-wrap"><table>
       <thead><tr>
         <th class="col-aksi">Aksi</th><th>Nama</th><th>Alamat</th><th>No HP</th>
-        <th>Tarif</th><th>Petugas</th><th>Bulan</th><th>Tahun</th>
+        <th>Tarif</th><th>Pendapatan RS</th><th>Pendapatan Petugas</th>
+        <th>Petugas</th><th>Bulan</th><th>Tahun</th>
       </tr></thead>
       <tbody>
         ${pageItems.map(p => {
@@ -1688,7 +1660,9 @@ function renderSobatPatients() {
             <td><b>${esc(p.nama)}</b></td>
             <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(p.alamat || '-')}</td>
             <td>${esc(p.no_hp || '-')}</td>
-            <td style="font-weight:800; color:#065f46;">${formatRupiah(p.tarif)}</td>
+            <td><span class="rupiah">${formatRupiah(p.tarif)}</span></td>
+            <td><span class="rupiah rs">${formatRupiah(p.pendapatan_rs)}</span></td>
+            <td><span class="rupiah ptg">${formatRupiah(p.pendapatan_petugas)}</span></td>
             <td><span class="badge">${esc(p.petugas || '-')}</span></td>
             <td>${BULAN_NAMA[p.bulan] || p.bulan || '-'}</td>
             <td>${p.tahun || '-'}</td>
@@ -1724,7 +1698,6 @@ function openSobatForm(id) {
   document.getElementById('sobatFormModal').classList.remove('hidden');
   const sfPetugas = document.getElementById('sfPetugas');
   if (sfPetugas.options.length <= 1) {
-    // Isi dari allUsers kalau belum ada
     sfPetugas.innerHTML = '<option value="">— Pilih Petugas —</option>' +
       allUsers.map(u => `<option value="${esc(u.full_name)}">${esc(u.full_name)}</option>`).join('');
   }
@@ -1736,12 +1709,14 @@ function openSobatForm(id) {
     document.getElementById('sfAlamat').value = p.alamat || '';
     document.getElementById('sfHp').value = p.no_hp || '';
     document.getElementById('sfTarif').value = p.tarif || '';
+    document.getElementById('sfRs').value = p.pendapatan_rs || '';
+    document.getElementById('sfPtg').value = p.pendapatan_petugas || '';
     document.getElementById('sfPetugas').value = p.petugas || '';
     document.getElementById('sfBulan').value = p.bulan || '';
     document.getElementById('sfTahun').value = p.tahun || '';
   } else {
     document.getElementById('sobatFormTitle').textContent = 'Tambah Pasien Sobat';
-    ['sfId','sfNama','sfAlamat','sfHp','sfTarif','sfTahun'].forEach(i => document.getElementById(i).value = '');
+    ['sfId','sfNama','sfAlamat','sfHp','sfTarif','sfRs','sfPtg'].forEach(i => document.getElementById(i).value = '');
     document.getElementById('sfPetugas').value = '';
     document.getElementById('sfBulan').value = '';
     document.getElementById('sfTahun').value = new Date().getFullYear();
@@ -1756,6 +1731,8 @@ async function saveSobatPatient() {
     alamat: document.getElementById('sfAlamat').value.trim(),
     no_hp: document.getElementById('sfHp').value.trim(),
     tarif: parseFloat(document.getElementById('sfTarif').value) || 0,
+    pendapatan_rs: parseFloat(document.getElementById('sfRs').value) || 0,
+    pendapatan_petugas: parseFloat(document.getElementById('sfPtg').value) || 0,
     petugas: document.getElementById('sfPetugas').value.trim(),
     bulan: parseInt(document.getElementById('sfBulan').value, 10) || null,
     tahun: parseInt(document.getElementById('sfTahun').value, 10) || null,
@@ -1777,9 +1754,7 @@ async function deleteSobatPatient(id) {
   await loadSobatPatients();
 }
 
-// =========================================================
-// UPLOAD CSV DOK
-// =========================================================
+// ============ UPLOAD CSV DOK ============
 async function handleDokCSVUpload(ev) {
   const file = ev.target.files[0];
   if (!file) return;
@@ -1789,7 +1764,7 @@ async function handleDokCSVUpload(ev) {
   const text = await file.text();
   const rows = parseCSV(text);
   if (!rows.length) {
-    resultEl.innerHTML = '<div class="info-box" style="background:#fee2e2;border-color:#fca5a5">❌ File kosong atau tidak terbaca.</div>';
+    resultEl.innerHTML = '<div class="info-box" style="background:#fee2e2;border-color:#fca5a5">❌ File kosong.</div>';
     ev.target.value = ''; return;
   }
   const headers = Object.keys(rows[0]);
@@ -1798,7 +1773,10 @@ async function handleDokCSVUpload(ev) {
     ev.target.value = ''; return;
   }
 
+  // Deteksi kolom secara fleksibel
   const tarifKey = headers.find(h => h.startsWith('tarif')) || 'tarif';
+  const rsKey = headers.find(h => h === 'pendapatan_rs' || h === 'rs' || h.startsWith('pendapatan_rs')) || null;
+  const ptgKey = headers.find(h => h === 'pendapatan_petugas' || h.startsWith('pendapatan_petugas')) || null;
   const petugasKey = headers.includes('petugas') ? 'petugas' : null;
   const bulanKey = headers.includes('bulan') ? 'bulan' : null;
   const tahunKey = headers.includes('tahun') ? 'tahun' : null;
@@ -1809,7 +1787,7 @@ async function handleDokCSVUpload(ev) {
     ev.target.value = ''; return;
   }
 
-  // Cek duplikat internal file (nama+no_hp+bulan+tahun sama)
+  // Dedupe internal file
   const seen = new Set();
   const uniqueRows = [];
   let duplikatDiFile = 0;
@@ -1822,20 +1800,17 @@ async function handleDokCSVUpload(ev) {
     uniqueRows.push(r);
   }
 
-  // Cek duplikat di database (query sekali per kombinasi tahun-bulan yang ada di file)
+  // Cek duplikat di DB
   const tahunBulanPairs = new Set();
   uniqueRows.forEach(r => {
     const t = parseTahun(tahunKey ? r[tahunKey] : null);
     const b = parseBulan(bulanKey ? r[bulanKey] : null);
     if (t && b) tahunBulanPairs.add(`${t}-${b}`);
   });
-
-  // Cek existing dari DB
   const existingKeys = new Set();
   for (const pair of tahunBulanPairs) {
     const [t, b] = pair.split('-').map(Number);
-    const { data } = await sb.from('patients_sobat')
-      .select('nama, no_hp').eq('tahun', t).eq('bulan', b);
+    const { data } = await sb.from('patients_sobat').select('nama, no_hp').eq('tahun', t).eq('bulan', b);
     for (const row of (data || [])) {
       const key = [String(row.nama||'').trim().toLowerCase(),
                    normalizePhone(row.no_hp),
@@ -1844,7 +1819,6 @@ async function handleDokCSVUpload(ev) {
     }
   }
 
-  // Ambil koordinat dari master patients (lookup nama+hp / nama+alamat)
   const names = uniqueRows.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
     .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
@@ -1856,7 +1830,6 @@ async function handleDokCSVUpload(ev) {
     if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
   }
 
-  // Bangun payload
   const payloads = [];
   let dilewatiDuplikat = 0;
   for (const r of uniqueRows) {
@@ -1876,6 +1849,8 @@ async function handleDokCSVUpload(ev) {
       alamat: r.alamat || '',
       no_hp: r.no_hp || '',
       tarif: parseTarif(r[tarifKey]),
+      pendapatan_rs: rsKey ? parseTarif(r[rsKey]) : 0,
+      pendapatan_petugas: ptgKey ? parseTarif(r[ptgKey]) : 0,
       petugas: petugasKey ? (r[petugasKey] || '') : '',
       bulan: b,
       tahun: t,
@@ -1887,14 +1862,11 @@ async function handleDokCSVUpload(ev) {
 
   if (!payloads.length) {
     resultEl.innerHTML = `<div class="info-box" style="background:#fef9c3;border-color:#fde68a">
-      ⚠️ Tidak ada baris baru yang diimpor.<br>
-      Duplikat di file: <b>${duplikatDiFile}</b><br>
-      Duplikat dengan database: <b>${dilewatiDuplikat}</b>
+      ⚠️ Tidak ada baris baru.<br>Duplikat di file: <b>${duplikatDiFile}</b><br>Duplikat dengan DB: <b>${dilewatiDuplikat}</b>
     </div>`;
     ev.target.value = ''; return;
   }
 
-  // Insert batch
   let totalInserted = 0;
   const chunk = 200;
   let errors = 0;
@@ -1910,8 +1882,8 @@ async function handleDokCSVUpload(ev) {
       <div style="font-weight:800; font-size:15px; color:#065f46; margin-bottom:10px;">✅ Import selesai</div>
       <table style="width:100%; background:transparent; box-shadow:none; min-width:auto;">
         <tr><td>Total baris di file</td><td style="text-align:right;"><b>${valid.length}</b></td></tr>
-        <tr><td>Duplikat di dalam file (dilewati)</td><td style="text-align:right;"><b>${duplikatDiFile}</b></td></tr>
-        <tr><td>Duplikat dengan database (dilewati)</td><td style="text-align:right;"><b>${dilewatiDuplikat}</b></td></tr>
+        <tr><td>Duplikat di dalam file</td><td style="text-align:right;"><b>${duplikatDiFile}</b></td></tr>
+        <tr><td>Duplikat dengan database</td><td style="text-align:right;"><b>${dilewatiDuplikat}</b></td></tr>
         <tr><td><b>Berhasil diimpor</b></td><td style="text-align:right;"><b style="color:#065f46;">${totalInserted}</b></td></tr>
         ${errors ? `<tr><td>Batch gagal</td><td style="text-align:right; color:#dc2626;"><b>${errors}</b></td></tr>` : ''}
       </table>
@@ -1919,14 +1891,11 @@ async function handleDokCSVUpload(ev) {
   ev.target.value = '';
 }
 
-// =========================================================
-// DASHBOARD LAPORAN
-// =========================================================
+// ============ DASHBOARD ============
 async function loadDashboard() {
   const sumEl = document.getElementById('dashSummary');
   sumEl.innerHTML = '<div class="dash-card"><div class="label">Memuat...</div><div class="value">-</div></div>';
 
-  // Ambil semua data sobat (paginasi 1000)
   const pageSize = 1000;
   let all = [];
   let from = 0;
@@ -1944,33 +1913,24 @@ async function loadDashboard() {
     else from += pageSize;
   }
 
-  // Isi dropdown tahun (kalau belum)
   const tahunSel = document.getElementById('dashTahun');
   const years = [...new Set(all.map(d => d.tahun).filter(Boolean))].sort((a, b) => b - a);
   const curTahun = tahunSel.value;
-  if (tahunSel.options.length <= 1 || tahunSel.dataset.yearsChanged) {
-    tahunSel.innerHTML = '<option value="">Semua Tahun</option>' +
-      years.map(y => `<option value="${y}">${y}</option>`).join('');
-    tahunSel.value = curTahun;
-    tahunSel.dataset.yearsChanged = '';
-  }
+  tahunSel.innerHTML = '<option value="">Semua Tahun</option>' +
+    years.map(y => `<option value="${y}">${y}</option>`).join('');
+  tahunSel.value = curTahun;
 
-  // Isi dropdown petugas
   const petugasSel = document.getElementById('dashPetugas');
   const petugasList = [...new Set(all.map(d => d.petugas).filter(Boolean))].sort();
   const curP = petugasSel.value;
-  if (petugasSel.options.length <= 1 || petugasSel.dataset.petugasChanged) {
-    petugasSel.innerHTML = '<option value="">Semua Petugas</option>' +
-      petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
-    petugasSel.value = curP;
-    petugasSel.dataset.petugasChanged = '';
-  }
+  petugasSel.innerHTML = '<option value="">Semua Petugas</option>' +
+    petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  petugasSel.value = curP;
 
   const fTahun = tahunSel.value;
   const fBulan = document.getElementById('dashBulan').value;
   const fPetugas = petugasSel.value;
 
-  // Filter data
   let filtered = all.filter(d => {
     if (fTahun && String(d.tahun) !== String(fTahun)) return false;
     if (fBulan && String(d.bulan) !== String(fBulan)) return false;
@@ -1978,32 +1938,21 @@ async function loadDashboard() {
     return true;
   });
 
-  // Summary
   const totalTarif = filtered.reduce((s, d) => s + (Number(d.tarif) || 0), 0);
+  const totalRs = filtered.reduce((s, d) => s + (Number(d.pendapatan_rs) || 0), 0);
+  const totalPtg = filtered.reduce((s, d) => s + (Number(d.pendapatan_petugas) || 0), 0);
   const jumlahPasien = filtered.length;
-  const rataTarif = jumlahPasien ? totalTarif / jumlahPasien : 0;
 
   sumEl.innerHTML = `
-    <div class="dash-card">
-      <div class="label">Total Tarif</div>
-      <div class="value">${formatRupiah(totalTarif)}</div>
-    </div>
-    <div class="dash-card">
-      <div class="label">Jumlah Pasien</div>
-      <div class="value">${jumlahPasien.toLocaleString('id-ID')}</div>
-    </div>
-    <div class="dash-card">
-      <div class="label">Rata-rata Tarif</div>
-      <div class="value">${formatRupiah(rataTarif)}</div>
-    </div>`;
+    <div class="dash-card"><div class="label">Total Tarif</div><div class="value">${formatRupiah(totalTarif)}</div></div>
+    <div class="dash-card rs"><div class="label">🏥 Pendapatan RS</div><div class="value">${formatRupiah(totalRs)}</div></div>
+    <div class="dash-card ptg"><div class="label">👤 Pendapatan Petugas</div><div class="value">${formatRupiah(totalPtg)}</div></div>
+    <div class="dash-card"><div class="label">Jumlah Pasien</div><div class="value">${jumlahPasien.toLocaleString('id-ID')}</div></div>`;
 
-  // Tentukan sumbu X
-  // - Kalau tahun spesifik → 12 bulan
-  // - Kalau tahun "Semua" → daftar tahun yang ada
   const useMonths = !!fTahun;
   let xLabels, xKeys;
   if (useMonths) {
-    xLabels = BULAN_SINGKAT.slice(1);       // ['Jan','Feb',...]
+    xLabels = BULAN_SINGKAT.slice(1);
     xKeys = [1,2,3,4,5,6,7,8,9,10,11,12];
   } else {
     const allYears = [...new Set(all.map(d => d.tahun).filter(Boolean))].sort((a, b) => a - b);
@@ -2011,123 +1960,102 @@ async function loadDashboard() {
     xKeys = allYears;
   }
 
-  // Group data by petugas
   const petugasToShow = fPetugas ? [fPetugas] : [...new Set(filtered.map(d => d.petugas).filter(Boolean))].sort();
   if (!petugasToShow.length) petugasToShow.push('(tidak ada)');
 
   const colors = ['#059669', '#0891b2', '#7c3aed', '#dc2626', '#ca8a04', '#0ea5e9', '#65a30d'];
 
-  // Untuk setiap petugas, aggregate tarif & jumlah pasien
-  const datasetsTarif = petugasToShow.map((ptg, idx) => {
-    const dataPerX = xKeys.map(k => {
-      if (useMonths) {
-        return filtered.filter(d => d.petugas === ptg && d.bulan === k)
-          .reduce((s, d) => s + (Number(d.tarif) || 0), 0);
-      } else {
-        return filtered.filter(d => d.petugas === ptg && d.tahun === k)
-          .reduce((s, d) => s + (Number(d.tarif) || 0), 0);
-      }
+  function buildDataset(field, mode) {
+    return petugasToShow.map((ptg, idx) => {
+      const dataPerX = xKeys.map(k => {
+        const rows = useMonths
+          ? filtered.filter(d => d.petugas === ptg && d.bulan === k)
+          : filtered.filter(d => d.petugas === ptg && d.tahun === k);
+        if (mode === 'count') return rows.length;
+        return rows.reduce((s, d) => s + (Number(d[field]) || 0), 0);
+      });
+      return {
+        label: ptg,
+        data: dataPerX,
+        borderColor: colors[idx % colors.length],
+        backgroundColor: colors[idx % colors.length] + '20',
+        borderWidth: 3, tension: 0.35, fill: true,
+        pointRadius: 5, pointHoverRadius: 8,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: colors[idx % colors.length],
+        pointBorderWidth: 3
+      };
     });
-    return {
-      label: ptg,
-      data: dataPerX,
-      borderColor: colors[idx % colors.length],
-      backgroundColor: colors[idx % colors.length] + '20',
-      borderWidth: 3,
-      tension: 0.35,
-      fill: true,
-      pointRadius: 5,
-      pointHoverRadius: 8,
-      pointBackgroundColor: '#fff',
-      pointBorderColor: colors[idx % colors.length],
-      pointBorderWidth: 3
-    };
-  });
+  }
 
-  const datasetsJumlah = petugasToShow.map((ptg, idx) => {
-    const dataPerX = xKeys.map(k => {
-      if (useMonths) return filtered.filter(d => d.petugas === ptg && d.bulan === k).length;
-      else return filtered.filter(d => d.petugas === ptg && d.tahun === k).length;
-    });
-    return {
-      label: ptg,
-      data: dataPerX,
-      borderColor: colors[idx % colors.length],
-      backgroundColor: colors[idx % colors.length] + '20',
-      borderWidth: 3, tension: 0.35, fill: true,
-      pointRadius: 5, pointHoverRadius: 8,
-      pointBackgroundColor: '#fff', pointBorderColor: colors[idx % colors.length], pointBorderWidth: 3
-    };
-  });
+  const dsTarif = buildDataset('tarif');
+  const dsRs = buildDataset('pendapatan_rs');
+  const dsPtg = buildDataset('pendapatan_petugas');
+  const dsJumlah = buildDataset(null, 'count');
 
-  // Judul chart
   const tahunLabel = fTahun || 'Semua Tahun';
   const bulanLabel = fBulan ? ` · ${BULAN_NAMA[Number(fBulan)]}` : '';
   const petugasLabel = fPetugas ? ` · ${fPetugas}` : '';
   document.getElementById('chartTitle').textContent = `💰 Total Tarif — ${tahunLabel}${bulanLabel}${petugasLabel}`;
+  document.getElementById('chartTitleRs').textContent = `🏥 Pendapatan RS — ${tahunLabel}${bulanLabel}${petugasLabel}`;
+  document.getElementById('chartTitlePtg').textContent = `👤 Pendapatan Petugas — ${tahunLabel}${bulanLabel}${petugasLabel}`;
   document.getElementById('chartTitle2').textContent = `👥 Jumlah Pasien — ${tahunLabel}${bulanLabel}${petugasLabel}`;
 
-  // Destroy chart lama
   if (chartTarifInstance) { chartTarifInstance.destroy(); chartTarifInstance = null; }
   if (chartJumlahInstance) { chartJumlahInstance.destroy(); chartJumlahInstance = null; }
+  if (chartRsInstance) { chartRsInstance.destroy(); chartRsInstance = null; }
+  if (chartPtgInstance) { chartPtgInstance.destroy(); chartPtgInstance = null; }
 
-  const commonOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          font: { family: 'Manrope', size: 12, weight: '700' },
-          color: '#064e3b',
-          usePointStyle: true,
-          padding: 14
+  function commonOpts(isCurrency) {
+    const o = {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            font: { family: 'Manrope', size: 12, weight: '700' },
+            color: '#064e3b', usePointStyle: true, padding: 14
+          }
+        },
+        tooltip: {
+          backgroundColor: '#052e16',
+          titleFont: { family: 'Manrope', size: 13, weight: '800' },
+          bodyFont: { family: 'Manrope', size: 12, weight: '600' },
+          padding: 12, cornerRadius: 8, displayColors: true
         }
       },
-      tooltip: {
-        backgroundColor: '#052e16',
-        titleFont: { family: 'Manrope', size: 13, weight: '800' },
-        bodyFont: { family: 'Manrope', size: 12, weight: '600' },
-        padding: 12,
-        cornerRadius: 8,
-        displayColors: true
+      scales: {
+        x: {
+          grid: { color: '#d1fae5' },
+          ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: '#d1fae5' },
+          ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' }
+        }
       }
-    },
-    scales: {
-      x: {
-        grid: { color: '#d1fae5' },
-        ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' }
-      },
-      y: {
-        beginAtZero: true,
-        grid: { color: '#d1fae5' },
-        ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' }
-      }
+    };
+    if (isCurrency) {
+      o.plugins.tooltip.callbacks = { label: (ctx) => `${ctx.dataset.label}: ${formatRupiah(ctx.parsed.y)}` };
+      o.scales.y.ticks.callback = (v) => formatRupiahShort(v);
     }
-  };
-
-  // Tarif chart — format tooltip sebagai Rupiah
-  const optsTarif = JSON.parse(JSON.stringify(commonOptions));
-  optsTarif.plugins.tooltip.callbacks = {
-    label: (ctx) => `${ctx.dataset.label}: ${formatRupiah(ctx.parsed.y)}`
-  };
-  optsTarif.scales.y.ticks.callback = (v) => {
-    if (v >= 1000000) return 'Rp ' + (v / 1000000).toFixed(1) + 'jt';
-    if (v >= 1000) return 'Rp ' + (v / 1000).toFixed(0) + 'rb';
-    return 'Rp ' + v;
-  };
+    return o;
+  }
 
   chartTarifInstance = new Chart(document.getElementById('chartTarif'), {
-    type: 'line',
-    data: { labels: xLabels, datasets: datasetsTarif },
-    options: optsTarif
+    type: 'line', data: { labels: xLabels, datasets: dsTarif }, options: commonOpts(true)
   });
-
+  chartRsInstance = new Chart(document.getElementById('chartRs'), {
+    type: 'line', data: { labels: xLabels, datasets: dsRs }, options: commonOpts(true)
+  });
+  chartPtgInstance = new Chart(document.getElementById('chartPtg'), {
+    type: 'line', data: { labels: xLabels, datasets: dsPtg }, options: commonOpts(true)
+  });
   chartJumlahInstance = new Chart(document.getElementById('chartJumlah'), {
-    type: 'line',
-    data: { labels: xLabels, datasets: datasetsJumlah },
-    options: commonOptions
+    type: 'line', data: { labels: xLabels, datasets: dsJumlah }, options: commonOpts(false)
   });
 }
 
