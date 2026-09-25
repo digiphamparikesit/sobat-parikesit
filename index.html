@@ -19,14 +19,16 @@
     --bg:#ecfdf5; --ink:#052e16;
   }
   * { box-sizing:border-box; font-family:'Manrope',system-ui,-apple-system,sans-serif; font-weight:600; }
-  body { margin:0; background:var(--bg); color:var(--ink); }
+  html, body { height:100%; margin:0; background:var(--bg); color:var(--ink); overflow:hidden; }
   .hidden { display:none !important; }
+
   #loginPage { min-height:100vh; display:flex; align-items:center; justify-content:center;
     background:linear-gradient(135deg,#052e16 0%,#065f46 50%,#047857 100%); padding:20px; }
   .login-box { background:#fff; padding:36px 32px; border-radius:16px;
     box-shadow:0 20px 60px rgba(0,0,0,.35); width:100%; max-width:380px; border-top:5px solid var(--green-600); }
   .login-box h1 { margin:0 0 6px; color:var(--green-800); font-size:24px; font-weight:800; letter-spacing:-.5px; }
   .login-box p { margin:0 0 26px; color:#64748b; font-size:13px; }
+
   input,textarea,button,select { font-size:14px; font-family:inherit; }
   input,textarea,select { padding:11px 14px; border:2px solid var(--green-100); border-radius:9px;
     outline:none; background:#fff; color:var(--ink); font-weight:600; }
@@ -47,9 +49,17 @@
   button.updown { background:var(--green-100); color:var(--green-800); padding:4px 8px; font-size:13px; font-weight:800; }
   button.updown:hover { background:var(--green-400); color:#fff; }
   button:disabled { opacity:.35; cursor:not-allowed; }
-  #appPage { display:flex; min-height:100vh; }
-  .sidebar { width:250px; background:linear-gradient(180deg,#052e16 0%,#064e3b 100%);
-    color:#d1fae5; padding:24px 14px; flex-shrink:0; display:flex; flex-direction:column; }
+
+  /* ========== LAYOUT UTAMA ========== */
+  #appPage { display:flex; height:100vh; overflow:hidden; }
+
+  .sidebar {
+    width:250px; flex-shrink:0;
+    background:linear-gradient(180deg,#052e16 0%,#064e3b 100%);
+    color:#d1fae5; padding:24px 14px;
+    display:flex; flex-direction:column;
+    height:100vh; overflow-y:auto;
+  }
   .sidebar h2 { color:#fff; font-size:17px; margin:0 0 4px 10px; font-weight:800; letter-spacing:-.3px; }
   .sidebar small { display:block; margin:0 0 22px 10px; color:#6ee7b7; font-size:11px; letter-spacing:1px; }
   .nav-item { padding:11px 14px; border-radius:10px; cursor:pointer; font-size:13.5px; margin-bottom:4px;
@@ -59,11 +69,30 @@
   .sidebar .user-info { margin-top:auto; padding-top:20px; border-top:1px solid rgba(16,185,129,.25); font-size:12px; }
   .sidebar .user-info b { color:#fff; display:block; margin-bottom:8px; font-weight:700; font-size:14px; }
   .sidebar .user-info .badge { background:var(--green-500); color:#052e16; }
-  .main { flex:1; padding:28px; overflow-x:hidden; min-width:0; }
+
+  .main {
+    flex:1; min-width:0;
+    height:100vh; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+
+  /* Halaman: punya bagian fixed + bagian scroll */
+  .page { flex:1; display:flex; flex-direction:column; overflow:hidden; padding:24px 28px 0; min-height:0; }
+  .page-fixed { flex-shrink:0; }
+  .page-scroll {
+    flex:1; overflow-y:auto; overflow-x:auto;
+    padding-bottom:24px;
+    margin-right:-10px; padding-right:10px; /* kompensasi scrollbar */
+    -webkit-overflow-scrolling:touch;
+  }
+  /* Khusus peta: tidak scroll, langsung isi sisa */
+  .page-map-fill { flex:1; overflow:hidden; min-height:0; padding-bottom:20px; }
+
   .main h1 { margin:0 0 22px; font-size:24px; font-weight:800; letter-spacing:-.4px; color:var(--green-900); }
   .toolbar { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
   .toolbar input,.toolbar select { width:auto; margin:0; }
   .toolbar input[type=text] { min-width:220px; }
+
   .loc-panel { background:#fff; border:2px solid var(--green-100); border-radius:12px;
     padding:16px 18px; margin-bottom:16px; display:flex; gap:14px; align-items:center;
     flex-wrap:wrap; box-shadow:0 2px 8px rgba(5,46,22,.06); }
@@ -76,14 +105,17 @@
   .loc-panel.err { border-color:#fca5a5; background:#fef2f2; }
   .loc-panel.wait { border-color:#fde68a; background:#fefce8; }
   .loc-panel .loc-actions { display:flex; gap:6px; flex-wrap:wrap; }
+
   .table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
   table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px;
     overflow:hidden; box-shadow:0 2px 8px rgba(5,46,22,.08); min-width:820px; }
   th,td { padding:12px 14px; text-align:left; border-bottom:1px solid var(--green-100); font-size:13px; vertical-align:top; }
-  th { background:var(--green-50); font-weight:800; color:var(--green-800); text-transform:uppercase; font-size:11px; letter-spacing:.8px; }
+  th { background:var(--green-50); font-weight:800; color:var(--green-800); text-transform:uppercase;
+    font-size:11px; letter-spacing:.8px; position:sticky; top:0; z-index:2; }
   tr:last-child td { border-bottom:none; }
   tr:hover td { background:#f7fefb; }
-  .badge { background:var(--green-100); color:var(--green-800); padding:3px 10px; border-radius:999px; font-size:11px; display:inline-block; font-weight:800; }
+  .badge { background:var(--green-100); color:var(--green-800); padding:3px 10px; border-radius:999px;
+    font-size:11px; display:inline-block; font-weight:800; }
   td .actions { display:flex; flex-wrap:wrap; gap:4px; }
   td .actions button,td .actions a button { padding:6px 11px; font-size:12px; }
   .name-link { color:var(--green-800); cursor:pointer; font-weight:700; }
@@ -95,19 +127,16 @@
   .move-input::-webkit-outer-spin-button,.move-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   .move-input[type=number] { -moz-appearance:textfield; }
   .col-aksi { width:1%; white-space:nowrap; }
-  td.cod-cell {
-    background:#fee2e2 !important; color:#991b1b !important; font-weight:800 !important;
-    border-left:4px solid #dc2626;
-  }
+  td.cod-cell { background:#fee2e2 !important; color:#991b1b !important; font-weight:800 !important;
+    border-left:4px solid #dc2626; }
   tr:hover td.cod-cell { background:#fecaca !important; }
-  .cod-badge {
-    display:inline-block; background:#dc2626; color:#fff;
+  .cod-badge { display:inline-block; background:#dc2626; color:#fff;
     font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;
-    margin-right:6px; vertical-align:middle; letter-spacing:.5px;
-  }
+    margin-right:6px; vertical-align:middle; letter-spacing:.5px; }
   .rupiah { font-family:'Manrope',sans-serif; font-weight:800; color:#065f46; white-space:nowrap; }
   .rupiah.rs { color:#0891b2; }
   .rupiah.ptg { color:#7c3aed; }
+
   .pagination {
     display:flex; gap:10px; align-items:center; justify-content:center;
     flex-wrap:wrap; margin:18px 0 8px; padding:14px;
@@ -118,6 +147,7 @@
   .pagination .page-info { font-size:13px; color:var(--green-800); font-weight:700; padding:0 10px; }
   .pagination .page-info b { font-weight:800; color:var(--green-900); font-size:15px; }
   .pagination input.page-jump { width:70px !important; text-align:center; font-weight:700; padding:9px 8px !important; }
+
   .modal-bg { position:fixed; inset:0; background:rgba(5,46,22,.7); display:flex; align-items:center;
     justify-content:center; z-index:1000; padding:16px; backdrop-filter:blur(3px); }
   .modal { background:#fff; padding:26px; border-radius:14px; width:100%; max-width:480px;
@@ -125,7 +155,8 @@
   .modal.modal-wide { max-width:640px; }
   .modal h3 { margin:0 0 18px; font-weight:800; color:var(--green-900); font-size:18px; letter-spacing:-.3px; }
   .modal .row { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
-  .modal label.field-label { display:block; font-size:12px; font-weight:800; color:var(--green-800); margin:6px 0 4px; text-transform:uppercase; letter-spacing:.4px; }
+  .modal label.field-label { display:block; font-size:12px; font-weight:800; color:var(--green-800);
+    margin:6px 0 4px; text-transform:uppercase; letter-spacing:.4px; }
   .geo-status { padding:11px 14px; border-radius:9px; font-size:13px; margin-bottom:14px; font-weight:700; }
   .geo-status.ok { background:var(--green-100); color:var(--green-800); }
   .geo-status.wait { background:#fef9c3; color:#854d0e; }
@@ -137,6 +168,7 @@
   .detail-actions { display:flex; flex-direction:column; gap:9px; margin:18px 0 0; }
   .detail-actions button,.detail-actions a button { width:100%; padding:13px; }
   .info-box { background:var(--green-50); border:1px solid var(--green-100); border-radius:10px; padding:14px; margin:12px 0; }
+  .info-box code { background:#fff; padding:2px 6px; border-radius:4px; font-family:'Courier New',monospace; color:#065f46; }
   .bc-list { border:1px solid var(--green-100); border-radius:10px; max-height:320px; overflow-y:auto; }
   .bc-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid #f1f5f9; }
   .bc-item:last-child { border-bottom:none; }
@@ -161,12 +193,13 @@
   .viewas-banner { background:var(--green-100); border:1px solid var(--green-400); color:var(--green-900);
     padding:12px 16px; border-radius:10px; margin-bottom:14px; font-size:13px; }
   .viewas-banner b { color:var(--green-950); font-weight:800; }
-  .info-box code { background:#fff; padding:2px 6px; border-radius:4px; font-family:'Courier New',monospace; color:#065f46; }
 
-  #mapContainer { height:72vh; min-height:480px; width:100%; border-radius:12px; overflow:hidden;
+  /* MAP */
+  .page-map-fill #mapContainer { width:100%; height:100%; border-radius:12px; overflow:hidden;
     box-shadow:0 2px 12px rgba(5,46,22,.12); border:3px solid #fff; }
   .map-toolbar { background:#fff; border:2px solid var(--green-100); border-radius:12px; padding:12px 14px;
-    display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px; box-shadow:0 2px 8px rgba(5,46,22,.06); }
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px;
+    box-shadow:0 2px 8px rgba(5,46,22,.06); }
   .map-toolbar input[type=text] { flex:1; min-width:200px; margin:0; }
   .map-toolbar .map-info { font-size:13px; color:var(--green-800); font-weight:700;
     padding:6px 12px; background:var(--green-50); border-radius:8px; white-space:nowrap; }
@@ -187,6 +220,7 @@
   .leaflet-popup-content { margin:12px 14px; }
   .leaflet-popup-tip { box-shadow:0 3px 8px rgba(5,46,22,.2); }
 
+  /* DASHBOARD */
   .dash-filters { background:#fff; border:2px solid var(--green-100); border-radius:12px;
     padding:14px 16px; margin-bottom:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
     box-shadow:0 2px 8px rgba(5,46,22,.06); }
@@ -211,28 +245,36 @@
     padding:18px; box-shadow:0 2px 8px rgba(5,46,22,.06); margin-bottom:16px; position:relative; }
   .chart-box h3 { margin:0 0 14px; font-size:15px; font-weight:800;
     color:var(--green-900); letter-spacing:-.2px; }
-  .chart-box .chart-wrap { position:relative; height:360px; width:100%; }
-  @media (max-width:768px) {
-    .chart-box .chart-wrap { height:280px; }
-  }
+  .chart-box .chart-wrap { position:relative; height:340px; width:100%; }
 
+  /* ============ MOBILE ============ */
   @media (max-width:768px) {
     #appPage { flex-direction:column; }
-    .sidebar { width:100%; padding:14px 10px; position:sticky; top:0; z-index:50; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+    .sidebar {
+      width:100%; height:auto; max-height:36vh;
+      padding:14px 10px; position:relative;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+      overflow-y:auto;
+    }
     .sidebar h2 { font-size:15px; margin:0 0 3px 6px; }
-    .sidebar small { margin:0 0 12px 6px; font-size:10px; }
-    .nav-row { display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; }
+    .sidebar small { margin:0 0 10px 6px; font-size:10px; }
+    .nav-row { display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; }
     .nav-item { flex:0 0 auto; padding:9px 14px; font-size:12px; margin-bottom:0; white-space:nowrap; }
     .sidebar .user-info { margin-top:6px; padding:10px; display:flex; align-items:center; gap:10px;
       flex-wrap:wrap; border-top:1px solid rgba(16,185,129,.2); }
     .sidebar .user-info b { margin:0; font-size:13px; }
-    .sidebar .user-info button { width:auto !important; font-size:11px !important; padding:7px 12px !important; margin:0 !important; margin-left:auto !important; }
-    .main { padding:16px 12px; }
-    .main h1 { font-size:18px; margin-bottom:16px; }
+    .sidebar .user-info button { width:auto !important; font-size:11px !important;
+      padding:7px 12px !important; margin:0 !important; margin-left:auto !important; }
+
+    .main { height:auto; flex:1; }
+    .page { padding:14px 12px 0; }
+    .page-scroll { padding-bottom:16px; margin-right:-6px; padding-right:6px; }
+
+    .main h1 { font-size:18px; margin-bottom:12px; }
     .loc-panel { padding:12px; gap:10px; }
     .loc-panel .loc-actions { width:100%; }
     .loc-panel .loc-actions button { flex:1; font-size:12px; padding:9px 10px; }
-    .toolbar { gap:6px; }
+    .toolbar { gap:6px; margin-bottom:12px; }
     .toolbar input[type=text],.toolbar select { min-width:0; flex:1; }
     table { min-width:640px; }
     th,td { padding:9px 10px; font-size:12px; }
@@ -246,15 +288,19 @@
     .pagination button { padding:9px 14px; font-size:12px; min-width:70px; }
     .pagination .page-info { font-size:12px; padding:0 6px; }
     .pagination input.page-jump { width:60px !important; padding:8px 6px !important; }
-    #mapContainer { height:60vh; min-height:360px; }
     .map-toolbar { padding:10px; }
     .map-toolbar input[type=text] { min-width:0; font-size:13px; padding:9px 12px; }
     .map-toolbar button { padding:9px 12px; font-size:12px; }
     .map-info { font-size:11px !important; }
-    .dash-filters { padding:10px; gap:6px; }
+    .dash-filters { padding:10px; gap:6px; margin-bottom:12px; }
     .dash-filters select { min-width:0; flex:1; font-size:12px; padding:9px 10px; }
+    .dash-summary { gap:8px; margin-bottom:12px; }
     .dash-card { padding:12px 14px; }
     .dash-card .value { font-size:16px; }
+    .chart-box { padding:14px; margin-bottom:12px; }
+    .chart-box .chart-wrap { height:260px; }
+    .page-map-fill { padding-bottom:10px; }
+    .page-map-fill #mapContainer { border-radius:10px; border-width:2px; }
   }
   @media (max-width:420px) {
     .main h1 { font-size:16px; }
@@ -280,7 +326,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.1</small>
+    <small>v3.2</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
@@ -299,179 +345,211 @@
   </div>
 
   <div class="main">
-    <div id="page-queue">
-      <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
-      <div class="loc-panel wait" id="locPanel">
-        <div class="loc-icon">📍</div>
-        <div class="loc-body">
-          <div class="loc-title" id="locTitle">Lokasi Saya Belum Diambil</div>
-          <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> di awal shift.</div>
+    <!-- ============ ANTRIAN ============ -->
+    <div id="page-queue" class="page">
+      <div class="page-fixed">
+        <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
+
+        <div class="loc-panel wait" id="locPanel">
+          <div class="loc-icon">📍</div>
+          <div class="loc-body">
+            <div class="loc-title" id="locTitle">Lokasi Saya Belum Diambil</div>
+            <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> di awal shift.</div>
+          </div>
+          <div class="loc-actions">
+            <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
+            <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
+            <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan Semua</button>
+            <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
+          </div>
         </div>
-        <div class="loc-actions">
-          <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
-          <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
-          <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan Semua</button>
-          <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
+
+        <div class="toolbar" id="queueToolbarAdmin" style="display:none">
+          <input type="date" id="queueDate" onchange="loadQueue()">
+          <select id="queueFilter" onchange="loadQueue()">
+            <option value="all">Semua</option>
+            <option value="unassigned">Belum di-assign</option>
+          </select>
+          <select id="viewAsUser" onchange="onViewAsChange()">
+            <option value="">— Lihat Semua Petugas —</option>
+          </select>
+          <label class="upload-zone" style="padding:9px 14px;margin:0;border-width:1px">
+            📤 Upload CSV
+            <input type="file" accept=".csv" onchange="handleCSVUpload(event)">
+          </label>
+          <button class="danger" onclick="hapusAntrianHariIni()">🗑️ Hapus Tanggal Ini</button>
         </div>
       </div>
-      <div class="toolbar" id="queueToolbarAdmin" style="display:none">
-        <input type="date" id="queueDate" onchange="loadQueue()">
-        <select id="queueFilter" onchange="loadQueue()">
-          <option value="all">Semua</option>
-          <option value="unassigned">Belum di-assign</option>
-        </select>
-        <select id="viewAsUser" onchange="onViewAsChange()">
-          <option value="">— Lihat Semua Petugas —</option>
-        </select>
-        <label class="upload-zone" style="padding:9px 14px;margin:0;border-width:1px">
-          📤 Upload CSV
-          <input type="file" accept=".csv" onchange="handleCSVUpload(event)">
+
+      <div class="page-scroll">
+        <div id="queueTableWrap"></div>
+      </div>
+    </div>
+
+    <!-- ============ DATA PASIEN ============ -->
+    <div id="page-patients" class="page hidden">
+      <div class="page-fixed">
+        <h1>Data Utama Pasien</h1>
+        <div class="toolbar">
+          <input id="searchPatient" placeholder="Cari nama / alamat / no HP..." oninput="onSearchPatient()">
+          <button onclick="openPatientForm()">+ Tambah Pasien</button>
+          <select id="patientPageSize" onchange="onPatientPageSizeChange()" style="width:auto">
+            <option value="50">50 / halaman</option>
+            <option value="100" selected>100 / halaman</option>
+            <option value="200">200 / halaman</option>
+            <option value="500">500 / halaman</option>
+          </select>
+        </div>
+      </div>
+      <div class="page-scroll">
+        <div id="patientsTableWrap"></div>
+        <div id="patientPagination"></div>
+      </div>
+    </div>
+
+    <!-- ============ PETA ============ -->
+    <div id="page-map" class="page hidden">
+      <div class="page-fixed">
+        <h1>🗺️ Peta Pasien</h1>
+        <div class="map-toolbar">
+          <input id="mapSearch" type="text" placeholder="🔍 Ketik nama pasien (tidak harus lengkap)..." oninput="onMapSearchInput()">
+          <button class="ghost" onclick="clearMapSearch()">✖ Reset</button>
+          <div class="map-info" id="mapInfo">Memuat...</div>
+        </div>
+        <div class="map-legend">
+          <span><span class="dot" style="background:#059669;"></span>Pasien biasa</span>
+          <span><span class="dot" style="background:#dc2626;"></span>COD (bayar di tempat)</span>
+          <span style="color:#64748b; font-weight:600;">💡 Klik titik untuk lihat data & tombol rute</span>
+        </div>
+      </div>
+      <div class="page-map-fill">
+        <div id="mapContainer"></div>
+      </div>
+    </div>
+
+    <!-- ============ DATA PASIEN SOBAT ============ -->
+    <div id="page-sobat" class="page hidden">
+      <div class="page-fixed">
+        <h1>💊 Data Pasien Sobat</h1>
+        <div class="toolbar">
+          <input id="searchSobat" placeholder="Cari nama / alamat / no HP..." oninput="onSearchSobat()">
+          <button onclick="openSobatForm()">+ Tambah</button>
+          <select id="sobatFilterBulan" onchange="onSearchSobat()" style="width:auto"></select>
+          <select id="sobatFilterTahun" onchange="onSearchSobat()" style="width:auto"></select>
+          <select id="sobatFilterPetugas" onchange="onSearchSobat()" style="width:auto"></select>
+          <select id="sobatPageSize" onchange="onSobatPageSizeChange()" style="width:auto">
+            <option value="50">50 / hal</option>
+            <option value="100" selected>100 / hal</option>
+            <option value="200">200 / hal</option>
+          </select>
+        </div>
+      </div>
+      <div class="page-scroll">
+        <div id="sobatTableWrap"></div>
+        <div id="sobatPagination"></div>
+      </div>
+    </div>
+
+    <!-- ============ UPLOAD CSV DOK ============ -->
+    <div id="page-uploadDok" class="page hidden">
+      <div class="page-fixed">
+        <h1>📤 Upload CSV Dok</h1>
+      </div>
+      <div class="page-scroll">
+        <div class="info-box" style="max-width:820px;">
+          <p style="margin-top:0"><b>Format CSV (baris pertama = header):</b></p>
+          <div style="background:#fff; padding:12px; border-radius:8px; font-family:'Courier New',monospace;
+            font-size:12px; overflow-x:auto; margin:8px 0; color:#065f46; font-weight:700; line-height:1.7;">
+            nama,alamat,no_hp,tarif(rupiah),pendapatan_rs,pendapatan_petugas,petugas,bulan,tahun<br>
+            A MUSNI,KEL LOA IPUH...,08123456789,150000,90000,60000,SUGENG,Januari,2025<br>
+            BUDI SANTOSO,JL MERDEKA...,08129876543,200000,120000,80000,SANDI,2,2025
+          </div>
+          <ul style="margin:8px 0; padding-left:20px; font-size:13px; line-height:1.75;">
+            <li><b>tarif</b> — total biaya. Boleh <code>150000</code> atau <code>Rp 150.000</code></li>
+            <li><b>pendapatan_rs</b> — bagian RS (opsional, default 0)</li>
+            <li><b>pendapatan_petugas</b> — bagian petugas (opsional, default 0)</li>
+            <li><b>petugas</b> — nama petugas (SUGENG/SANDI/VIONA)</li>
+            <li><b>bulan</b> — angka 1-12 atau nama (Januari, Feb, dst)</li>
+            <li><b>tahun</b> — 4 digit (contoh 2025)</li>
+            <li>Baris duplikat (nama+no_hp+bulan+tahun) otomatis <b>dilewati</b></li>
+          </ul>
+        </div>
+
+        <label class="upload-zone" style="display:block; max-width:820px;">
+          <div style="font-size:32px; margin-bottom:8px;">📄</div>
+          <div style="font-size:15px; font-weight:800;">Klik untuk pilih file CSV</div>
+          <div style="font-size:12px; margin-top:4px; opacity:.8;">atau drag & drop file ke sini</div>
+          <input type="file" accept=".csv" id="dokFileInput" onchange="handleDokCSVUpload(event)">
         </label>
-        <button class="danger" onclick="hapusAntrianHariIni()">🗑️ Hapus Tanggal Ini</button>
+
+        <div id="dokUploadResult" style="max-width:820px; margin-top:16px;"></div>
       </div>
-      <div id="queueTableWrap"></div>
     </div>
 
-    <div id="page-patients" class="hidden">
-      <h1>Data Utama Pasien</h1>
-      <div class="toolbar">
-        <input id="searchPatient" placeholder="Cari nama / alamat / no HP..." oninput="onSearchPatient()">
-        <button onclick="openPatientForm()">+ Tambah Pasien</button>
-        <select id="patientPageSize" onchange="onPatientPageSizeChange()" style="width:auto">
-          <option value="50">50 / halaman</option>
-          <option value="100" selected>100 / halaman</option>
-          <option value="200">200 / halaman</option>
-          <option value="500">500 / halaman</option>
-        </select>
-      </div>
-      <div id="patientsTableWrap"></div>
-      <div id="patientPagination"></div>
-    </div>
-
-    <div id="page-map" class="hidden">
-      <h1>🗺️ Peta Pasien</h1>
-      <div class="map-toolbar">
-        <input id="mapSearch" type="text" placeholder="🔍 Ketik nama pasien (tidak harus lengkap)..." oninput="onMapSearchInput()">
-        <button class="ghost" onclick="clearMapSearch()">✖ Reset</button>
-        <div class="map-info" id="mapInfo">Memuat...</div>
-      </div>
-      <div class="map-legend">
-        <span><span class="dot" style="background:#059669;"></span>Pasien biasa</span>
-        <span><span class="dot" style="background:#dc2626;"></span>COD (bayar di tempat)</span>
-        <span style="color:#64748b; font-weight:600;">💡 Klik titik untuk lihat data & tombol rute</span>
-      </div>
-      <div id="mapContainer"></div>
-    </div>
-
-    <div id="page-sobat" class="hidden">
-      <h1>💊 Data Pasien Sobat</h1>
-      <div class="toolbar">
-        <input id="searchSobat" placeholder="Cari nama / alamat / no HP..." oninput="onSearchSobat()">
-        <button onclick="openSobatForm()">+ Tambah</button>
-        <select id="sobatFilterBulan" onchange="onSearchSobat()" style="width:auto"></select>
-        <select id="sobatFilterTahun" onchange="onSearchSobat()" style="width:auto"></select>
-        <select id="sobatFilterPetugas" onchange="onSearchSobat()" style="width:auto"></select>
-        <select id="sobatPageSize" onchange="onSobatPageSizeChange()" style="width:auto">
-          <option value="50">50 / hal</option>
-          <option value="100" selected>100 / hal</option>
-          <option value="200">200 / hal</option>
-        </select>
-      </div>
-      <div id="sobatTableWrap"></div>
-      <div id="sobatPagination"></div>
-    </div>
-
-    <div id="page-uploadDok" class="hidden">
-      <h1>📤 Upload CSV Dok</h1>
-      <div class="info-box" style="max-width:820px;">
-        <p style="margin-top:0"><b>Format CSV (baris pertama = header):</b></p>
-        <div style="background:#fff; padding:12px; border-radius:8px; font-family:'Courier New',monospace; font-size:12px; overflow-x:auto; margin:8px 0; color:#065f46; font-weight:700; line-height:1.7;">
-          nama,alamat,no_hp,tarif(rupiah),pendapatan_rs,pendapatan_petugas,petugas,bulan,tahun<br>
-          A MUSNI,KEL LOA IPUH...,08123456789,150000,90000,60000,SUGENG,Januari,2025<br>
-          BUDI SANTOSO,JL MERDEKA...,08129876543,200000,120000,80000,SANDI,2,2025
+    <!-- ============ DASHBOARD ============ -->
+    <div id="page-dashboard" class="page hidden">
+      <div class="page-fixed">
+        <h1>📊 Dashboard Laporan</h1>
+        <div class="dash-filters">
+          <label>Tahun</label>
+          <select id="dashTahun" onchange="loadDashboard()"><option value="">Memuat...</option></select>
+          <label>Bulan</label>
+          <select id="dashBulan" onchange="loadDashboard()">
+            <option value="">Semua Bulan</option>
+            <option value="1">Januari</option><option value="2">Februari</option>
+            <option value="3">Maret</option><option value="4">April</option>
+            <option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option>
+            <option value="9">September</option><option value="10">Oktober</option>
+            <option value="11">November</option><option value="12">Desember</option>
+          </select>
+          <label>Petugas</label>
+          <select id="dashPetugas" onchange="loadDashboard()">
+            <option value="">Semua Petugas</option>
+          </select>
+          <button class="ghost" onclick="loadDashboard()">🔄 Refresh</button>
         </div>
-        <ul style="margin:8px 0; padding-left:20px; font-size:13px; line-height:1.75;">
-          <li><b>tarif</b> — total biaya. Boleh <code>150000</code> atau <code>Rp 150.000</code></li>
-          <li><b>pendapatan_rs</b> — bagian RS (opsional, default 0)</li>
-          <li><b>pendapatan_petugas</b> — bagian petugas (opsional, default 0)</li>
-          <li><b>petugas</b> — nama petugas (SUGENG/SANDI/VIONA)</li>
-          <li><b>bulan</b> — angka 1-12 atau nama (Januari, Feb, dst)</li>
-          <li><b>tahun</b> — 4 digit (contoh 2025)</li>
-          <li>Baris duplikat (nama+no_hp+bulan+tahun) otomatis <b>dilewati</b></li>
-        </ul>
+        <div class="dash-summary" id="dashSummary"></div>
       </div>
-
-      <label class="upload-zone" style="display:block; max-width:820px;">
-        <div style="font-size:32px; margin-bottom:8px;">📄</div>
-        <div style="font-size:15px; font-weight:800;">Klik untuk pilih file CSV</div>
-        <div style="font-size:12px; margin-top:4px; opacity:.8;">atau drag & drop file ke sini</div>
-        <input type="file" accept=".csv" id="dokFileInput" onchange="handleDokCSVUpload(event)">
-      </label>
-
-      <div id="dokUploadResult" style="max-width:820px; margin-top:16px;"></div>
-    </div>
-
-    <div id="page-dashboard" class="hidden">
-      <h1>📊 Dashboard Laporan</h1>
-
-      <div class="dash-filters">
-        <label>Tahun</label>
-        <select id="dashTahun" onchange="loadDashboard()"><option value="">Memuat...</option></select>
-        <label>Bulan</label>
-        <select id="dashBulan" onchange="loadDashboard()">
-          <option value="">Semua Bulan</option>
-          <option value="1">Januari</option>
-          <option value="2">Februari</option>
-          <option value="3">Maret</option>
-          <option value="4">April</option>
-          <option value="5">Mei</option>
-          <option value="6">Juni</option>
-          <option value="7">Juli</option>
-          <option value="8">Agustus</option>
-          <option value="9">September</option>
-          <option value="10">Oktober</option>
-          <option value="11">November</option>
-          <option value="12">Desember</option>
-        </select>
-        <label>Petugas</label>
-        <select id="dashPetugas" onchange="loadDashboard()">
-          <option value="">Semua Petugas</option>
-        </select>
-        <button class="ghost" onclick="loadDashboard()">🔄 Refresh</button>
-      </div>
-
-      <div class="dash-summary" id="dashSummary"></div>
-
-      <div class="chart-box">
-        <h3 id="chartTitle">💰 Total Tarif</h3>
-        <div class="chart-wrap"><canvas id="chartTarif"></canvas></div>
-      </div>
-
-      <div class="chart-box">
-        <h3 id="chartTitleRs">🏥 Pendapatan RS</h3>
-        <div class="chart-wrap"><canvas id="chartRs"></canvas></div>
-      </div>
-
-      <div class="chart-box">
-        <h3 id="chartTitlePtg">👤 Pendapatan Petugas</h3>
-        <div class="chart-wrap"><canvas id="chartPtg"></canvas></div>
-      </div>
-
-      <div class="chart-box">
-        <h3 id="chartTitle2">👥 Jumlah Pasien</h3>
-        <div class="chart-wrap"><canvas id="chartJumlah"></canvas></div>
+      <div class="page-scroll">
+        <div class="chart-box">
+          <h3 id="chartTitle">💰 Total Tarif</h3>
+          <div class="chart-wrap"><canvas id="chartTarif"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <h3 id="chartTitleRs">🏥 Pendapatan RS</h3>
+          <div class="chart-wrap"><canvas id="chartRs"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <h3 id="chartTitlePtg">👤 Pendapatan Petugas</h3>
+          <div class="chart-wrap"><canvas id="chartPtg"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <h3 id="chartTitle2">👥 Jumlah Pasien</h3>
+          <div class="chart-wrap"><canvas id="chartJumlah"></canvas></div>
+        </div>
       </div>
     </div>
 
-    <div id="page-history" class="hidden">
-      <h1>Riwayat Kunjungan</h1>
-      <button class="ghost" onclick="loadHistory()" style="margin-bottom:14px">🔄 Refresh</button>
-      <div id="historyTableWrap"></div>
+    <!-- ============ RIWAYAT ============ -->
+    <div id="page-history" class="page hidden">
+      <div class="page-fixed">
+        <h1>Riwayat Kunjungan</h1>
+        <button class="ghost" onclick="loadHistory()" style="margin-bottom:14px">🔄 Refresh</button>
+      </div>
+      <div class="page-scroll">
+        <div id="historyTableWrap"></div>
+      </div>
     </div>
 
-    <div id="page-users" class="hidden">
-      <h1>Daftar User</h1>
-      <div id="usersTableWrap"></div>
+    <!-- ============ USER ============ -->
+    <div id="page-users" class="page hidden">
+      <div class="page-fixed">
+        <h1>Daftar User</h1>
+      </div>
+      <div class="page-scroll">
+        <div id="usersTableWrap"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -504,7 +582,6 @@
   </div>
 </div>
 
-<!-- Modal form Sobat -->
 <div id="sobatFormModal" class="modal-bg hidden">
   <div class="modal">
     <h3 id="sobatFormTitle">Tambah Pasien Sobat</h3>
@@ -518,24 +595,16 @@
     <label class="field-label">Pendapatan Petugas (Rp)</label>
     <input id="sfPtg" type="number" placeholder="Contoh: 60000">
     <label class="field-label">Petugas</label>
-    <select id="sfPetugas">
-      <option value="">— Pilih Petugas —</option>
-    </select>
+    <select id="sfPetugas"><option value="">— Pilih Petugas —</option></select>
     <label class="field-label">Bulan</label>
     <select id="sfBulan">
       <option value="">— Pilih Bulan —</option>
-      <option value="1">Januari</option>
-      <option value="2">Februari</option>
-      <option value="3">Maret</option>
-      <option value="4">April</option>
-      <option value="5">Mei</option>
-      <option value="6">Juni</option>
-      <option value="7">Juli</option>
-      <option value="8">Agustus</option>
-      <option value="9">September</option>
-      <option value="10">Oktober</option>
-      <option value="11">November</option>
-      <option value="12">Desember</option>
+      <option value="1">Januari</option><option value="2">Februari</option>
+      <option value="3">Maret</option><option value="4">April</option>
+      <option value="5">Mei</option><option value="6">Juni</option>
+      <option value="7">Juli</option><option value="8">Agustus</option>
+      <option value="9">September</option><option value="10">Oktober</option>
+      <option value="11">November</option><option value="12">Desember</option>
     </select>
     <label class="field-label">Tahun</label>
     <input id="sfTahun" type="number" placeholder="Contoh: 2025">
@@ -689,7 +758,6 @@ function parseCSV(text) {
   });
 }
 
-// ============ AUTH ============
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
@@ -746,7 +814,7 @@ function showPage(page) {
       initMap();
       if (mapInstance) mapInstance.invalidateSize();
       renderMapMarkers();
-    }, 120);
+    }, 150);
   }
   if (page === 'sobat') loadSobatPatients();
   if (page === 'dashboard') loadDashboard();
@@ -811,10 +879,7 @@ function renderMapMarkers() {
     ? `<b>${list.length}</b> hasil untuk "${esc(q)}"${truncated ? ` (max ${MAX_MARKERS})` : ''}`
     : `<b>${list.length}</b> pasien berlokasi${truncated ? ` (max ${MAX_MARKERS})` : ''}`;
   markerLayer.clearLayers();
-  if (!displayed.length) {
-    if (q) mapInstance.setView([-0.43, 116.97], 12);
-    return;
-  }
+  if (!displayed.length) { if (q) mapInstance.setView([-0.43, 116.97], 12); return; }
   const bounds = [];
   displayed.forEach(p => {
     const lat = p.latitude, lng = p.longitude;
@@ -1625,7 +1690,7 @@ function renderSobatPatients() {
 
   if (!total) {
     wrap.innerHTML = `<p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
-      Total: <b>${sobatCache.length}</b> baris · Tidak ada hasil untuk filter saat ini.</p>
+      Total: <b>${sobatCache.length}</b> baris · Tidak ada hasil.</p>
       <div class="empty">Belum ada data. Upload CSV Dok atau tambah manual.</div>`;
     pagEl.innerHTML = '';
     return;
@@ -1638,7 +1703,7 @@ function renderSobatPatients() {
   wrap.innerHTML = `
     <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
       Total: <b>${sobatCache.length}</b> · Filter: <b>${total}</b>
-      · Total Tarif: <span class="rupiah">${formatRupiah(totalTarif)}</span>
+      · Tarif: <span class="rupiah">${formatRupiah(totalTarif)}</span>
       · RS: <span class="rupiah rs">${formatRupiah(totalRs)}</span>
       · Petugas: <span class="rupiah ptg">${formatRupiah(totalPtg)}</span>
       · Menampilkan <b>${startIdx+1}–${endIdx}</b>
@@ -1773,7 +1838,6 @@ async function handleDokCSVUpload(ev) {
     ev.target.value = ''; return;
   }
 
-  // Deteksi kolom secara fleksibel
   const tarifKey = headers.find(h => h.startsWith('tarif')) || 'tarif';
   const rsKey = headers.find(h => h === 'pendapatan_rs' || h === 'rs' || h.startsWith('pendapatan_rs')) || null;
   const ptgKey = headers.find(h => h === 'pendapatan_petugas' || h.startsWith('pendapatan_petugas')) || null;
@@ -1787,7 +1851,6 @@ async function handleDokCSVUpload(ev) {
     ev.target.value = ''; return;
   }
 
-  // Dedupe internal file
   const seen = new Set();
   const uniqueRows = [];
   let duplikatDiFile = 0;
@@ -1800,7 +1863,6 @@ async function handleDokCSVUpload(ev) {
     uniqueRows.push(r);
   }
 
-  // Cek duplikat di DB
   const tahunBulanPairs = new Set();
   uniqueRows.forEach(r => {
     const t = parseTahun(tahunKey ? r[tahunKey] : null);
