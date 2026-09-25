@@ -1920,85 +1920,100 @@ async function handleDokCSVUpload(ev) {
 // ============ DASHBOARD ============
   async function loadDashboard() {
   const sumEl = document.getElementById('dashSummary');
-  sumEl.innerHTML = '<div class="dash-card" style="grid-column:1/-1;"><div class="label">Memuat data...</div><div class="value">Mohon tunggu, sedang membaca ribuan baris data...</div></div>';
+  sumEl.innerHTML = '<div class="dash-card" style="grid-column:1/-1;"><div class="label">Memuat...</div><div class="value">Menghitung di server...</div></div>';
 
-  const pageSize = 1000;
-  let all = [];
-  let from = 0;
-  let keep = true;
-  let guard = 0;
-  while (keep && guard < 300) {
-    guard++;
-    const { data, error } = await sb.from('patients_sobat').select('*')
-      .order('tahun', { ascending: false }).order('bulan', { ascending: false })
-      .range(from, from + pageSize - 1);
-    if (error) { alert('Gagal: ' + error.message); return; }
-    const batch = data || [];
-    all = all.concat(batch);
-    if (batch.length < pageSize) keep = false;
-    else from += pageSize;
-  }
+  // ---- Ambil daftar tahun & petugas untuk dropdown (paralel) ----
+  const [tahunRes, petugasRes] = await Promise.all([
+    sb.rpc('dashboard_tahun_list'),
+    sb.rpc('dashboard_petugas_list')
+  ]);
 
   const tahunSel = document.getElementById('dashTahun');
-  const years = [...new Set(all.map(d => d.tahun).filter(Boolean))].sort((a, b) => b - a);
   const curTahun = tahunSel.value;
+  const years = (tahunRes.data || []).map(r => r.tahun);
   tahunSel.innerHTML = '<option value="">Semua Tahun</option>' +
     years.map(y => `<option value="${y}">${y}</option>`).join('');
   tahunSel.value = curTahun;
 
   const petugasSel = document.getElementById('dashPetugas');
-  const petugasList = [...new Set(all.map(d => d.petugas).filter(Boolean))].sort();
   const curP = petugasSel.value;
+  const petugasList = (petugasRes.data || []).map(r => r.petugas);
   petugasSel.innerHTML = '<option value="">Semua Petugas</option>' +
     petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
   petugasSel.value = curP;
 
-  const fTahun = tahunSel.value;
-  const fBulan = document.getElementById('dashBulan').value;
-  const fPetugas = petugasSel.value;
+  // ---- Filter aktif ----
+  const fTahun = tahunSel.value ? parseInt(tahunSel.value, 10) : null;
+  const fBulan = document.getElementById('dashBulan').value ? parseInt(document.getElementById('dashBulan').value, 10) : null;
+  const fPetugas = petugasSel.value || null;
 
-  let filtered = all.filter(d => {
-    if (fTahun && String(d.tahun) !== String(fTahun)) return false;
-    if (fBulan && String(d.bulan) !== String(fBulan)) return false;
-    if (fPetugas && d.petugas !== fPetugas) return false;
-    return true;
-  });
+  // ---- Ambil summary + chart data (paralel) ----
+  const [sumRes, chartRes] = await Promise.all([
+    sb.rpc('dashboard_summary', { p_tahun: fTahun, p_bulan: fBulan, p_petugas: fPetugas }),
+    sb.rpc('dashboard_chart',   { p_tahun: fTahun, p_bulan: fBulan, p_petugas: fPetugas })
+  ]);
 
-  const totalTarif = filtered.reduce((s, d) => s + (Number(d.tarif) || 0), 0);
-  const totalRs = filtered.reduce((s, d) => s + (Number(d.pendapatan_rs) || 0), 0);
-  const totalPtg = filtered.reduce((s, d) => s + (Number(d.pendapatan_petugas) || 0), 0);
-  const jumlahPasien = filtered.length;
+  if (sumRes.error) { alert('Gagal ringkasan: ' + sumRes.error.message); return; }
+  if (chartRes.error) { alert('Gagal grafik: ' + chartRes.error.message); return; }
 
+  const summary = (sumRes.data && sumRes.data[0]) || { total_tarif: 0, total_rs: 0, total_ptg: 0, jumlah_pasien: 0 };
+  const chartData = chartRes.data || [];
+
+  // ---- Render kartu ringkasan ----
   sumEl.innerHTML = `
-    <div class="dash-card"><div class="label">Total Tarif</div><div class="value">${formatRupiah(totalTarif)}</div></div>
-    <div class="dash-card rs"><div class="label">🏥 Pendapatan RS</div><div class="value">${formatRupiah(totalRs)}</div></div>
-    <div class="dash-card ptg"><div class="label">👤 Pendapatan Petugas</div><div class="value">${formatRupiah(totalPtg)}</div></div>
-    <div class="dash-card"><div class="label">Jumlah Pasien</div><div class="value">${jumlahPasien.toLocaleString('id-ID')}</div></div>`;
+    <div class="dash-card"><div class="label">Total Tarif</div><div class="value">${formatRupiah(summary.total_tarif)}</div></div>
+    <div class="dash-card rs"><div class="label">🏥 Pendapatan RS</div><div class="value">${formatRupiah(summary.total_rs)}</div></div>
+    <div class="dash-card ptg"><div class="label">👤 Pendapatan Petugas</div><div class="value">${formatRupiah(summary.total_ptg)}</div></div>
+    <div class="dash-card"><div class="label">Jumlah Pasien</div><div class="value">${Number(summary.jumlah_pasien).toLocaleString('id-ID')}</div></div>`;
 
+  // ---- Bangun sumbu X ----
   const useMonths = !!fTahun;
   let xLabels, xKeys;
   if (useMonths) {
     xLabels = BULAN_SINGKAT.slice(1);
     xKeys = [1,2,3,4,5,6,7,8,9,10,11,12];
   } else {
-    const allYears = [...new Set(all.map(d => d.tahun).filter(Boolean))].sort((a, b) => a - b);
+    const allYears = [...new Set(chartData.map(r => r.tahun).filter(Boolean))].sort((a, b) => a - b);
     xLabels = allYears.map(String);
     xKeys = allYears;
   }
 
-  const petugasToShow = fPetugas ? [fPetugas] : [...new Set(filtered.map(d => d.petugas).filter(Boolean))].sort();
+  const petugasToShow = fPetugas ? [fPetugas] : [...new Set(chartData.map(r => r.petugas).filter(Boolean))].sort();
   if (!petugasToShow.length) petugasToShow.push('(tidak ada)');
+
+  // ---- Pivot lookup ----
+  const lookup = {};
+  chartData.forEach(r => {
+    const key = `${r.petugas}|${r.tahun}|${r.bulan}`;
+    if (!lookup[key]) lookup[key] = { tarif: 0, rs: 0, ptg: 0, jumlah: 0 };
+    lookup[key].tarif += Number(r.total_tarif || 0);
+    lookup[key].rs += Number(r.total_rs || 0);
+    lookup[key].ptg += Number(r.total_ptg || 0);
+    lookup[key].jumlah += Number(r.jumlah_pasien || 0);
+  });
+
+  function aggregate(ptg, xKey) {
+    if (useMonths) {
+      const key = `${ptg}|${fTahun}|${xKey}`;
+      return lookup[key] || { tarif: 0, rs: 0, ptg: 0, jumlah: 0 };
+    } else {
+      let t = 0, r = 0, p = 0, j = 0;
+      for (let b = 1; b <= 12; b++) {
+        const key = `${ptg}|${xKey}|${b}`;
+        const v = lookup[key];
+        if (v) { t += v.tarif; r += v.rs; p += v.ptg; j += v.jumlah; }
+      }
+      return { tarif: t, rs: r, ptg: p, jumlah: j };
+    }
+  }
 
   const colors = ['#059669', '#0891b2', '#7c3aed', '#dc2626', '#ca8a04', '#0ea5e9', '#65a30d'];
 
   function buildDataset(field, mode) {
     return petugasToShow.map((ptg, idx) => {
       const dataPerX = xKeys.map(k => {
-        const rows = useMonths
-          ? filtered.filter(d => d.petugas === ptg && d.bulan === k)
-          : filtered.filter(d => d.petugas === ptg && d.tahun === k);
-        if (mode === 'count') return rows.length;
-        return rows.reduce((s, d) => s + (Number(d[field]) || 0), 0);
+        const agg = aggregate(ptg, k);
+        return mode === 'count' ? agg.jumlah : agg[field];
       });
       return {
         label: ptg,
@@ -2015,8 +2030,8 @@ async function handleDokCSVUpload(ev) {
   }
 
   const dsTarif = buildDataset('tarif');
-  const dsRs = buildDataset('pendapatan_rs');
-  const dsPtg = buildDataset('pendapatan_petugas');
+  const dsRs = buildDataset('rs');
+  const dsPtg = buildDataset('ptg');
   const dsJumlah = buildDataset(null, 'count');
 
   const tahunLabel = fTahun || 'Semua Tahun';
@@ -2053,15 +2068,10 @@ async function handleDokCSVUpload(ev) {
         }
       },
       scales: {
-        x: {
-          grid: { color: '#d1fae5' },
-          ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' }
-        },
-        y: {
-          beginAtZero: true,
-          grid: { color: '#d1fae5' },
-          ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' }
-        }
+        x: { grid: { color: '#d1fae5' },
+             ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' } },
+        y: { beginAtZero: true, grid: { color: '#d1fae5' },
+             ticks: { font: { family: 'Manrope', size: 11, weight: '700' }, color: '#065f46' } }
       }
     };
     if (isCurrency) {
