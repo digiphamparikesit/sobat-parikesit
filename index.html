@@ -189,7 +189,15 @@
   .map-legend .dot { display: inline-block; width: 12px; height: 12px;
     border-radius: 50%; margin-right: 5px; vertical-align: middle; border: 2px solid #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,.3); }
-
+ 
+  /* Marker COD berdenyut */
+  @keyframes pulseRed {
+    0% { filter: drop-shadow(0 0 0 rgba(220,38,38,.9)); }
+    70% { filter: drop-shadow(0 0 8px rgba(220,38,38,.6)); }
+    100% { filter: drop-shadow(0 0 0 rgba(220,38,38,0)); }
+  }
+  .cod-marker { animation: pulseRed 1.8s infinite; }
+  .normal-marker { filter: drop-shadow(0 1px 3px rgba(5,46,22,.4)); }
   /* Popup Leaflet override */
   .leaflet-popup-content-wrapper {
     border-radius: 12px; padding: 4px;
@@ -558,6 +566,11 @@ function initMap() {
     maxZoom: 19
   }).addTo(mapInstance);
   markerLayer = L.layerGroup().addTo(mapInstance);
+
+  // Perbaiki ukuran saat window di-resize
+  window.addEventListener('resize', () => {
+    if (mapInstance) setTimeout(() => mapInstance.invalidateSize(), 200);
+  });
 }
 
 function onMapSearchInput() {
@@ -578,14 +591,17 @@ function renderMapMarkers() {
   const info = document.getElementById('mapInfo');
 
   // Filter pasien yang punya koordinat valid
-  let list = patientsCache.filter(p =>
-    p.latitude != null && p.longitude != null &&
-    !isNaN(parseFloat(p.latitude)) && !isNaN(parseFloat(p.longitude))
-  );
+  let list = patientsCache.filter(p => {
+    const lat = parseFloat(p.latitude);
+    const lng = parseFloat(p.longitude);
+    return !isNaN(lat) && !isNaN(lng) && !(lat === 0 && lng === 0);
+  });
 
   if (q) {
     list = list.filter(p => (p.nama || '').toLowerCase().includes(q));
   }
+
+  console.log('[Map] total patients:', patientsCache.length, '| with coords:', list.length, '| query:', q);
 
   const MAX_MARKERS = 800;
   const truncated = list.length > MAX_MARKERS;
@@ -598,9 +614,7 @@ function renderMapMarkers() {
   markerLayer.clearLayers();
 
   if (!displayed.length) {
-    if (q) {
-      mapInstance.setView([-0.43, 116.97], 12);
-    }
+    if (q) mapInstance.setView([-0.43, 116.97], 12);
     return;
   }
 
@@ -609,24 +623,22 @@ function renderMapMarkers() {
     const lat = parseFloat(p.latitude);
     const lng = parseFloat(p.longitude);
     const cod = hasCOD(p.alamat);
+    const color = cod ? '#dc2626' : '#059669';
+
+    // Pakai circleMarker — lebih reliable dari divIcon
+    const marker = L.circleMarker([lat, lng], {
+      radius: 9,
+      fillColor: color,
+      color: '#fff',
+      weight: 3,
+      opacity: 1,
+      fillOpacity: 1,
+      className: cod ? 'cod-marker' : 'normal-marker'
+    });
+
     const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
     const waUrl = p.no_hp ? `https://wa.me/${normalizePhone(p.no_hp)}` : '';
 
-    const icon = L.divIcon({
-      className: 'pt-marker',
-      html: `<div style="
-        background:${cod ? '#dc2626' : '#059669'};
-        width:22px;height:22px;border-radius:50%;
-        border:3px solid #fff;
-        box-shadow:0 2px 6px rgba(0,0,0,.35);
-        ${cod ? 'animation:pulseRed 1.8s infinite;' : ''}
-      "></div>`,
-      iconSize: [22, 22],
-      iconAnchor: [11, 11],
-      popupAnchor: [0, -12]
-    });
-
-    const marker = L.marker([lat, lng], { icon });
     marker.bindPopup(`
       <div style="font-family:'Manrope',sans-serif; min-width:230px;">
         <div style="font-weight:800; font-size:14px; color:#064e3b; margin-bottom:8px; line-height:1.3;">
@@ -651,17 +663,30 @@ function renderMapMarkers() {
         </div>
       </div>
     `);
+
     markerLayer.addLayer(marker);
     bounds.push([lat, lng]);
   });
 
-  // Auto-fit
-  if (bounds.length === 1) {
-    mapInstance.setView(bounds[0], 16);
-  } else if (bounds.length > 1) {
-    if (q || !mapInitialized) {
-      mapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
-      mapInitialized = true;
+  console.log('[Map] markers added:', bounds.length, '| first:', bounds[0]);
+
+  // Auto zoom ke marker
+  if (bounds.length >= 1) {
+    try {
+      if (bounds.length === 1) {
+        mapInstance.setView(bounds[0], 16);
+      } else {
+        // Cek apakah semua titik sama (keluarga dengan alamat sama)
+        const allSame = bounds.every(b => b[0] === bounds[0][0] && b[1] === bounds[0][1]);
+        if (allSame) {
+          mapInstance.setView(bounds[0], 16);
+        } else {
+          mapInstance.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+        }
+      }
+    } catch (e) {
+      console.error('[Map] zoom error:', e);
+      mapInstance.setView(bounds[0], 14);
     }
   }
 }
