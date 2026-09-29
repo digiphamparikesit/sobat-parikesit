@@ -50,7 +50,6 @@
   button.updown:hover { background:var(--green-400); color:#fff; }
   button:disabled { opacity:.35; cursor:not-allowed; }
 
-  /* ========== LAYOUT UTAMA ========== */
   #appPage { display:flex; height:100vh; overflow:hidden; }
 
   .sidebar {
@@ -76,16 +75,14 @@
     display:flex; flex-direction:column;
   }
 
-  /* Halaman: punya bagian fixed + bagian scroll */
   .page { flex:1; display:flex; flex-direction:column; overflow:hidden; padding:24px 28px 0; min-height:0; }
   .page-fixed { flex-shrink:0; }
   .page-scroll {
     flex:1; overflow-y:auto; overflow-x:auto;
     padding-bottom:24px;
-    margin-right:-10px; padding-right:10px; /* kompensasi scrollbar */
+    margin-right:-10px; padding-right:10px;
     -webkit-overflow-scrolling:touch;
   }
-  /* Khusus peta: tidak scroll, langsung isi sisa */
   .page-map-fill { flex:1; overflow:hidden; min-height:0; padding-bottom:20px; }
 
   .main h1 { margin:0 0 22px; font-size:24px; font-weight:800; letter-spacing:-.4px; color:var(--green-900); }
@@ -122,10 +119,11 @@
   .name-link:hover { color:var(--green-500); text-decoration:underline; }
   .order-badge { display:inline-flex; width:28px; height:28px; align-items:center; justify-content:center;
     background:var(--green-600); color:#fff; font-size:13px; font-weight:800; border-radius:50%; }
-  .move-cell { display:flex; gap:3px; align-items:center; flex-wrap:wrap; }
-  .move-input { width:44px !important; padding:5px 6px !important; font-size:12px; text-align:center; margin:0; font-weight:700; }
+  .move-cell { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .move-input { width:52px !important; padding:5px 6px !important; font-size:13px; text-align:center; margin:0; font-weight:800; }
   .move-input::-webkit-outer-spin-button,.move-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   .move-input[type=number] { -moz-appearance:textfield; }
+  .move-input.changed { background:#fef3c7; border-color:#f59e0b; color:#92400e; }
   .col-aksi { width:1%; white-space:nowrap; }
   td.cod-cell { background:#fee2e2 !important; color:#991b1b !important; font-weight:800 !important;
     border-left:4px solid #dc2626; }
@@ -194,7 +192,6 @@
     padding:12px 16px; border-radius:10px; margin-bottom:14px; font-size:13px; }
   .viewas-banner b { color:var(--green-950); font-weight:800; }
 
-  /* MAP */
   .page-map-fill #mapContainer { width:100%; height:100%; border-radius:12px; overflow:hidden;
     box-shadow:0 2px 12px rgba(5,46,22,.12); border:3px solid #fff; }
   .map-toolbar { background:#fff; border:2px solid var(--green-100); border-radius:12px; padding:12px 14px;
@@ -220,7 +217,6 @@
   .leaflet-popup-content { margin:12px 14px; }
   .leaflet-popup-tip { box-shadow:0 3px 8px rgba(5,46,22,.2); }
 
-  /* DASHBOARD */
   .dash-filters { background:#fff; border:2px solid var(--green-100); border-radius:12px;
     padding:14px 16px; margin-bottom:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
     box-shadow:0 2px 8px rgba(5,46,22,.06); }
@@ -247,7 +243,6 @@
     color:var(--green-900); letter-spacing:-.2px; }
   .chart-box .chart-wrap { position:relative; height:340px; width:100%; }
 
-  /* ============ MOBILE ============ */
   @media (max-width:768px) {
     #appPage { flex-direction:column; }
     .sidebar {
@@ -279,7 +274,7 @@
     table { min-width:640px; }
     th,td { padding:9px 10px; font-size:12px; }
     .order-badge { width:24px; height:24px; font-size:11px; }
-    .move-input { width:38px !important; font-size:11px; }
+    .move-input { width:44px !important; font-size:12px; }
     button.updown { padding:3px 7px; font-size:11px; }
     td .actions button,td .actions a button { padding:5px 9px; font-size:11px; }
     .modal { padding:20px 16px; }
@@ -326,7 +321,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.2</small>
+    <small>v3.3</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
@@ -345,7 +340,6 @@
   </div>
 
   <div class="main">
-    <!-- ============ ANTRIAN ============ -->
     <div id="page-queue" class="page">
       <div class="page-fixed">
         <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
@@ -358,7 +352,7 @@
           </div>
           <div class="loc-actions">
             <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
-            <button class="save-master" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
+            <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
             <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan Semua</button>
             <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
           </div>
@@ -383,7 +377,6 @@
       </div>
     </div>
 
-    <!-- ============ DATA PASIEN ============ -->
     <div id="page-patients" class="page hidden">
       <div class="page-fixed">
         <h1>Data Utama Pasien</h1>
@@ -404,7 +397,6 @@
       </div>
     </div>
 
-    <!-- ============ PETA ============ -->
     <div id="page-map" class="page hidden">
       <div class="page-fixed">
         <h1>🗺️ Peta Pasien</h1>
@@ -424,7 +416,6 @@
       </div>
     </div>
 
-    <!-- ============ DATA PASIEN SOBAT ============ -->
     <div id="page-sobat" class="page hidden">
       <div class="page-fixed">
         <h1>💊 Data Pasien Sobat</h1>
@@ -447,7 +438,6 @@
       </div>
     </div>
 
-    <!-- ============ UPLOAD CSV DOK ============ -->
     <div id="page-uploadDok" class="page hidden">
       <div class="page-fixed">
         <h1>📤 Upload CSV Dok</h1>
@@ -468,7 +458,7 @@
             <li><b>petugas</b> — nama petugas (SUGENG/SANDI/VIONA)</li>
             <li><b>bulan</b> — angka 1-12 atau nama (Januari, Feb, dst)</li>
             <li><b>tahun</b> — 4 digit (contoh 2025)</li>
-            <li>Baris duplikat (nama+no_hp+bulan+tahun) otomatis <b>dilewati</b></li>
+            <li>Semua baris diimpor apa adanya — duplikat dibiarkan</li>
           </ul>
         </div>
 
@@ -483,7 +473,6 @@
       </div>
     </div>
 
-    <!-- ============ DASHBOARD ============ -->
     <div id="page-dashboard" class="page hidden">
       <div class="page-fixed">
         <h1>📊 Dashboard Laporan</h1>
@@ -528,7 +517,6 @@
       </div>
     </div>
 
-    <!-- ============ RIWAYAT ============ -->
     <div id="page-history" class="page hidden">
       <div class="page-fixed">
         <h1>Riwayat Kunjungan</h1>
@@ -539,7 +527,6 @@
       </div>
     </div>
 
-    <!-- ============ USER ============ -->
     <div id="page-users" class="page hidden">
       <div class="page-fixed">
         <h1>Daftar User</h1>
@@ -612,7 +599,7 @@
     </div>
   </div>
 </div>
-<!-- ============ MODAL PASTE DATA ============ -->
+
 <div id="pasteModal" class="modal-bg hidden">
   <div class="modal" style="max-width:900px;">
     <h3>📋 Paste Data dari Excel</h3>
@@ -650,6 +637,7 @@
     </div>
   </div>
 </div>
+
 <div id="bcModal" class="modal-bg hidden">
   <div class="modal modal-wide">
     <h3>📢 Broadcast WhatsApp</h3>
@@ -694,6 +682,9 @@ let chartTarifInstance = null;
 let chartJumlahInstance = null;
 let chartRsInstance = null;
 let chartPtgInstance = null;
+
+let pasteParsedData = null;
+let pendingReorder = {};  // { id: urutanBaru }
 
 const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const BULAN_SINGKAT = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
@@ -792,6 +783,7 @@ function parseCSV(text) {
   });
 }
 
+// ============ AUTH ============
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
@@ -960,7 +952,7 @@ function renderMapMarkers() {
   }
 }
 
-// ============ LOKASI ============
+// ============ LOKASI PETUGAS ============
 function perbaruiLokasiSaya() {
   const panel = document.getElementById('locPanel');
   const title = document.getElementById('locTitle');
@@ -1002,93 +994,7 @@ function renderLocPanel() {
     · <a href="${link}" target="_blank">Lihat di Maps</a>`;
 }
 
-// ============ UPLOAD CSV ANTRIAN ============
-async function handleCSVUpload(ev) {
-  const file = ev.target.files[0];
-  if (!file) return;
-  const text = await file.text();
-  const rows = parseCSV(text);
-  if (!rows.length) return alert('File CSV kosong.');
-  const headers = Object.keys(rows[0]);
-  if (!headers.includes('nama')) return alert('CSV harus punya header "nama".');
-  const hasPetugasCol = headers.includes('petugas');
-  const dateVal = document.getElementById('queueDate').value || todayStr();
-  const valid = rows.filter(r => r.nama);
-  if (!valid.length) return alert('Tidak ada baris dengan nama.');
-
-  if (hasPetugasCol) {
-    const petugasSet = new Set(allUsers.map(u => String(u.full_name || '').trim().toUpperCase()));
-    const namaUnik = [...new Set(valid.map(r => String(r.petugas || '').trim().toUpperCase()).filter(Boolean))];
-    const tidakDikenal = namaUnik.filter(n => !petugasSet.has(n));
-    if (tidakDikenal.length) {
-      if (!confirm(`Nama petugas berikut tidak ada di daftar user:\n\n• ${tidakDikenal.join('\n• ')}\n\nBaris tsb akan tetap UNASSIGNED.\n\nLanjutkan?`)) {
-        ev.target.value = ''; return;
-      }
-    }
-  }
-  if (!confirm(`Akan mengimpor ${valid.length} pasien untuk tanggal ${dateVal}.\nLanjutkan?`)) {
-    ev.target.value = ''; return;
-  }
-
-  const names = valid.map(r => r.nama);
-  const { data: masters } = await sb.from('patients')
-    .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
-  const keyNamaHp = (nama, hp) => String(nama||'').trim().toLowerCase() + '||' + (normalizePhone(hp) || '');
-  const keyNamaAlamat = (nama, alamat) => String(nama||'').trim().toLowerCase() + '||' + String(alamat||'').trim().toLowerCase();
-  const byNameHp = {}, byNameAlamat = {};
-  for (const m of (masters || [])) {
-    byNameHp[keyNamaHp(m.nama, m.no_hp)] = m;
-    if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
-  }
-  const petugasMap = {};
-  for (const u of allUsers) {
-    const key = String(u.full_name || '').trim().toUpperCase();
-    if (key) petugasMap[key] = u.id;
-  }
-  const urutPerUser = {};
-  for (const u of allUsers) urutPerUser[u.id] = 0;
-  const { data: existingRows } = await sb.from('daily_deliveries')
-    .select('assigned_to, urutan').eq('delivery_date', dateVal).not('assigned_to', 'is', null);
-  for (const e of (existingRows || [])) {
-    if (e.assigned_to) urutPerUser[e.assigned_to] = Math.max(urutPerUser[e.assigned_to] || 0, e.urutan || 0);
-  }
-  let matched = 0, unmatched = 0, assigned = 0, unassigned = 0;
-  const payloads = valid.map(r => {
-    let m = null;
-    if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
-    if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
-    if (m) matched++; else unmatched++;
-    let assignedTo = null, urutan = 0;
-    if (hasPetugasCol) {
-      const namaPetugas = String(r.petugas || '').trim().toUpperCase();
-      if (namaPetugas && petugasMap[namaPetugas]) {
-        assignedTo = petugasMap[namaPetugas];
-        urutPerUser[assignedTo] = (urutPerUser[assignedTo] || 0) + 1;
-        urutan = urutPerUser[assignedTo];
-        assigned++;
-      } else unassigned++;
-    } else unassigned++;
-    return {
-      delivery_date: dateVal, nama: r.nama, alamat: r.alamat || '', no_hp: r.no_hp || '',
-      latitude: m?.latitude || null, longitude: m?.longitude || null,
-      assigned_to: assignedTo, urutan: urutan, status: 'pending', created_by: currentUser.id
-    };
-  });
-  let total = 0;
-  const chunkSize = 200;
-  for (let i = 0; i < payloads.length; i += chunkSize) {
-    const { error } = await sb.from('daily_deliveries').insert(payloads.slice(i, i + chunkSize));
-    if (error) { alert('Gagal: ' + error.message); break; }
-    total += Math.min(chunkSize, payloads.length - i);
-  }
-  ev.target.value = '';
-  alert(`✅ ${total} pasien diimpor.\n\n🎯 Koordinat ketemu: ${matched}\n❓ Tidak ketemu: ${unmatched}\n\n` +
-    (hasPetugasCol ? `👤 Auto-assign: ${assigned} · Gagal: ${unassigned}` : `ℹ️ Kolom "petugas" tidak ada.`));
-  loadQueue();
-}
 // ============ PASTE DATA DARI EXCEL ============
-let pasteParsedData = null;
-
 function openPasteModal() {
   document.getElementById('pasteModal').classList.remove('hidden');
   document.getElementById('pasteArea').value = '';
@@ -1099,54 +1005,36 @@ function openPasteModal() {
   pasteParsedData = null;
   setTimeout(() => document.getElementById('pasteArea').focus(), 100);
 }
-
 function closePasteModal() {
   document.getElementById('pasteModal').classList.add('hidden');
   pasteParsedData = null;
 }
-
 function clearPaste() {
   document.getElementById('pasteArea').value = '';
   document.getElementById('pastePreviewWrap').innerHTML = '';
   document.getElementById('btnPasteSave').disabled = true;
   pasteParsedData = null;
 }
-
 function parsePastePreview() {
   const raw = document.getElementById('pasteArea').value || '';
   if (!raw.trim()) { alert('Kotak paste kosong. Silakan paste data dari Excel dulu.'); return; }
-
   const lines = raw.split(/\r?\n/).filter(l => l.trim().length > 0);
   if (lines.length < 2) { alert('Data minimal 2 baris (header + 1 baris data).'); return; }
-
-  // Deteksi delimiter otomatis
   const firstLine = lines[0];
   const delim = firstLine.includes('\t') ? '\t'
               : firstLine.includes(';') ? ';'
               : firstLine.includes('|') ? '|'
               : firstLine.includes(',') ? ','
               : '\t';
-
   const splitLine = (line) => line.split(delim).map(s => s.trim().replace(/^"|"$/g, ''));
-
-  // Cek apakah baris pertama header
   const firstCols = splitLine(firstLine).map(c => c.toLowerCase().trim().replace(/\s+/g, '_'));
   const headerKeywords = ['nama', 'alamat', 'no_hp', 'nohp', 'petugas', 'telepon', 'hp', 'telp', 'nama_pasien'];
   const isHeader = firstCols.some(c =>
-    headerKeywords.includes(c) ||
-    c.includes('nama') || c.includes('alamat') || c.includes('hp') || c.includes('petugas')
+    headerKeywords.includes(c) || c.includes('nama') || c.includes('alamat') || c.includes('hp') || c.includes('petugas')
   );
-
   let headers, dataLines;
-  if (isHeader) {
-    headers = firstCols;
-    dataLines = lines.slice(1);
-  } else {
-    headers = ['nama', 'alamat', 'no_hp', 'petugas'];
-    dataLines = lines;
-  }
-
-  // Map header ke index kolom
+  if (isHeader) { headers = firstCols; dataLines = lines.slice(1); }
+  else { headers = ['nama', 'alamat', 'no_hp', 'petugas']; dataLines = lines; }
   const headerMap = {};
   headers.forEach((h, i) => {
     const hh = h.toLowerCase();
@@ -1155,13 +1043,10 @@ function parsePastePreview() {
     else if (headerMap.no_hp === undefined && (hh.includes('hp') || hh.includes('telp') || hh.includes('telepon') || hh.includes('phone'))) headerMap.no_hp = i;
     else if (headerMap.petugas === undefined && hh.includes('petugas')) headerMap.petugas = i;
   });
-
   if (headerMap.nama === undefined) {
     alert('Kolom "nama" tidak ditemukan.\n\nHeader terdeteksi: ' + headers.join(', '));
     return;
   }
-
-  // Parse setiap baris
   const parsed = [];
   for (const line of dataLines) {
     const cols = splitLine(line);
@@ -1173,30 +1058,23 @@ function parsePastePreview() {
     };
     if (row.nama) parsed.push(row);
   }
-
   if (!parsed.length) { alert('Tidak ada baris yang memiliki nama.'); return; }
-
   pasteParsedData = parsed;
   renderPastePreview(parsed, isHeader, headers);
   document.getElementById('btnPasteSave').disabled = false;
 }
-
 function renderPastePreview(data, isHeader, headers) {
   const wrap = document.getElementById('pastePreviewWrap');
   const previewLimit = 15;
   const shown = data.slice(0, previewLimit);
-
-  // Statistik petugas
   const petugasCount = {};
   data.forEach(r => {
     const p = (r.petugas || '').trim().toUpperCase();
     if (p) petugasCount[p] = (petugasCount[p] || 0) + 1;
     else petugasCount['(KOSONG)'] = (petugasCount['(KOSONG)'] || 0) + 1;
   });
-
   const petugasSet = new Set(allUsers.map(u => String(u.full_name || '').trim().toUpperCase()));
   const tidakCocok = Object.keys(petugasCount).filter(p => p !== '(KOSONG)' && !petugasSet.has(p));
-
   wrap.innerHTML = `
     <div class="info-box" style="background:#d1fae5;border-color:#34d399;margin-bottom:10px;">
       <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px;">
@@ -1223,9 +1101,7 @@ function renderPastePreview(data, isHeader, headers) {
     </div>
     <div class="table-wrap" style="max-height:320px;overflow-y:auto;border:2px solid var(--green-100);border-radius:8px;">
       <table style="min-width:auto;box-shadow:none;border-radius:8px;">
-        <thead><tr>
-          <th>#</th><th>Nama</th><th>Alamat</th><th>No HP</th><th>Petugas</th>
-        </tr></thead>
+        <thead><tr><th>#</th><th>Nama</th><th>Alamat</th><th>No HP</th><th>Petugas</th></tr></thead>
         <tbody>
           ${shown.map((r, i) => {
             const cod = hasCOD(r.alamat);
@@ -1245,19 +1121,13 @@ function renderPastePreview(data, isHeader, headers) {
     ${data.length > previewLimit ? `<p style="font-size:12px;color:#047857;margin:6px 0 0;text-align:center;">… dan ${data.length - previewLimit} baris lainnya</p>` : ''}
   `;
 }
-
 async function savePasteToQueue() {
   if (!pasteParsedData || !pasteParsedData.length) return alert('Belum ada data yang di-preview.');
   const dateVal = document.getElementById('pasteDate').value
-    || document.getElementById('queueDate').value
-    || todayStr();
-
+    || document.getElementById('queueDate').value || todayStr();
   if (!confirm(`Simpan ${pasteParsedData.length} baris ke antrian tanggal ${dateVal}?`)) return;
-
   const btn = document.getElementById('btnPasteSave');
   btn.disabled = true; btn.textContent = '⏳ Menyimpan...';
-
-  // Lookup koordinat dari master patients
   const names = pasteParsedData.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
     .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
@@ -1268,14 +1138,11 @@ async function savePasteToQueue() {
     byNameHp[keyNamaHp(m.nama, m.no_hp)] = m;
     if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
   }
-
   const petugasMap = {};
   for (const u of allUsers) {
     const key = String(u.full_name || '').trim().toUpperCase();
     if (key) petugasMap[key] = u.id;
   }
-
-  // Hitung urutan existing per user hari ini
   const urutPerUser = {};
   for (const u of allUsers) urutPerUser[u.id] = 0;
   const { data: existingRows } = await sb.from('daily_deliveries')
@@ -1283,14 +1150,12 @@ async function savePasteToQueue() {
   for (const e of (existingRows || [])) {
     if (e.assigned_to) urutPerUser[e.assigned_to] = Math.max(urutPerUser[e.assigned_to] || 0, e.urutan || 0);
   }
-
   let matched = 0, unmatched = 0, assigned = 0, unassigned = 0;
   const payloads = pasteParsedData.map(r => {
     let m = null;
     if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
     if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
     if (m) matched++; else unmatched++;
-
     let assignedTo = null, urutan = 0;
     const namaPetugas = String(r.petugas || '').trim().toUpperCase();
     if (namaPetugas && petugasMap[namaPetugas]) {
@@ -1299,22 +1164,12 @@ async function savePasteToQueue() {
       urutan = urutPerUser[assignedTo];
       assigned++;
     } else unassigned++;
-
     return {
-      delivery_date: dateVal,
-      nama: r.nama,
-      alamat: r.alamat || '',
-      no_hp: r.no_hp || '',
-      latitude: m?.latitude || null,
-      longitude: m?.longitude || null,
-      assigned_to: assignedTo,
-      urutan: urutan,
-      status: 'pending',
-      created_by: currentUser.id
+      delivery_date: dateVal, nama: r.nama, alamat: r.alamat || '', no_hp: r.no_hp || '',
+      latitude: m?.latitude || null, longitude: m?.longitude || null,
+      assigned_to: assignedTo, urutan: urutan, status: 'pending', created_by: currentUser.id
     };
   });
-
-  // Insert batch
   let total = 0;
   const chunkSize = 200;
   let errorCount = 0, lastError = '';
@@ -1324,9 +1179,7 @@ async function savePasteToQueue() {
     else total += Math.min(chunkSize, payloads.length - i);
     btn.textContent = `⏳ Menyimpan... ${Math.min(i + chunkSize, payloads.length)}/${payloads.length}`;
   }
-
   btn.disabled = false; btn.textContent = '💾 Simpan ke Antrian';
-
   if (errorCount) {
     alert(`⚠️ Sebagian gagal disimpan.\n\n✅ Berhasil: ${total}\n❌ Gagal: ${errorCount} batch\n\nError: ${lastError}`);
   } else {
@@ -1334,10 +1187,10 @@ async function savePasteToQueue() {
       `🎯 Koordinat ketemu: ${matched}\n❓ Tidak ketemu: ${unmatched}\n` +
       `👤 Auto-assign: ${assigned}\n⚠️ Tidak bisa assign: ${unassigned}`);
   }
-
   closePasteModal();
   loadQueue();
 }
+
 // ============ ANTRIAN ============
 async function loadQueue() {
   const wrap = document.getElementById('queueTableWrap');
@@ -1378,12 +1231,13 @@ async function loadQueue() {
     const f = document.getElementById('queueFilter').value;
     if (f === 'unassigned') displayed = list.filter(r => !r.assigned_to);
     if (!displayed.length) {
-      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Upload CSV di toolbar atas.</small></div>`;
+      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Klik "📋 Paste Data dari Excel" di toolbar atas.</small></div>`;
       return;
     }
     renderQueueAdmin(displayed, dateVal);
   }
 }
+
 function renderQueueAdmin(list, dateVal) {
   const wrap = document.getElementById('queueTableWrap');
   wrap.innerHTML = `
@@ -1413,13 +1267,28 @@ function renderQueueAdmin(list, dateVal) {
       </tbody>
     </table></div>`;
 }
+
 function renderQueueUser(list) {
   const wrap = document.getElementById('queueTableWrap');
-  const banner = isAdmin ? `<div class="viewas-banner">👁️ Melihat antrian sebagai <b>${esc(allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas')}</b>.</div>` : '';
+  const banner = isAdmin
+    ? `<div class="viewas-banner">👁️ Melihat antrian sebagai <b>${esc(allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas')}</b>.</div>`
+    : '';
+
+  pendingReorder = {};
+
   wrap.innerHTML = `
     ${banner}
-    <div class="hint">💡 <b>Ubah urutan:</b> klik <b>↑↓</b> atau ketik nomor posisi di kotak kecil → Enter.</div>
-    <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">Terdapat <b>${list.length}</b> pasien.</p>
+    <div class="hint">
+      💡 <b>Ubah urutan:</b> isi nomor baru di kotak <b>Urut</b> pada setiap baris yang ingin dipindah, lalu klik tombol <b>💾 SAVE URUTAN</b> di bawah tabel. Tidak perlu klik satu-satu.
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <p style="font-size:13px;color:#047857;margin:0;font-weight:700">Terdapat <b>${list.length}</b> pasien.</p>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <span id="reorderStatus" style="font-size:12px; color:#ca8a04; font-weight:700;"></span>
+        <button class="save-master" id="btnSaveReorder" onclick="saveReorder()" disabled style="padding:9px 16px;font-size:13px;">💾 SAVE URUTAN</button>
+        <button class="ghost" onclick="resetReorder()" style="padding:9px 14px;font-size:13px;">↺ Reset</button>
+      </div>
+    </div>
     <div class="table-wrap"><table>
       <thead><tr>
         <th>Urut</th><th class="col-aksi">Aksi</th><th>Pasien</th><th>Alamat</th><th>No HP</th><th>Koordinat</th><th>Status</th>
@@ -1433,14 +1302,16 @@ function renderQueueUser(list) {
           const statusText = r.status === 'delivered' ? '✓ Terkirim' : 'Menunggu';
           const syncedMark = r.synced_to_master ? '<div class="status-synced">✓ master</div>' : '';
           const cod = hasCOD(r.alamat);
-          return `<tr>
-            <td><div class="move-cell">
-              <span class="order-badge">${i+1}</span>
-              <button class="updown" ${i===0?'disabled':''} onclick="moveItem(${i}, -1)">↑</button>
-              <button class="updown" ${i===list.length-1?'disabled':''} onclick="moveItem(${i}, 1)">↓</button>
-              <input type="number" class="move-input" min="1" max="${list.length}" placeholder="→"
-                onkeydown="if(event.key==='Enter'){ event.preventDefault(); moveToPosition(${i}, this.value); }">
-            </div></td>
+          return `<tr data-id="${r.id}">
+            <td>
+              <div class="move-cell">
+                <span class="order-badge" data-badge="${r.id}">${i+1}</span>
+                <input type="number" class="move-input order-input" data-id="${r.id}"
+                  min="1" max="${list.length}" value="${i+1}"
+                  onchange="markReorder(${r.id}, this.value)"
+                  oninput="markReorder(${r.id}, this.value)">
+              </div>
+            </td>
             <td class="col-aksi"><div class="actions">
               <button onclick="openQDetail(${r.id})" style="padding:6px 11px;font-size:12px;background:var(--green-600);color:#fff;border:none;border-radius:7px;font-weight:800">BUKA</button>
               ${waBtn}${telBtn}
@@ -1455,6 +1326,97 @@ function renderQueueUser(list) {
       </tbody>
     </table></div>`;
 }
+
+function markReorder(id, val) {
+  const n = parseInt(val, 10);
+  const statusEl = document.getElementById('reorderStatus');
+  const saveBtn = document.getElementById('btnSaveReorder');
+  const input = document.querySelector(`.order-input[data-id="${id}"]`);
+
+  if (isNaN(n) || n < 1 || n > myQueue.length) {
+    delete pendingReorder[id];
+    if (input) input.classList.remove('changed');
+  } else {
+    pendingReorder[id] = n;
+    // Bandingkan dengan posisi asli
+    const origIdx = myQueue.findIndex(r => r.id === Number(id));
+    if (input) {
+      if (n !== origIdx + 1) input.classList.add('changed');
+      else input.classList.remove('changed');
+    }
+  }
+
+  const changed = Object.keys(pendingReorder).length;
+  if (changed > 0) {
+    statusEl.textContent = `⚠️ ${changed} perubahan belum disimpan`;
+    saveBtn.disabled = false;
+  } else {
+    statusEl.textContent = '';
+    saveBtn.disabled = true;
+  }
+}
+
+function resetReorder() {
+  pendingReorder = {};
+  renderQueueUser(myQueue);
+}
+
+async function saveReorder() {
+  const ids = Object.keys(pendingReorder);
+  if (!ids.length) return;
+
+  const statusEl = document.getElementById('reorderStatus');
+  const saveBtn = document.getElementById('btnSaveReorder');
+  statusEl.textContent = '⏳ Menyimpan...';
+  saveBtn.disabled = true;
+
+  const newAssignments = {};
+  const usedPositions = {};
+  for (const id of ids) {
+    const targetPos = pendingReorder[id];
+    if (usedPositions[targetPos]) {
+      alert(`Ada dua baris dengan nomor urut ${targetPos}.\n\nSilakan periksa kembali sebelum SAVE.`);
+      statusEl.textContent = '❌ Ada nomor bentrok';
+      saveBtn.disabled = false;
+      return;
+    }
+    usedPositions[targetPos] = true;
+    newAssignments[id] = targetPos - 1;
+  }
+
+  const finalList = new Array(myQueue.length).fill(null);
+  for (const id of ids) {
+    const idx = newAssignments[id];
+    const row = myQueue.find(r => r.id === Number(id));
+    finalList[idx] = row;
+  }
+  const changedIds = new Set(ids.map(Number));
+  const remaining = myQueue.filter(r => !changedIds.has(r.id));
+  let ri = 0;
+  for (let i = 0; i < finalList.length; i++) {
+    if (!finalList[i]) finalList[i] = remaining[ri++];
+  }
+
+  try {
+    await Promise.all(finalList.map((row, i) =>
+      sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', row.id)
+    ));
+  } catch (e) {
+    alert('Gagal menyimpan urutan: ' + e.message);
+    statusEl.textContent = '❌ Gagal menyimpan';
+    saveBtn.disabled = false;
+    return;
+  }
+
+  pendingReorder = {};
+  statusEl.textContent = '✅ Tersimpan';
+  await loadQueue();
+  setTimeout(() => {
+    const s = document.getElementById('reorderStatus');
+    if (s) s.textContent = '';
+  }, 2000);
+}
+
 async function assignTo(deliveryId, userId) {
   if (!userId) {
     const { error } = await sb.from('daily_deliveries').update({ assigned_to: null, urutan: 0 }).eq('id', deliveryId);
@@ -1482,30 +1444,6 @@ async function hapusAntrianHariIni() {
   const { error } = await sb.from('daily_deliveries').delete().eq('delivery_date', dateVal);
   if (error) return alert('Gagal: ' + error.message);
   loadQueue();
-}
-async function moveItem(index, dir) {
-  const target = index + dir;
-  if (target < 0 || target >= myQueue.length) return;
-  const list = [...myQueue];
-  [list[index], list[target]] = [list[target], list[index]];
-  try {
-    await Promise.all(list.map((item, i) => sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', item.id)));
-  } catch (e) { alert('Gagal: ' + e.message); }
-  await loadQueue();
-}
-async function moveToPosition(fromIndex, targetInput) {
-  const targetPos = parseInt(targetInput, 10);
-  if (isNaN(targetPos)) return;
-  if (targetPos < 1 || targetPos > myQueue.length) return alert(`Posisi harus antara 1 sampai ${myQueue.length}.`);
-  const targetIndex = targetPos - 1;
-  if (targetIndex === fromIndex) return;
-  const list = [...myQueue];
-  const [item] = list.splice(fromIndex, 1);
-  list.splice(targetIndex, 0, item);
-  try {
-    await Promise.all(list.map((it, i) => sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', it.id)));
-  } catch (e) { alert('Gagal: ' + e.message); }
-  await loadQueue();
 }
 
 // ============ SIMPAN KE MASTER ============
@@ -1687,11 +1625,27 @@ function buildWAText(patient) {
     listPart = `\nDaftar pasien yang akan saya antar hari ini (urut pengantaran):\n${daftar}\n`;
   }
   let locPart = '';
-  if (officerLocation) locPart = `\n📍 Link lokasi saya (untuk tracking):\nhttps://www.google.com/maps?q=${officerLocation.lat},${officerLocation.lng}\n`;
-  else locPart = `\n📍 Lokasi saya belum tersedia.\n`;
+  if (officerLocation) {
+    locPart = `\n📍 Link lokasi saya (untuk tracking):\nhttps://www.google.com/maps?q=${officerLocation.lat},${officerLocation.lng}\n`;
+  } else {
+    locPart = `\n📍 Lokasi saya belum tersedia.\n`;
+  }
+
+  // Bagian COD — HANYA jika alamat pasien mengandung "COD"
+  let codPart = '';
+  if (hasCOD(patient.alamat)) {
+    codPart =
+      `\n━━━━━━━━━━━━━━━━━━━━━\n` +
+      `📌 Note: COD mohon siapkan uang cash / transfer ke rekening RSUD AM Parikesit\n` +
+      `BPD : 0049000685\n` +
+      `BCA : 8145678966\n` +
+      `Terima kasih\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n`;
+  }
+
   return `Assalamualaikum selamat ${salam} Bpk/Ibu ${patient.nama},\n\n` +
     `Kami dari Sobat Parikesit (${petugas}) akan mengantarkan obat ke alamat Anda.\n` +
-    listPart + locPart +
+    listPart + locPart + codPart +
     `\nMohon maaf untuk pasien yang terakhir karena sedikit terlambat.\n\nTerima kasih.`;
 }
 function openWAFromQueue(deliveryId) {
@@ -1707,9 +1661,10 @@ function openBroadcast() {
   document.getElementById('bcCount').textContent = myQueue.length;
   document.getElementById('bcList').innerHTML = myQueue.map((p, i) => {
     const phone = normalizePhone(p.no_hp);
+    const codMark = hasCOD(p.alamat) ? ' <span class="cod-badge" style="font-size:9px;">COD</span>' : '';
     return `<div class="bc-item">
       <div class="bc-num">${i+1}</div>
-      <div class="bc-name"><b>${esc(p.nama)}</b><small>${esc(p.no_hp || 'tanpa nomor HP')}</small></div>
+      <div class="bc-name"><b>${esc(p.nama)}</b>${codMark}<small>${esc(p.no_hp || 'tanpa nomor HP')}</small></div>
       <button class="wa" ${phone ? '' : 'disabled'} onclick="kirimKePasien(${p.id})">💬 Kirim</button>
     </div>`;
   }).join('');
@@ -1938,13 +1893,11 @@ async function loadSobatPatients() {
 
   onSearchSobat();
 }
-
 function onSearchSobat() {
   const q = (document.getElementById('searchSobat').value || '').trim().toLowerCase();
   const fBulan = document.getElementById('sobatFilterBulan').value;
   const fTahun = document.getElementById('sobatFilterTahun').value;
   const fPetugas = document.getElementById('sobatFilterPetugas').value;
-
   sobatFilteredCache = sobatCache.filter(p => {
     if (fBulan && String(p.bulan) !== String(fBulan)) return false;
     if (fTahun && String(p.tahun) !== String(fTahun)) return false;
@@ -1959,13 +1912,11 @@ function onSearchSobat() {
   sobatPage = 1;
   renderSobatPatients();
 }
-
 function onSobatPageSizeChange() {
   sobatPageSize = parseInt(document.getElementById('sobatPageSize').value, 10) || 100;
   sobatPage = 1;
   renderSobatPatients();
 }
-
 function renderSobatPatients() {
   const wrap = document.getElementById('sobatTableWrap');
   const pagEl = document.getElementById('sobatPagination');
@@ -1976,7 +1927,6 @@ function renderSobatPatients() {
   const startIdx = (sobatPage - 1) * sobatPageSize;
   const endIdx = Math.min(startIdx + sobatPageSize, total);
   const pageItems = sobatFilteredCache.slice(startIdx, endIdx);
-
   if (!total) {
     wrap.innerHTML = `<p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
       Total: <b>${sobatCache.length}</b> baris · Tidak ada hasil.</p>
@@ -1984,11 +1934,9 @@ function renderSobatPatients() {
     pagEl.innerHTML = '';
     return;
   }
-
   const totalTarif = sobatFilteredCache.reduce((s, r) => s + (Number(r.tarif) || 0), 0);
   const totalRs = sobatFilteredCache.reduce((s, r) => s + (Number(r.pendapatan_rs) || 0), 0);
   const totalPtg = sobatFilteredCache.reduce((s, r) => s + (Number(r.pendapatan_petugas) || 0), 0);
-
   wrap.innerHTML = `
     <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
       Total: <b>${sobatCache.length}</b> · Filter: <b>${total}</b>
@@ -2024,7 +1972,6 @@ function renderSobatPatients() {
         }).join('')}
       </tbody>
     </table></div>`;
-
   const btnPrevDisabled = sobatPage <= 1 ? 'disabled' : '';
   const btnNextDisabled = sobatPage >= totalPages ? 'disabled' : '';
   pagEl.innerHTML = `
@@ -2038,7 +1985,6 @@ function renderSobatPatients() {
         onkeydown="if(event.key==='Enter'){ event.preventDefault(); gotoSobatPage(parseInt(this.value,10)||1); }">
     </div>`;
 }
-
 function gotoSobatPage(n) {
   const totalPages = Math.max(1, Math.ceil(sobatFilteredCache.length / sobatPageSize));
   if (n < 1) n = 1;
@@ -2047,7 +1993,6 @@ function gotoSobatPage(n) {
   renderSobatPatients();
   document.getElementById('sobatTableWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-
 function openSobatForm(id) {
   document.getElementById('sobatFormModal').classList.remove('hidden');
   const sfPetugas = document.getElementById('sfPetugas');
@@ -2077,7 +2022,6 @@ function openSobatForm(id) {
   }
 }
 function closeSobatForm() { document.getElementById('sobatFormModal').classList.add('hidden'); }
-
 async function saveSobatPatient() {
   const id = document.getElementById('sfId').value;
   const payload = {
@@ -2100,7 +2044,6 @@ async function saveSobatPatient() {
   closeSobatForm();
   await loadSobatPatients();
 }
-
 async function deleteSobatPatient(id) {
   if (!confirm('Hapus data ini?')) return;
   const { error } = await sb.from('patients_sobat').delete().eq('id', id);
@@ -2114,7 +2057,6 @@ async function handleDokCSVUpload(ev) {
   if (!file) return;
   const resultEl = document.getElementById('dokUploadResult');
   resultEl.innerHTML = '<div class="info-box">⏳ Membaca file...</div>';
-
   const text = await file.text();
   const rows = parseCSV(text);
   if (!rows.length) {
@@ -2126,21 +2068,17 @@ async function handleDokCSVUpload(ev) {
     resultEl.innerHTML = `<div class="info-box" style="background:#fee2e2;border-color:#fca5a5">❌ Header "nama" tidak ditemukan.<br>Header terdeteksi: <code>${esc(headers.join(', '))}</code></div>`;
     ev.target.value = ''; return;
   }
-
   const tarifKey = headers.find(h => h.startsWith('tarif')) || 'tarif';
   const rsKey = headers.find(h => h === 'pendapatan_rs' || h === 'rs' || h.startsWith('pendapatan_rs')) || null;
   const ptgKey = headers.find(h => h === 'pendapatan_petugas' || h.startsWith('pendapatan_petugas')) || null;
   const petugasKey = headers.includes('petugas') ? 'petugas' : null;
   const bulanKey = headers.includes('bulan') ? 'bulan' : null;
   const tahunKey = headers.includes('tahun') ? 'tahun' : null;
-
   const valid = rows.filter(r => r.nama);
   if (!valid.length) {
     resultEl.innerHTML = '<div class="info-box" style="background:#fee2e2;border-color:#fca5a5">❌ Tidak ada baris dengan nama.</div>';
     ev.target.value = ''; return;
   }
-
-  // Lookup koordinat dari master patients (nama + no_hp, fallback nama + alamat)
   const names = valid.map(r => r.nama);
   const { data: masters } = await sb.from('patients')
     .select('nama, alamat, no_hp, latitude, longitude').in('nama', names);
@@ -2151,13 +2089,10 @@ async function handleDokCSVUpload(ev) {
     byNameHp[keyNamaHp(m.nama, m.no_hp)] = m;
     if (m.alamat) byNameAlamat[keyNamaAlamat(m.nama, m.alamat)] = m;
   }
-
-  // Bangun payload — semua baris diinsert, tidak ada dedup
   const payloads = valid.map(r => {
     let m = null;
     if (r.no_hp) m = byNameHp[keyNamaHp(r.nama, r.no_hp)] || null;
     if (!m && r.alamat) m = byNameAlamat[keyNamaAlamat(r.nama, r.alamat)] || null;
-
     return {
       nama: r.nama.trim(),
       alamat: r.alamat || '',
@@ -2165,7 +2100,7 @@ async function handleDokCSVUpload(ev) {
       tarif: parseTarif(r[tarifKey]),
       pendapatan_rs: rsKey ? parseTarif(r[rsKey]) : 0,
       pendapatan_petugas: ptgKey ? parseTarif(r[ptgKey]) : 0,
-      petugas: petugasKey ? (r[petugasKey] || '') : '',
+      petugas: petugasKey ? String(r[petugasKey] || '').trim().replace(/\s+/g, ' ').toUpperCase() : '',
       bulan: parseBulan(bulanKey ? r[bulanKey] : null),
       tahun: parseTahun(tahunKey ? r[tahunKey] : null),
       latitude: m?.latitude || null,
@@ -2173,13 +2108,10 @@ async function handleDokCSVUpload(ev) {
       recorded_by: currentUser.id
     };
   });
-
   if (!payloads.length) {
     resultEl.innerHTML = '<div class="info-box" style="background:#fef9c3;border-color:#fde68a">⚠️ Tidak ada data untuk diimpor.</div>';
     ev.target.value = ''; return;
   }
-
-  // Insert batch — semua baris diinsert
   let totalInserted = 0;
   const chunk = 200;
   let errors = 0;
@@ -2189,10 +2121,8 @@ async function handleDokCSVUpload(ev) {
     const { error } = await sb.from('patients_sobat').insert(slice);
     if (error) { errors++; lastErrorMsg = error.message; console.error(error); }
     else totalInserted += slice.length;
-    // Update progress ke user
     resultEl.innerHTML = `<div class="info-box">⏳ Mengimpor... ${Math.min(i + chunk, payloads.length)} / ${payloads.length}</div>`;
   }
-
   resultEl.innerHTML = `
     <div class="info-box" style="background:#d1fae5;border-color:#34d399">
       <div style="font-weight:800; font-size:15px; color:#065f46; margin-bottom:10px;">✅ Import selesai</div>
@@ -2207,11 +2137,10 @@ async function handleDokCSVUpload(ev) {
 }
 
 // ============ DASHBOARD ============
-  async function loadDashboard() {
+async function loadDashboard() {
   const sumEl = document.getElementById('dashSummary');
   sumEl.innerHTML = '<div class="dash-card" style="grid-column:1/-1;"><div class="label">Memuat...</div><div class="value">Menghitung di server...</div></div>';
 
-  // ---- Ambil daftar tahun & petugas untuk dropdown (paralel) ----
   const [tahunRes, petugasRes] = await Promise.all([
     sb.rpc('dashboard_tahun_list'),
     sb.rpc('dashboard_petugas_list')
@@ -2231,12 +2160,10 @@ async function handleDokCSVUpload(ev) {
     petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
   petugasSel.value = curP;
 
-  // ---- Filter aktif ----
   const fTahun = tahunSel.value ? parseInt(tahunSel.value, 10) : null;
   const fBulan = document.getElementById('dashBulan').value ? parseInt(document.getElementById('dashBulan').value, 10) : null;
   const fPetugas = petugasSel.value || null;
 
-  // ---- Ambil summary + chart data (paralel) ----
   const [sumRes, chartRes] = await Promise.all([
     sb.rpc('dashboard_summary', { p_tahun: fTahun, p_bulan: fBulan, p_petugas: fPetugas }),
     sb.rpc('dashboard_chart',   { p_tahun: fTahun, p_bulan: fBulan, p_petugas: fPetugas })
@@ -2248,14 +2175,12 @@ async function handleDokCSVUpload(ev) {
   const summary = (sumRes.data && sumRes.data[0]) || { total_tarif: 0, total_rs: 0, total_ptg: 0, jumlah_pasien: 0 };
   const chartData = chartRes.data || [];
 
-  // ---- Render kartu ringkasan ----
   sumEl.innerHTML = `
     <div class="dash-card"><div class="label">Total Tarif</div><div class="value">${formatRupiah(summary.total_tarif)}</div></div>
     <div class="dash-card rs"><div class="label">🏥 Pendapatan RS</div><div class="value">${formatRupiah(summary.total_rs)}</div></div>
     <div class="dash-card ptg"><div class="label">👤 Pendapatan Petugas</div><div class="value">${formatRupiah(summary.total_ptg)}</div></div>
     <div class="dash-card"><div class="label">Jumlah Pasien</div><div class="value">${Number(summary.jumlah_pasien).toLocaleString('id-ID')}</div></div>`;
 
-  // ---- Bangun sumbu X ----
   const useMonths = !!fTahun;
   let xLabels, xKeys;
   if (useMonths) {
@@ -2270,7 +2195,6 @@ async function handleDokCSVUpload(ev) {
   const petugasToShow = fPetugas ? [fPetugas] : [...new Set(chartData.map(r => r.petugas).filter(Boolean))].sort();
   if (!petugasToShow.length) petugasToShow.push('(tidak ada)');
 
-  // ---- Pivot lookup ----
   const lookup = {};
   chartData.forEach(r => {
     const key = `${r.petugas}|${r.tahun}|${r.bulan}`;
