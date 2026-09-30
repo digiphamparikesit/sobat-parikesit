@@ -90,6 +90,9 @@
   .toolbar input,.toolbar select { width:auto; margin:0; }
   .toolbar input[type=text] { min-width:220px; }
 
+  .search-bar { display:flex; gap:8px; margin-bottom:14px; align-items:center; flex-wrap:wrap; }
+  .search-bar input[type=text] { flex:1; min-width:220px; }
+
   .loc-panel { background:#fff; border:2px solid var(--green-100); border-radius:12px;
     padding:16px 18px; margin-bottom:16px; display:flex; gap:14px; align-items:center;
     flex-wrap:wrap; box-shadow:0 2px 8px rgba(5,46,22,.06); }
@@ -271,6 +274,7 @@
     .loc-panel .loc-actions button { flex:1; font-size:12px; padding:9px 10px; }
     .toolbar { gap:6px; margin-bottom:12px; }
     .toolbar input[type=text],.toolbar select { min-width:0; flex:1; }
+    .search-bar input[type=text] { min-width:0; font-size:13px; padding:9px 12px; }
     table { min-width:640px; }
     th,td { padding:9px 10px; font-size:12px; }
     .order-badge { width:24px; height:24px; font-size:11px; }
@@ -321,7 +325,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.3</small>
+    <small>v3.4</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
@@ -360,7 +364,7 @@
 
         <div class="toolbar" id="queueToolbarAdmin" style="display:none">
           <input type="date" id="queueDate" onchange="loadQueue()">
-          <select id="queueFilter" onchange="loadQueue()">
+          <select id="queueFilter" onchange="applyQueueFilter()">
             <option value="all">Semua</option>
             <option value="unassigned">Belum di-assign</option>
           </select>
@@ -369,6 +373,12 @@
           </select>
           <button class="save-master" onclick="openPasteModal()">📋 Paste Data dari Excel</button>
           <button class="danger" onclick="hapusAntrianHariIni()">🗑️ Hapus Tanggal Ini</button>
+        </div>
+
+        <div class="search-bar">
+          <input id="searchQueue" type="text" placeholder="🔍 Cari nama / alamat / no HP di antrian..." oninput="onSearchQueue()">
+          <button class="ghost" onclick="clearSearchQueue()" style="padding:9px 14px;font-size:13px;">✖ Reset</button>
+          <div id="queueSearchInfo" style="font-size:12px; font-weight:700; color:#047857;"></div>
         </div>
       </div>
 
@@ -401,7 +411,7 @@
       <div class="page-fixed">
         <h1>🗺️ Peta Pasien</h1>
         <div class="map-toolbar">
-          <input id="mapSearch" type="text" placeholder="🔍 Ketik nama pasien (tidak harus lengkap)..." oninput="onMapSearchInput()">
+          <input id="mapSearch" type="text" placeholder="🔍 Cari nama / alamat / no HP (contoh: RT 05, Jl. Merdeka, Budi)..." oninput="onMapSearchInput()">
           <button class="ghost" onclick="clearMapSearch()">✖ Reset</button>
           <div class="map-info" id="mapInfo">Memuat...</div>
         </div>
@@ -684,7 +694,11 @@ let chartRsInstance = null;
 let chartPtgInstance = null;
 
 let pasteParsedData = null;
-let pendingReorder = {};  // { id: urutanBaru }
+let pendingReorder = {};
+
+// State untuk pencarian di antrian
+let queueAllList = [];       // semua baris yang di-fetch dari DB (belum difilter)
+let queueSearchQuery = '';   // kata kunci pencarian aktif
 
 const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const BULAN_SINGKAT = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
@@ -850,6 +864,9 @@ function showPage(page) {
 
 function onViewAsChange() {
   viewAsUserId = document.getElementById('viewAsUser').value;
+  // Reset search saat ganti view
+  document.getElementById('searchQueue').value = '';
+  queueSearchQuery = '';
   updateActionButtonsVisibility();
   loadQueue();
 }
@@ -857,6 +874,72 @@ function updateActionButtonsVisibility() {
   const show = !isAdmin || viewAsUserId !== '';
   document.getElementById('btnBroadcast').style.display = show ? '' : 'none';
   document.getElementById('btnSyncAll').style.display = show ? '' : 'none';
+}
+
+// ============ PENCARIAN ANTRIAN ============
+function onSearchQueue() {
+  queueSearchQuery = (document.getElementById('searchQueue').value || '').trim().toLowerCase();
+  applyQueueFilter();
+}
+function clearSearchQueue() {
+  document.getElementById('searchQueue').value = '';
+  queueSearchQuery = '';
+  applyQueueFilter();
+}
+
+function applyQueueFilter() {
+  const wrap = document.getElementById('queueTableWrap');
+  const infoEl = document.getElementById('queueSearchInfo');
+  const dateVal = isAdmin ? (document.getElementById('queueDate').value || todayStr()) : todayStr();
+  const userSpecificView = !isAdmin || (isAdmin && viewAsUserId !== '');
+
+  let filtered = queueAllList;
+  if (queueSearchQuery) {
+    filtered = queueAllList.filter(r =>
+      (r.nama || '').toLowerCase().includes(queueSearchQuery) ||
+      (r.alamat || '').toLowerCase().includes(queueSearchQuery) ||
+      (r.no_hp || '').toLowerCase().includes(queueSearchQuery)
+    );
+  }
+
+  if (queueSearchQuery) {
+    infoEl.textContent = `Hasil "${queueSearchQuery}": ${filtered.length} dari ${queueAllList.length}`;
+  } else {
+    infoEl.textContent = '';
+  }
+
+  if (userSpecificView) {
+    myQueue = filtered.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
+    if (!filtered.length) {
+      if (queueSearchQuery) {
+        wrap.innerHTML = `<div class="empty">Tidak ada pasien yang cocok dengan "${esc(queueSearchQuery)}".</div>`;
+      } else {
+        const targetName = isAdmin
+          ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini')
+          : 'Anda';
+        wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada ${dateVal}.
+          ${isAdmin
+            ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar.</small>'
+            : '<br><small>Hubungi admin.</small>'}</div>`;
+      }
+      return;
+    }
+    renderQueueUser(filtered);
+  } else {
+    myQueue = [];
+    let displayed = filtered;
+    const f = document.getElementById('queueFilter').value;
+    if (f === 'unassigned') displayed = filtered.filter(r => !r.assigned_to);
+    if (!displayed.length) {
+      if (queueSearchQuery) {
+        wrap.innerHTML = `<div class="empty">Tidak ada pasien yang cocok dengan "${esc(queueSearchQuery)}".</div>`;
+      } else {
+        wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Klik "📋 Paste Data dari Excel" di toolbar atas.</small></div>`;
+      }
+      return;
+    }
+    renderQueueAdmin(displayed, dateVal);
+  }
 }
 
 // ============ PETA ============
@@ -897,15 +980,29 @@ function renderMapMarkers() {
     if (Math.abs(lng) > 180) lng = lng / 1000000;
     return { ...p, latitude: lat, longitude: lng };
   });
-  if (q) list = list.filter(p => (p.nama || '').toLowerCase().includes(q));
+
+  // Pencarian: nama + alamat + no HP
+  if (q) {
+    list = list.filter(p =>
+      (p.nama || '').toLowerCase().includes(q) ||
+      (p.alamat || '').toLowerCase().includes(q) ||
+      (p.no_hp || '').toLowerCase().includes(q)
+    );
+  }
+
   const MAX_MARKERS = 800;
   const truncated = list.length > MAX_MARKERS;
   const displayed = truncated ? list.slice(0, MAX_MARKERS) : list;
+
   info.innerHTML = q
     ? `<b>${list.length}</b> hasil untuk "${esc(q)}"${truncated ? ` (max ${MAX_MARKERS})` : ''}`
     : `<b>${list.length}</b> pasien berlokasi${truncated ? ` (max ${MAX_MARKERS})` : ''}`;
+
   markerLayer.clearLayers();
-  if (!displayed.length) { if (q) mapInstance.setView([-0.43, 116.97], 12); return; }
+  if (!displayed.length) {
+    if (q) mapInstance.setView([-0.43, 116.97], 12);
+    return;
+  }
   const bounds = [];
   displayed.forEach(p => {
     const lat = p.latitude, lng = p.longitude;
@@ -1204,38 +1301,20 @@ async function loadQueue() {
   }
   const { data, error } = await q.order('urutan', { ascending: true }).order('id', { ascending: true });
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
-  const list = data || [];
-  if (userSpecificView) {
-    myQueue = list.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
-    if (isAdmin) {
-      const u = allUsers.find(x => x.id === viewAsUserId);
-      document.getElementById('queueTitle').textContent = `Antrian — ${u?.full_name || 'Petugas'}`;
-    } else {
-      document.getElementById('queueTitle').textContent = 'Antrian Pengantaran Hari Ini';
-    }
-    if (!list.length) {
-      const targetName = isAdmin
-        ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini')
-        : 'Anda';
-      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada ${dateVal}.
-        ${isAdmin
-          ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar.</small>'
-          : '<br><small>Hubungi admin.</small>'}</div>`;
-      return;
-    }
-    renderQueueUser(list);
+
+  // Simpan semua baris ke cache, biarkan applyQueueFilter yang mengatur tampilan
+  queueAllList = data || [];
+
+  if (isAdmin) {
+    const u = allUsers.find(x => x.id === viewAsUserId);
+    document.getElementById('queueTitle').textContent = viewAsUserId
+      ? `Antrian — ${u?.full_name || 'Petugas'}`
+      : 'Antrian Pengantaran Hari Ini';
   } else {
-    myQueue = [];
     document.getElementById('queueTitle').textContent = 'Antrian Pengantaran Hari Ini';
-    let displayed = list;
-    const f = document.getElementById('queueFilter').value;
-    if (f === 'unassigned') displayed = list.filter(r => !r.assigned_to);
-    if (!displayed.length) {
-      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Klik "📋 Paste Data dari Excel" di toolbar atas.</small></div>`;
-      return;
-    }
-    renderQueueAdmin(displayed, dateVal);
   }
+
+  applyQueueFilter();
 }
 
 function renderQueueAdmin(list, dateVal) {
@@ -1302,12 +1381,14 @@ function renderQueueUser(list) {
           const statusText = r.status === 'delivered' ? '✓ Terkirim' : 'Menunggu';
           const syncedMark = r.synced_to_master ? '<div class="status-synced">✓ master</div>' : '';
           const cod = hasCOD(r.alamat);
+          // Nomor urut tampil = urutan asli (bukan nomor baris di tabel yang mungkin sudah difilter)
+          const displayOrder = r.urutan || (i + 1);
           return `<tr data-id="${r.id}">
             <td>
               <div class="move-cell">
-                <span class="order-badge" data-badge="${r.id}">${i+1}</span>
+                <span class="order-badge" data-badge="${r.id}">${displayOrder}</span>
                 <input type="number" class="move-input order-input" data-id="${r.id}"
-                  min="1" max="${list.length}" value="${i+1}"
+                  min="1" max="${list.length}" value="${displayOrder}"
                   onchange="markReorder(${r.id}, this.value)"
                   oninput="markReorder(${r.id}, this.value)">
               </div>
@@ -1338,10 +1419,10 @@ function markReorder(id, val) {
     if (input) input.classList.remove('changed');
   } else {
     pendingReorder[id] = n;
-    // Bandingkan dengan posisi asli
-    const origIdx = myQueue.findIndex(r => r.id === Number(id));
+    const row = myQueue.find(r => r.id === Number(id));
+    const origOrder = row ? (row.urutan || 0) : 0;
     if (input) {
-      if (n !== origIdx + 1) input.classList.add('changed');
+      if (n !== origOrder) input.classList.add('changed');
       else input.classList.remove('changed');
     }
   }
@@ -1358,7 +1439,7 @@ function markReorder(id, val) {
 
 function resetReorder() {
   pendingReorder = {};
-  renderQueueUser(myQueue);
+  applyQueueFilter();
 }
 
 async function saveReorder() {
@@ -1384,7 +1465,8 @@ async function saveReorder() {
     newAssignments[id] = targetPos - 1;
   }
 
-  const finalList = new Array(myQueue.length).fill(null);
+  const maxPos = Math.max(...Object.values(pendingReorder), myQueue.length);
+  const finalList = new Array(maxPos).fill(null);
   for (const id of ids) {
     const idx = newAssignments[id];
     const row = myQueue.find(r => r.id === Number(id));
@@ -1396,9 +1478,10 @@ async function saveReorder() {
   for (let i = 0; i < finalList.length; i++) {
     if (!finalList[i]) finalList[i] = remaining[ri++];
   }
+  const cleaned = finalList.filter(r => r);
 
   try {
-    await Promise.all(finalList.map((row, i) =>
+    await Promise.all(cleaned.map((row, i) =>
       sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', row.id)
     ));
   } catch (e) {
@@ -1631,7 +1714,6 @@ function buildWAText(patient) {
     locPart = `\n📍 Lokasi saya belum tersedia.\n`;
   }
 
-  // Bagian COD — HANYA jika alamat pasien mengandung "COD"
   let codPart = '';
   if (hasCOD(patient.alamat)) {
     codPart =
