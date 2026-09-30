@@ -94,7 +94,7 @@
   .search-bar input[type=text] { flex:1; min-width:220px; }
 
   .loc-panel { background:#fff; border:2px solid var(--green-100); border-radius:12px;
-    padding:16px 18px; margin-bottom:16px; display:flex; gap:14px; align-items:center;
+    padding:16px 18px; margin-bottom:12px; display:flex; gap:14px; align-items:center;
     flex-wrap:wrap; box-shadow:0 2px 8px rgba(5,46,22,.06); }
   .loc-panel .loc-icon { font-size:24px; }
   .loc-panel .loc-body { flex:1; min-width:220px; }
@@ -105,6 +105,18 @@
   .loc-panel.err { border-color:#fca5a5; background:#fef2f2; }
   .loc-panel.wait { border-color:#fde68a; background:#fefce8; }
   .loc-panel .loc-actions { display:flex; gap:6px; flex-wrap:wrap; }
+
+  /* Panel untuk paste link live lokasi */
+  .live-link-panel { background:#fff; border:2px solid #c7d2fe; border-radius:12px;
+    padding:12px 14px; margin-bottom:12px; display:flex; gap:12px; align-items:flex-start;
+    box-shadow:0 2px 8px rgba(5,46,22,.06); }
+  .live-link-panel.ok { border-color:var(--green-400); background:#f0fdf4; }
+  .live-link-panel .ll-icon { font-size:20px; margin-top:2px; }
+  .live-link-panel .ll-body { flex:1; min-width:200px; }
+  .live-link-panel .ll-label { font-size:11px; font-weight:800; color:var(--green-800);
+    text-transform:uppercase; letter-spacing:.4px; margin-bottom:5px; display:block; }
+  .live-link-panel input { font-size:12px; padding:8px 10px; font-family:'Courier New',monospace; }
+  .live-link-panel .ll-status { font-size:11px; font-weight:700; margin-top:5px; color:#ca8a04; }
 
   .table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
   table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px;
@@ -138,12 +150,10 @@
   .rupiah.rs { color:#0891b2; }
   .rupiah.ptg { color:#7c3aed; }
 
-  .pagination {
-    display:flex; gap:10px; align-items:center; justify-content:center;
+  .pagination { display:flex; gap:10px; align-items:center; justify-content:center;
     flex-wrap:wrap; margin:18px 0 8px; padding:14px;
     background:#fff; border:2px solid var(--green-100); border-radius:12px;
-    box-shadow:0 2px 8px rgba(5,46,22,.06);
-  }
+    box-shadow:0 2px 8px rgba(5,46,22,.06); }
   .pagination button { min-width:90px; }
   .pagination .page-info { font-size:13px; color:var(--green-800); font-weight:700; padding:0 10px; }
   .pagination .page-info b { font-weight:800; color:var(--green-900); font-size:15px; }
@@ -249,32 +259,73 @@
   @media (max-width:768px) {
     #appPage { flex-direction:column; }
     .sidebar {
-      width:100%; height:auto; max-height:36vh;
-      padding:14px 10px; position:relative;
+      width:100%; height:auto; max-height:32vh;
+      padding:12px 10px; position:relative;
       box-shadow:0 4px 12px rgba(0,0,0,.15);
       overflow-y:auto;
     }
     .sidebar h2 { font-size:15px; margin:0 0 3px 6px; }
     .sidebar small { margin:0 0 10px 6px; font-size:10px; }
     .nav-row { display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; }
-    .nav-item { flex:0 0 auto; padding:9px 14px; font-size:12px; margin-bottom:0; white-space:nowrap; }
-    .sidebar .user-info { margin-top:6px; padding:10px; display:flex; align-items:center; gap:10px;
+    .nav-item { flex:0 0 auto; padding:8px 12px; font-size:11px; margin-bottom:0; white-space:nowrap; }
+    .sidebar .user-info { margin-top:6px; padding:8px 10px; display:flex; align-items:center; gap:10px;
       flex-wrap:wrap; border-top:1px solid rgba(16,185,129,.2); }
     .sidebar .user-info b { margin:0; font-size:13px; }
     .sidebar .user-info button { width:auto !important; font-size:11px !important;
       padding:7px 12px !important; margin:0 !important; margin-left:auto !important; }
 
     .main { height:auto; flex:1; }
-    .page { padding:14px 12px 0; }
-    .page-scroll { padding-bottom:16px; margin-right:-6px; padding-right:6px; }
+    .page { padding:10px 10px 0; }
+    .page-scroll { padding-bottom:12px; margin-right:-6px; padding-right:6px; }
 
-    .main h1 { font-size:18px; margin-bottom:12px; }
-    .loc-panel { padding:12px; gap:10px; }
-    .loc-panel .loc-actions { width:100%; }
-    .loc-panel .loc-actions button { flex:1; font-size:12px; padding:9px 10px; }
-    .toolbar { gap:6px; margin-bottom:12px; }
+    .main h1 { font-size:17px; margin-bottom:10px; }
+
+    /* ========== PANEL LOKASI — DIPERKECIL ========== */
+    .loc-panel {
+      padding:9px 10px !important;
+      gap:8px !important;
+      margin-bottom:8px !important;
+      border-radius:10px;
+    }
+    .loc-panel .loc-icon { font-size:18px; }
+    .loc-panel .loc-body { min-width:0; flex:1 1 100%; }
+    .loc-panel .loc-title { font-size:12px; margin-bottom:1px; }
+    .loc-panel .loc-sub { font-size:10px; }
+    .loc-panel .loc-actions {
+      width:100%;
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:4px;
+    }
+    .loc-panel .loc-actions button {
+      font-size:10px;
+      padding:6px 2px;
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      border-radius:7px;
+      font-weight:700;
+    }
+
+    /* ========== PANEL LIVE LINK — DIPERKECIL ========== */
+    .live-link-panel {
+      padding:8px 10px !important;
+      gap:8px !important;
+      margin-bottom:8px !important;
+      border-radius:10px;
+    }
+    .live-link-panel .ll-icon { font-size:16px; }
+    .live-link-panel .ll-label { font-size:10px; margin-bottom:3px; }
+    .live-link-panel input { font-size:11px; padding:6px 8px; }
+    .live-link-panel .ll-status { font-size:10px; margin-top:3px; }
+
+    .toolbar { gap:6px; margin-bottom:8px; }
     .toolbar input[type=text],.toolbar select { min-width:0; flex:1; }
+    .search-bar { margin-bottom:8px; gap:6px; }
     .search-bar input[type=text] { min-width:0; font-size:13px; padding:9px 12px; }
+    .search-bar button { padding:8px 11px !important; font-size:11px !important; }
+
     table { min-width:640px; }
     th,td { padding:9px 10px; font-size:12px; }
     .order-badge { width:24px; height:24px; font-size:11px; }
@@ -306,6 +357,7 @@
     .nav-item { padding:8px 11px; font-size:11px; }
     .pagination { padding:10px; gap:6px; }
     .pagination button { min-width:60px; padding:8px 10px; font-size:11px; }
+    .loc-panel .loc-actions button { font-size:9px; padding:6px 2px; }
   }
 </style>
 </head>
@@ -325,7 +377,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.4</small>
+    <small>v3.5</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
@@ -355,10 +407,21 @@
             <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> di awal shift.</div>
           </div>
           <div class="loc-actions">
-            <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui Lokasi</button>
-            <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast WA</button>
-            <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan Semua</button>
+            <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui</button>
+            <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast</button>
+            <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan</button>
             <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <!-- Panel Link Live Lokasi -->
+        <div class="live-link-panel" id="liveLinkPanel">
+          <div class="ll-icon">🔗</div>
+          <div class="ll-body">
+            <label class="ll-label" for="liveLocationLink">Link Live Lokasi (share dari Google Maps)</label>
+            <input id="liveLocationLink" type="text" placeholder="Paste link live share lokasi di sini..."
+              oninput="saveLiveLocationLink()">
+            <div class="ll-status" id="liveLinkStatus">ℹ️ Belum ada link.</div>
           </div>
         </div>
 
@@ -696,9 +759,8 @@ let chartPtgInstance = null;
 let pasteParsedData = null;
 let pendingReorder = {};
 
-// State untuk pencarian di antrian
-let queueAllList = [];       // semua baris yang di-fetch dari DB (belum difilter)
-let queueSearchQuery = '';   // kata kunci pencarian aktif
+let queueAllList = [];
+let queueSearchQuery = '';
 
 const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const BULAN_SINGKAT = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
@@ -797,6 +859,42 @@ function parseCSV(text) {
   });
 }
 
+// ============ LINK LIVE LOKASI (per user via localStorage) ============
+function liveLinkKey() {
+  return `live_loc_link_${currentUser?.id || 'anon'}`;
+}
+function getLiveLocationLink() {
+  if (!currentUser) return '';
+  return localStorage.getItem(liveLinkKey()) || '';
+}
+function loadLiveLocationLink() {
+  const el = document.getElementById('liveLocationLink');
+  if (el) el.value = getLiveLocationLink();
+  renderLiveLinkStatus();
+}
+function saveLiveLocationLink() {
+  if (!currentUser) return;
+  const val = (document.getElementById('liveLocationLink').value || '').trim();
+  if (val) localStorage.setItem(liveLinkKey(), val);
+  else localStorage.removeItem(liveLinkKey());
+  renderLiveLinkStatus();
+}
+function renderLiveLinkStatus() {
+  const el = document.getElementById('liveLinkStatus');
+  const panel = document.getElementById('liveLinkPanel');
+  if (!el) return;
+  const link = getLiveLocationLink();
+  if (link) {
+    el.innerHTML = '✅ Link aktif — otomatis disertakan di setiap pesan WA.';
+    el.style.color = '#047857';
+    if (panel) panel.classList.add('ok');
+  } else {
+    el.innerHTML = 'ℹ️ Belum ada link. Share live lokasi dari Google Maps lalu paste di sini.';
+    el.style.color = '#ca8a04';
+    if (panel) panel.classList.remove('ok');
+  }
+}
+
 // ============ AUTH ============
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -835,6 +933,7 @@ async function initApp() {
       allUsers.map(u => `<option value="${u.id}">${esc(u.full_name || u.id)}${u.role === 'admin' ? ' (admin)' : ''}</option>`).join('');
   }
   updateActionButtonsVisibility();
+  loadLiveLocationLink();
   await loadPatients();
   showPage('queue');
 }
@@ -864,7 +963,6 @@ function showPage(page) {
 
 function onViewAsChange() {
   viewAsUserId = document.getElementById('viewAsUser').value;
-  // Reset search saat ganti view
   document.getElementById('searchQueue').value = '';
   queueSearchQuery = '';
   updateActionButtonsVisibility();
@@ -886,7 +984,6 @@ function clearSearchQueue() {
   queueSearchQuery = '';
   applyQueueFilter();
 }
-
 function applyQueueFilter() {
   const wrap = document.getElementById('queueTableWrap');
   const infoEl = document.getElementById('queueSearchInfo');
@@ -981,7 +1078,6 @@ function renderMapMarkers() {
     return { ...p, latitude: lat, longitude: lng };
   });
 
-  // Pencarian: nama + alamat + no HP
   if (q) {
     list = list.filter(p =>
       (p.nama || '').toLowerCase().includes(q) ||
@@ -1301,8 +1397,6 @@ async function loadQueue() {
   }
   const { data, error } = await q.order('urutan', { ascending: true }).order('id', { ascending: true });
   if (error) { wrap.innerHTML = '<div class="empty">Gagal: ' + esc(error.message) + '</div>'; return; }
-
-  // Simpan semua baris ke cache, biarkan applyQueueFilter yang mengatur tampilan
   queueAllList = data || [];
 
   if (isAdmin) {
@@ -1358,7 +1452,7 @@ function renderQueueUser(list) {
   wrap.innerHTML = `
     ${banner}
     <div class="hint">
-      💡 <b>Ubah urutan:</b> isi nomor baru di kotak <b>Urut</b> pada setiap baris yang ingin dipindah, lalu klik tombol <b>💾 SAVE URUTAN</b> di bawah tabel. Tidak perlu klik satu-satu.
+      💡 <b>Ubah urutan:</b> isi nomor baru di kotak <b>Urut</b> pada setiap baris yang ingin dipindah, lalu klik tombol <b>💾 SAVE URUTAN</b> di bawah tabel.
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
       <p style="font-size:13px;color:#047857;margin:0;font-weight:700">Terdapat <b>${list.length}</b> pasien.</p>
@@ -1381,7 +1475,6 @@ function renderQueueUser(list) {
           const statusText = r.status === 'delivered' ? '✓ Terkirim' : 'Menunggu';
           const syncedMark = r.synced_to_master ? '<div class="status-synced">✓ master</div>' : '';
           const cod = hasCOD(r.alamat);
-          // Nomor urut tampil = urutan asli (bukan nomor baris di tabel yang mungkin sudah difilter)
           const displayOrder = r.urutan || (i + 1);
           return `<tr data-id="${r.id}">
             <td>
@@ -1651,6 +1744,32 @@ function closeQDetail() {
 function recordDelivery(deliveryId) {
   const statusEl = document.getElementById('qGeoStatus');
   if (!navigator.geolocation) { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Geolocation tidak didukung.'; return; }
+
+  // Cek apakah koordinat sudah ada
+  const r = myQueue.find(x => x.id === deliveryId);
+  const latNum = r ? parseFloat(r.latitude) : NaN;
+  const lngNum = r ? parseFloat(r.longitude) : NaN;
+  const alreadyHasCoord = !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
+
+  // Kalau koordinat sudah ada → jangan ambil GPS, hanya update status
+  if (alreadyHasCoord) {
+    statusEl.className = 'geo-status ok';
+    statusEl.textContent = `✅ Koordinat sudah tersimpan (${latNum.toFixed(5)}, ${lngNum.toFixed(5)}) — tidak diubah.`;
+    sb.from('daily_deliveries').update({
+      status: 'delivered',
+      delivered_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }).eq('id', deliveryId).then(({ error }) => {
+      if (error) console.error('Gagal update status:', error);
+      const idx = myQueue.findIndex(x => x.id === deliveryId);
+      if (idx >= 0) myQueue[idx].status = 'delivered';
+    });
+    return;
+  }
+
+  // Kalau koordinat kosong → ambil GPS
+  statusEl.className = 'geo-status wait';
+  statusEl.textContent = '📡 Mengambil titik koordinat GPS Anda...';
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       const { latitude, longitude } = pos.coords;
@@ -1707,8 +1826,15 @@ function buildWAText(patient) {
     const daftar = myQueue.map((p, i) => `${i+1}. ${p.nama}`).join('\n');
     listPart = `\nDaftar pasien yang akan saya antar hari ini (urut pengantaran):\n${daftar}\n`;
   }
+
+  // Prioritas link lokasi:
+  // 1. Link live yang di-paste petugas (real-time tracking)
+  // 2. Link koordinat GPS biasa (fallback)
   let locPart = '';
-  if (officerLocation) {
+  const liveLink = getLiveLocationLink();
+  if (liveLink) {
+    locPart = `\n📍 Link live lokasi saya (update real-time):\n${liveLink}\n`;
+  } else if (officerLocation) {
     locPart = `\n📍 Link lokasi saya (untuk tracking):\nhttps://www.google.com/maps?q=${officerLocation.lat},${officerLocation.lng}\n`;
   } else {
     locPart = `\n📍 Lokasi saya belum tersedia.\n`;
