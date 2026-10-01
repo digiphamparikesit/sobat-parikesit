@@ -93,6 +93,40 @@
   .search-bar { display:flex; gap:8px; margin-bottom:14px; align-items:center; flex-wrap:wrap; }
   .search-bar input[type=text] { flex:1; min-width:220px; }
 
+  /* ===== TOOLS TOGGLE (mobile only) ===== */
+  .tools-toggle {
+    display: none;
+    width: 100%;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(5,46,22,.15);
+    transition: all .2s;
+  }
+  .tools-toggle:hover { background: linear-gradient(135deg, #047857, #065f46); }
+  .tools-toggle .tt-left { display:flex; align-items:center; gap:8px; }
+  .tools-toggle .tt-icon { font-size:16px; }
+  .tools-toggle .tt-badges { display:inline-flex; gap:4px; margin-left:4px; }
+  .tools-toggle .tt-dot {
+    display:inline-block; width:8px; height:8px; border-radius:50%;
+    border:1.5px solid #fff; box-shadow:0 1px 2px rgba(0,0,0,.2);
+  }
+  .tools-toggle .tt-dot.ok { background: #4ade80; }
+  .tools-toggle .tt-dot.wait { background: #fbbf24; }
+  .tools-toggle .tt-dot.live { background: #60a5fa; }
+  .tools-toggle .tt-arrow { font-size:11px; transition: transform .2s; }
+
+  /* Tools panel = wrapper untuk loc-panel + live-link-panel */
+  .tools-panel { display: block; }
+
   .loc-panel { background:#fff; border:2px solid var(--green-100); border-radius:12px;
     padding:16px 18px; margin-bottom:12px; display:flex; gap:14px; align-items:center;
     flex-wrap:wrap; box-shadow:0 2px 8px rgba(5,46,22,.06); }
@@ -106,7 +140,6 @@
   .loc-panel.wait { border-color:#fde68a; background:#fefce8; }
   .loc-panel .loc-actions { display:flex; gap:6px; flex-wrap:wrap; }
 
-  /* Panel untuk paste link live lokasi */
   .live-link-panel { background:#fff; border:2px solid #c7d2fe; border-radius:12px;
     padding:12px 14px; margin-bottom:12px; display:flex; gap:12px; align-items:flex-start;
     box-shadow:0 2px 8px rgba(5,46,22,.06); }
@@ -280,7 +313,12 @@
 
     .main h1 { font-size:17px; margin-bottom:10px; }
 
-    /* ========== PANEL LOKASI — DIPERKECIL ========== */
+    /* ==== TOOLS COLLAPSE (MOBILE) ==== */
+    .tools-toggle { display: flex; }
+    .tools-panel { display: none; }
+    .tools-panel.open { display: block; }
+
+    /* Panel lokasi — compact saat tampil */
     .loc-panel {
       padding:9px 10px !important;
       gap:8px !important;
@@ -308,7 +346,7 @@
       font-weight:700;
     }
 
-    /* ========== PANEL LIVE LINK — DIPERKECIL ========== */
+    /* Panel live link — compact */
     .live-link-panel {
       padding:8px 10px !important;
       gap:8px !important;
@@ -377,7 +415,7 @@
 <div id="appPage" class="hidden">
   <div class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.5</small>
+    <small>v3.6</small>
     <div class="nav-row">
       <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
       <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
@@ -400,28 +438,40 @@
       <div class="page-fixed">
         <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
 
-        <div class="loc-panel wait" id="locPanel">
-          <div class="loc-icon">📍</div>
-          <div class="loc-body">
-            <div class="loc-title" id="locTitle">Lokasi Saya Belum Diambil</div>
-            <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> di awal shift.</div>
-          </div>
-          <div class="loc-actions">
-            <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui</button>
-            <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast</button>
-            <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan</button>
-            <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
-          </div>
-        </div>
+        <!-- Tombol Toggle untuk Mobile -->
+        <button type="button" class="tools-toggle" id="toolsToggle" onclick="toggleTools()">
+          <span class="tt-left">
+            <span class="tt-icon">⚙️</span>
+            <span class="tt-title">Tools & Link Lokasi</span>
+            <span class="tt-badges" id="toolsBadges"></span>
+          </span>
+          <span class="tt-arrow" id="toolsArrow">▼</span>
+        </button>
 
-        <!-- Panel Link Live Lokasi -->
-        <div class="live-link-panel" id="liveLinkPanel">
-          <div class="ll-icon">🔗</div>
-          <div class="ll-body">
-            <label class="ll-label" for="liveLocationLink">Link Live Lokasi (share dari Google Maps)</label>
-            <input id="liveLocationLink" type="text" placeholder="Paste link live share lokasi di sini..."
-              oninput="saveLiveLocationLink()">
-            <div class="ll-status" id="liveLinkStatus">ℹ️ Belum ada link.</div>
+        <!-- Panel Tools (Lokasi + Live Link) -->
+        <div class="tools-panel" id="toolsPanel">
+          <div class="loc-panel wait" id="locPanel">
+            <div class="loc-icon">📍</div>
+            <div class="loc-body">
+              <div class="loc-title" id="locTitle">Lokasi Saya Belum Diambil</div>
+              <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> di awal shift.</div>
+            </div>
+            <div class="loc-actions">
+              <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui</button>
+              <button class="broadcast" id="btnBroadcast" onclick="openBroadcast()">📢 Broadcast</button>
+              <button class="save-master" id="btnSyncAll" onclick="syncAllToMaster()">💾 Simpan</button>
+              <button class="ghost" onclick="loadQueue()">🔄 Refresh</button>
+            </div>
+          </div>
+
+          <div class="live-link-panel" id="liveLinkPanel">
+            <div class="ll-icon">🔗</div>
+            <div class="ll-body">
+              <label class="ll-label" for="liveLocationLink">Link Live Lokasi (share dari Google Maps)</label>
+              <input id="liveLocationLink" type="text" placeholder="Paste link live share lokasi di sini..."
+                oninput="saveLiveLocationLink()">
+              <div class="ll-status" id="liveLinkStatus">ℹ️ Belum ada link.</div>
+            </div>
           </div>
         </div>
 
@@ -859,7 +909,26 @@ function parseCSV(text) {
   });
 }
 
-// ============ LINK LIVE LOKASI (per user via localStorage) ============
+// ============ TOOLS TOGGLE (mobile collapse) ============
+function toggleTools() {
+  const panel = document.getElementById('toolsPanel');
+  const arrow = document.getElementById('toolsArrow');
+  if (!panel || !arrow) return;
+  const isOpen = panel.classList.toggle('open');
+  arrow.textContent = isOpen ? '▲' : '▼';
+}
+
+function updateToolsBadges() {
+  const el = document.getElementById('toolsBadges');
+  if (!el) return;
+  const badges = [];
+  if (officerLocation) badges.push('<span class="tt-dot ok" title="Lokasi aktif"></span>');
+  else badges.push('<span class="tt-dot wait" title="Lokasi belum diambil"></span>');
+  if (getLiveLocationLink()) badges.push('<span class="tt-dot live" title="Link live aktif"></span>');
+  el.innerHTML = badges.join('');
+}
+
+// ============ LINK LIVE LOKASI ============
 function liveLinkKey() {
   return `live_loc_link_${currentUser?.id || 'anon'}`;
 }
@@ -878,6 +947,7 @@ function saveLiveLocationLink() {
   if (val) localStorage.setItem(liveLinkKey(), val);
   else localStorage.removeItem(liveLinkKey());
   renderLiveLinkStatus();
+  updateToolsBadges();
 }
 function renderLiveLinkStatus() {
   const el = document.getElementById('liveLinkStatus');
@@ -934,6 +1004,7 @@ async function initApp() {
   }
   updateActionButtonsVisibility();
   loadLiveLocationLink();
+  updateToolsBadges();
   await loadPatients();
   showPage('queue');
 }
@@ -1158,6 +1229,7 @@ function perbaruiLokasiSaya() {
     (pos) => {
       officerLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude, time: new Date() };
       renderLocPanel();
+      updateToolsBadges();
     },
     (err) => {
       panel.className = 'loc-panel err';
@@ -1688,7 +1760,7 @@ async function syncAllToMaster() {
       else same++;
     } else failed++;
   }
-  if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan Semua'; }
+  if (btn) { btn.disabled = false; btn.textContent = '💾 Simpan'; }
   alert(`Selesai!\n\n🔄 Diperbarui: ${updated}\n➕ Ditambahkan: ${inserted}\n⏭️ Sudah sama: ${same}\n❌ Gagal: ${failed}`);
   await loadPatients(); await loadQueue();
 }
@@ -1745,13 +1817,11 @@ function recordDelivery(deliveryId) {
   const statusEl = document.getElementById('qGeoStatus');
   if (!navigator.geolocation) { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Geolocation tidak didukung.'; return; }
 
-  // Cek apakah koordinat sudah ada
   const r = myQueue.find(x => x.id === deliveryId);
   const latNum = r ? parseFloat(r.latitude) : NaN;
   const lngNum = r ? parseFloat(r.longitude) : NaN;
   const alreadyHasCoord = !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
 
-  // Kalau koordinat sudah ada → jangan ambil GPS, hanya update status
   if (alreadyHasCoord) {
     statusEl.className = 'geo-status ok';
     statusEl.textContent = `✅ Koordinat sudah tersimpan (${latNum.toFixed(5)}, ${lngNum.toFixed(5)}) — tidak diubah.`;
@@ -1767,7 +1837,6 @@ function recordDelivery(deliveryId) {
     return;
   }
 
-  // Kalau koordinat kosong → ambil GPS
   statusEl.className = 'geo-status wait';
   statusEl.textContent = '📡 Mengambil titik koordinat GPS Anda...';
   navigator.geolocation.getCurrentPosition(
@@ -1827,9 +1896,6 @@ function buildWAText(patient) {
     listPart = `\nDaftar pasien yang akan saya antar hari ini (urut pengantaran):\n${daftar}\n`;
   }
 
-  // Prioritas link lokasi:
-  // 1. Link live yang di-paste petugas (real-time tracking)
-  // 2. Link koordinat GPS biasa (fallback)
   let locPart = '';
   const liveLink = getLiveLocationLink();
   if (liveLink) {
