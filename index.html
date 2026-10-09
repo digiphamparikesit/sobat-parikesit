@@ -50,8 +50,10 @@
   button.updown:hover { background:var(--green-400); color:#fff; }
   button:disabled { opacity:.35; cursor:not-allowed; }
 
+  /* ========== LAYOUT ========== */
   #appPage { display:flex; height:100vh; overflow:hidden; }
 
+  /* ==== SIDEBAR (desktop) ==== */
   .sidebar {
     width:250px; flex-shrink:0;
     background:linear-gradient(180deg,#052e16 0%,#064e3b 100%);
@@ -69,6 +71,183 @@
   .sidebar .user-info b { color:#fff; display:block; margin-bottom:8px; font-weight:700; font-size:14px; }
   .sidebar .user-info .badge { background:var(--green-500); color:#052e16; }
 
+  /* ==== TOPBAR (mobile) ==== */
+  .mobile-topbar {
+    display: none;
+    height: 52px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #052e16, #065f46);
+    color: #d1fae5;
+    align-items: center;
+    padding: 0 12px;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    z-index: 40;
+  }
+  .mobile-topbar .mt-menu-btn {
+    background: rgba(16,185,129,.15);
+    color: #d1fae5;
+    padding: 8px 11px;
+    font-size: 18px;
+    border-radius: 8px;
+    font-weight: 800;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+  }
+  .mobile-topbar .mt-menu-btn:hover { background: rgba(16,185,129,.3); color: #fff; }
+  .mobile-topbar .mt-title {
+    flex: 1;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mobile-topbar .mt-user {
+    font-size: 11px;
+    font-weight: 800;
+    background: var(--green-500);
+    color: #052e16;
+    padding: 4px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ==== BOTTOM NAV (mobile) ==== */
+  .mobile-bottom-nav {
+    display: none;
+    height: 62px;
+    flex-shrink: 0;
+    background: #fff;
+    border-top: 1px solid var(--green-100);
+    box-shadow: 0 -3px 12px rgba(5,46,22,.08);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    z-index: 40;
+  }
+  .mbn-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 2px;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    transition: all .15s;
+    border: none;
+    background: transparent;
+    border-radius: 0;
+    letter-spacing: -.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mbn-item .mbn-icon { font-size: 20px; line-height: 1; }
+  .mbn-item:hover { background: #f7fefb; }
+  .mbn-item.active {
+    color: var(--green-700);
+    font-weight: 800;
+  }
+  .mbn-item.active .mbn-icon {
+    transform: scale(1.12);
+    transition: transform .15s;
+  }
+  .mbn-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 32px;
+    height: 3px;
+    background: var(--green-500);
+    border-radius: 0 0 3px 3px;
+  }
+  .mbn-item { position: relative; }
+
+  /* ==== DRAWER (mobile) ==== */
+  .drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5,46,22,.6);
+    z-index: 50;
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .drawer-overlay.open { display: block; opacity: 1; }
+
+  .mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 82%;
+    max-width: 300px;
+    background: linear-gradient(180deg, #052e16 0%, #064e3b 100%);
+    color: #d1fae5;
+    z-index: 51;
+    transform: translateX(-100%);
+    transition: transform .25s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px 14px;
+  }
+  .mobile-drawer.open { transform: translateX(0); }
+  .mobile-drawer .md-header {
+    padding: 0 0 18px;
+    border-bottom: 1px solid rgba(16,185,129,.25);
+    margin-bottom: 14px;
+  }
+  .mobile-drawer .md-header h3 { color: #fff; font-size: 17px; margin: 0 0 3px; font-weight: 800; }
+  .mobile-drawer .md-header small { color: #6ee7b7; font-size: 11px; letter-spacing: 1px; }
+  .mobile-drawer .md-user { padding: 12px; background: rgba(16,185,129,.12); border-radius: 10px; margin-bottom: 14px; }
+  .mobile-drawer .md-user b { display: block; color: #fff; font-size: 14px; margin-bottom: 4px; }
+  .mobile-drawer .md-user .badge { background: var(--green-500); color: #052e16; font-size: 10px; padding: 2px 8px; }
+  .mobile-drawer .md-section-label {
+    font-size: 10px; color: #6ee7b7; letter-spacing: 1.2px; font-weight: 800;
+    padding: 10px 12px 6px; text-transform: uppercase;
+  }
+  .drawer-item {
+    padding: 12px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #a7f3d0;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .drawer-item:hover { background: rgba(16,185,129,.15); color: #fff; }
+  .drawer-item.active { background: var(--green-500); color: #052e16; font-weight: 800; }
+  .drawer-item .di-icon { font-size: 18px; width: 22px; text-align: center; }
+  .mobile-drawer .md-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(16,185,129,.25);
+  }
+  .mobile-drawer .md-logout {
+    width: 100%;
+    background: var(--green-100);
+    color: var(--green-900);
+    font-weight: 800;
+    padding: 12px;
+    border-radius: 9px;
+  }
+  .mobile-drawer .md-logout:hover { background: var(--green-400); color: #fff; }
+
+  /* ==== MAIN ==== */
   .main {
     flex:1; min-width:0;
     height:100vh; overflow:hidden;
@@ -93,23 +272,13 @@
   .search-bar { display:flex; gap:8px; margin-bottom:14px; align-items:center; flex-wrap:wrap; }
   .search-bar input[type=text] { flex:1; min-width:220px; }
 
-  /* ===== TOOLS TOGGLE (mobile only) ===== */
   .tools-toggle {
-    display: none;
-    width: 100%;
-    padding: 10px 14px;
+    display: none; width: 100%; padding: 10px 14px;
     background: linear-gradient(135deg, #059669, #047857);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    font-weight: 800;
-    font-size: 13px;
-    cursor: pointer;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(5,46,22,.15);
-    transition: all .2s;
+    color: #fff; border: none; border-radius: 10px; margin-bottom: 8px;
+    font-weight: 800; font-size: 13px; cursor: pointer;
+    justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 8px rgba(5,46,22,.15); transition: all .2s;
   }
   .tools-toggle:hover { background: linear-gradient(135deg, #047857, #065f46); }
   .tools-toggle .tt-left { display:flex; align-items:center; gap:8px; }
@@ -124,7 +293,6 @@
   .tools-toggle .tt-dot.live { background: #60a5fa; }
   .tools-toggle .tt-arrow { font-size:11px; transition: transform .2s; }
 
-  /* Tools panel = wrapper untuk loc-panel + live-link-panel */
   .tools-panel { display: block; }
 
   .loc-panel { background:#fff; border:2px solid var(--green-100); border-radius:12px;
@@ -289,36 +457,25 @@
     color:var(--green-900); letter-spacing:-.2px; }
   .chart-box .chart-wrap { position:relative; height:340px; width:100%; }
 
+  /* ============ MOBILE ============ */
   @media (max-width:768px) {
-    #appPage { flex-direction:column; }
-    .sidebar {
-      width:100%; height:auto; max-height:32vh;
-      padding:12px 10px; position:relative;
-      box-shadow:0 4px 12px rgba(0,0,0,.15);
-      overflow-y:auto;
-    }
-    .sidebar h2 { font-size:15px; margin:0 0 3px 6px; }
-    .sidebar small { margin:0 0 10px 6px; font-size:10px; }
-    .nav-row { display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; }
-    .nav-item { flex:0 0 auto; padding:8px 12px; font-size:11px; margin-bottom:0; white-space:nowrap; }
-    .sidebar .user-info { margin-top:6px; padding:8px 10px; display:flex; align-items:center; gap:10px;
-      flex-wrap:wrap; border-top:1px solid rgba(16,185,129,.2); }
-    .sidebar .user-info b { margin:0; font-size:13px; }
-    .sidebar .user-info button { width:auto !important; font-size:11px !important;
-      padding:7px 12px !important; margin:0 !important; margin-left:auto !important; }
+    #appPage { flex-direction: column; }
+    .sidebar { display: none; }
 
-    .main { height:auto; flex:1; }
-    .page { padding:10px 10px 0; }
+    .mobile-topbar { display: flex; }
+    .mobile-bottom-nav { display: flex; }
+
+    .main { height: auto; flex: 1; min-height: 0; }
+
+    .page { padding:12px 10px 0; }
     .page-scroll { padding-bottom:12px; margin-right:-6px; padding-right:6px; }
 
     .main h1 { font-size:17px; margin-bottom:10px; }
 
-    /* ==== TOOLS COLLAPSE (MOBILE) ==== */
     .tools-toggle { display: flex; }
     .tools-panel { display: none; }
     .tools-panel.open { display: block; }
 
-    /* Panel lokasi — compact saat tampil */
     .loc-panel {
       padding:9px 10px !important;
       gap:8px !important;
@@ -336,17 +493,11 @@
       gap:4px;
     }
     .loc-panel .loc-actions button {
-      font-size:10px;
-      padding:6px 2px;
-      min-width:0;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      border-radius:7px;
-      font-weight:700;
+      font-size:10px; padding:6px 2px; min-width:0;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      border-radius:7px; font-weight:700;
     }
 
-    /* Panel live link — compact */
     .live-link-panel {
       padding:8px 10px !important;
       gap:8px !important;
@@ -373,9 +524,10 @@
     .modal { padding:20px 16px; }
     .modal h3 { font-size:16px; }
     .modal .row button { flex:1; min-width:90px; }
-    .pagination button { padding:9px 14px; font-size:12px; min-width:70px; }
-    .pagination .page-info { font-size:12px; padding:0 6px; }
-    .pagination input.page-jump { width:60px !important; padding:8px 6px !important; }
+    .pagination { padding:10px; gap:6px; margin:12px 0 6px; }
+    .pagination button { padding:8px 12px; font-size:11px; min-width:60px; }
+    .pagination .page-info { font-size:11px; padding:0 4px; }
+    .pagination input.page-jump { width:55px !important; padding:7px 5px !important; font-size:11px; }
     .map-toolbar { padding:10px; }
     .map-toolbar input[type=text] { min-width:0; font-size:13px; padding:9px 12px; }
     .map-toolbar button { padding:9px 12px; font-size:12px; }
@@ -392,10 +544,10 @@
   }
   @media (max-width:420px) {
     .main h1 { font-size:16px; }
-    .nav-item { padding:8px 11px; font-size:11px; }
-    .pagination { padding:10px; gap:6px; }
-    .pagination button { min-width:60px; padding:8px 10px; font-size:11px; }
     .loc-panel .loc-actions button { font-size:9px; padding:6px 2px; }
+    .pagination button { min-width:50px; padding:7px 9px; font-size:10px; }
+    .mbn-item { font-size:9px; }
+    .mbn-item .mbn-icon { font-size:18px; }
   }
 </style>
 </head>
@@ -413,32 +565,38 @@
 </div>
 
 <div id="appPage" class="hidden">
-  <div class="sidebar">
+  <!-- ========== DESKTOP SIDEBAR ========== -->
+  <aside class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.6</small>
-    <div class="nav-row">
-      <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
-      <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
-      <div class="nav-item" data-page="map" onclick="showPage('map')">🗺️ Peta Pasien</div>
-      <div class="nav-item" data-page="sobat" onclick="showPage('sobat')">💊 Data Pasien Sobat</div>
-      <div class="nav-item" data-page="uploadDok" onclick="showPage('uploadDok')">📤 Upload CSV Dok</div>
-      <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')">📊 Dashboard</div>
-      <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat</div>
-      <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
-    </div>
+    <small>v3.8</small>
+    <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
+    <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
+    <div class="nav-item" data-page="map" onclick="showPage('map')">🗺️ Peta Pasien</div>
+    <div class="nav-item" data-page="sobat" onclick="showPage('sobat')">💊 Data Pasien Sobat</div>
+    <div class="nav-item" data-page="uploadDok" onclick="showPage('uploadDok')">📤 Upload CSV Dok</div>
+    <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')">📊 Dashboard</div>
+    <div class="nav-item" data-page="history" onclick="showPage('history')">📜 Riwayat</div>
+    <div class="nav-item" data-page="users" onclick="showPage('users')">👥 User</div>
     <div class="user-info">
       <b id="userName">-</b>
       <div id="userRole" class="badge">-</div>
       <button class="ghost" style="margin-left:auto;padding:6px 12px;font-size:12px" onclick="doLogout()">Logout</button>
     </div>
-  </div>
+  </aside>
 
+  <!-- ========== MOBILE TOPBAR ========== -->
+  <header class="mobile-topbar">
+    <button class="mt-menu-btn" onclick="toggleDrawer()" aria-label="Menu">☰</button>
+    <div class="mt-title" id="mtTitle">Sobat Parikesit</div>
+    <div class="mt-user" id="mtUser">-</div>
+  </header>
+
+  <!-- ========== MAIN ========== -->
   <div class="main">
     <div id="page-queue" class="page">
       <div class="page-fixed">
         <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
 
-        <!-- Tombol Toggle untuk Mobile -->
         <button type="button" class="tools-toggle" id="toolsToggle" onclick="toggleTools()">
           <span class="tt-left">
             <span class="tt-icon">⚙️</span>
@@ -448,7 +606,6 @@
           <span class="tt-arrow" id="toolsArrow">▼</span>
         </button>
 
-        <!-- Panel Tools (Lokasi + Live Link) -->
         <div class="tools-panel" id="toolsPanel">
           <div class="loc-panel wait" id="locPanel">
             <div class="loc-icon">📍</div>
@@ -497,6 +654,7 @@
 
       <div class="page-scroll">
         <div id="queueTableWrap"></div>
+        <div id="queuePagination"></div>
       </div>
     </div>
 
@@ -506,12 +664,6 @@
         <div class="toolbar">
           <input id="searchPatient" placeholder="Cari nama / alamat / no HP..." oninput="onSearchPatient()">
           <button onclick="openPatientForm()">+ Tambah Pasien</button>
-          <select id="patientPageSize" onchange="onPatientPageSizeChange()" style="width:auto">
-            <option value="50">50 / halaman</option>
-            <option value="100" selected>100 / halaman</option>
-            <option value="200">200 / halaman</option>
-            <option value="500">500 / halaman</option>
-          </select>
         </div>
       </div>
       <div class="page-scroll">
@@ -548,11 +700,6 @@
           <select id="sobatFilterBulan" onchange="onSearchSobat()" style="width:auto"></select>
           <select id="sobatFilterTahun" onchange="onSearchSobat()" style="width:auto"></select>
           <select id="sobatFilterPetugas" onchange="onSearchSobat()" style="width:auto"></select>
-          <select id="sobatPageSize" onchange="onSobatPageSizeChange()" style="width:auto">
-            <option value="50">50 / hal</option>
-            <option value="100" selected>100 / hal</option>
-            <option value="200">200 / hal</option>
-          </select>
         </div>
       </div>
       <div class="page-scroll">
@@ -659,6 +806,62 @@
       </div>
     </div>
   </div>
+
+  <!-- ========== MOBILE BOTTOM NAV ========== -->
+  <nav class="mobile-bottom-nav">
+    <button class="mbn-item active" data-page="queue" onclick="showPage('queue')">
+      <span class="mbn-icon">📦</span>
+      <span>Antrian</span>
+    </button>
+    <button class="mbn-item" data-page="patients" onclick="showPage('patients')">
+      <span class="mbn-icon">📋</span>
+      <span>Pasien</span>
+    </button>
+    <button class="mbn-item" data-page="map" onclick="showPage('map')">
+      <span class="mbn-icon">🗺️</span>
+      <span>Peta</span>
+    </button>
+    <button class="mbn-item" data-page="sobat" onclick="showPage('sobat')">
+      <span class="mbn-icon">💊</span>
+      <span>Sobat</span>
+    </button>
+    <button class="mbn-item" onclick="toggleDrawer()">
+      <span class="mbn-icon">☰</span>
+      <span>Lainnya</span>
+    </button>
+  </nav>
+
+  <!-- ========== MOBILE DRAWER ========== -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="md-header">
+      <h3>🌿 Sobat Parikesit</h3>
+      <small>v3.8</small>
+    </div>
+
+    <div class="md-user">
+      <b id="drawerUserName">-</b>
+      <div class="badge" id="drawerUserRole">-</div>
+    </div>
+
+    <div class="md-section-label">Menu Lainnya</div>
+    <div class="drawer-item" data-page="uploadDok" onclick="navigateFromDrawer('uploadDok')">
+      <span class="di-icon">📤</span> Upload CSV Dok
+    </div>
+    <div class="drawer-item" data-page="dashboard" onclick="navigateFromDrawer('dashboard')">
+      <span class="di-icon">📊</span> Dashboard
+    </div>
+    <div class="drawer-item" data-page="history" onclick="navigateFromDrawer('history')">
+      <span class="di-icon">📜</span> Riwayat
+    </div>
+    <div class="drawer-item" data-page="users" onclick="navigateFromDrawer('users')">
+      <span class="di-icon">👥</span> User
+    </div>
+
+    <div class="md-footer">
+      <button class="md-logout" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
 </div>
 
 <div id="qDetailModal" class="modal-bg hidden">
@@ -787,8 +990,10 @@ let currentUser = null, currentProfile = null, isAdmin = false;
 let patientsCache = [], myQueue = [], allUsers = [];
 let officerLocation = null, currentQId = null, viewAsUserId = '';
 
+const PAGE_SIZE = 10;
+let queuePage = 1;
 let patientPage = 1;
-let patientPageSize = 100;
+const patientPageSize = PAGE_SIZE;
 let patientFilteredCache = [];
 
 let mapInstance = null;
@@ -798,7 +1003,7 @@ let mapInitialized = false;
 
 let sobatCache = [];
 let sobatPage = 1;
-let sobatPageSize = 100;
+const sobatPageSize = PAGE_SIZE;
 let sobatFilteredCache = [];
 
 let chartTarifInstance = null;
@@ -909,7 +1114,30 @@ function parseCSV(text) {
   });
 }
 
-// ============ TOOLS TOGGLE (mobile collapse) ============
+// ============ DRAWER ============
+function toggleDrawer() {
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if (!drawer || !overlay) return;
+  const isOpen = drawer.classList.contains('open');
+  if (isOpen) closeDrawer();
+  else {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+  }
+}
+function closeDrawer() {
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+}
+function navigateFromDrawer(page) {
+  closeDrawer();
+  showPage(page);
+}
+
+// ============ TOOLS TOGGLE ============
 function toggleTools() {
   const panel = document.getElementById('toolsPanel');
   const arrow = document.getElementById('toolsArrow');
@@ -917,7 +1145,6 @@ function toggleTools() {
   const isOpen = panel.classList.toggle('open');
   arrow.textContent = isOpen ? '▲' : '▼';
 }
-
 function updateToolsBadges() {
   const el = document.getElementById('toolsBadges');
   if (!el) return;
@@ -989,6 +1216,11 @@ async function initApp() {
   isAdmin = currentProfile.role === 'admin';
   document.getElementById('userName').textContent = currentProfile.full_name || user.email;
   document.getElementById('userRole').textContent = currentProfile.role || 'petugas';
+  const nameTxt = currentProfile.full_name || user.email;
+  const roleTxt = currentProfile.role || 'petugas';
+  document.getElementById('mtUser').textContent = nameTxt;
+  document.getElementById('drawerUserName').textContent = nameTxt;
+  document.getElementById('drawerUserRole').textContent = roleTxt;
   document.getElementById('loginPage').classList.add('hidden');
   document.getElementById('appPage').classList.remove('hidden');
 
@@ -1014,10 +1246,42 @@ function showLogin() {
 }
 sb.auth.getSession().then(({ data: { session } }) => { if (session) initApp(); else showLogin(); });
 
+// ====== PAGE TITLES untuk topbar mobile ======
+const PAGE_TITLES = {
+  queue: 'Antrian',
+  patients: 'Data Pasien',
+  map: 'Peta Pasien',
+  sobat: 'Data Pasien Sobat',
+  uploadDok: 'Upload CSV Dok',
+  dashboard: 'Dashboard',
+  history: 'Riwayat',
+  users: 'User'
+};
+
 function showPage(page) {
   ['queue','patients','map','sobat','uploadDok','dashboard','history','users'].forEach(p =>
     document.getElementById('page-' + p).classList.toggle('hidden', p !== page));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+
+  // Sync desktop sidebar
+  document.querySelectorAll('.sidebar .nav-item').forEach(n =>
+    n.classList.toggle('active', n.dataset.page === page));
+
+  // Sync bottom nav (mobile)
+  document.querySelectorAll('.mobile-bottom-nav .mbn-item').forEach(n =>
+    n.classList.toggle('active', n.dataset.page === page));
+
+  // Sync drawer items
+  document.querySelectorAll('.mobile-drawer .drawer-item').forEach(n =>
+    n.classList.toggle('active', n.dataset.page === page));
+
+  // Update topbar title
+  const mt = document.getElementById('mtTitle');
+  if (mt) mt.textContent = PAGE_TITLES[page] || 'Sobat Parikesit';
+
+  // Close drawer saat navigasi
+  closeDrawer();
+
+  // Load data
   if (page === 'queue') { renderLocPanel(); loadQueue(); }
   if (page === 'map') {
     setTimeout(() => {
@@ -1036,6 +1300,7 @@ function onViewAsChange() {
   viewAsUserId = document.getElementById('viewAsUser').value;
   document.getElementById('searchQueue').value = '';
   queueSearchQuery = '';
+  queuePage = 1;
   updateActionButtonsVisibility();
   loadQueue();
 }
@@ -1048,15 +1313,27 @@ function updateActionButtonsVisibility() {
 // ============ PENCARIAN ANTRIAN ============
 function onSearchQueue() {
   queueSearchQuery = (document.getElementById('searchQueue').value || '').trim().toLowerCase();
+  queuePage = 1;
   applyQueueFilter();
 }
 function clearSearchQueue() {
   document.getElementById('searchQueue').value = '';
   queueSearchQuery = '';
+  queuePage = 1;
   applyQueueFilter();
+}
+function gotoQueuePage(n) {
+  const totalPages = Math.max(1, Math.ceil((window.__queueDisplayedCount || 0) / PAGE_SIZE));
+  if (n < 1) n = 1;
+  if (n > totalPages) n = totalPages;
+  queuePage = n;
+  applyQueueFilter();
+  const w = document.getElementById('queueTableWrap');
+  if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function applyQueueFilter() {
   const wrap = document.getElementById('queueTableWrap');
+  const pagEl = document.getElementById('queuePagination');
   const infoEl = document.getElementById('queueSearchInfo');
   const dateVal = isAdmin ? (document.getElementById('queueDate').value || todayStr()) : todayStr();
   const userSpecificView = !isAdmin || (isAdmin && viewAsUserId !== '');
@@ -1070,44 +1347,67 @@ function applyQueueFilter() {
     );
   }
 
+  if (userSpecificView) {
+    myQueue = filtered.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
+  } else {
+    myQueue = [];
+  }
+
+  let displayed = filtered;
+  if (!userSpecificView) {
+    const f = document.getElementById('queueFilter').value;
+    if (f === 'unassigned') displayed = filtered.filter(r => !r.assigned_to);
+  }
+
+  window.__queueDisplayedCount = displayed.length;
+
   if (queueSearchQuery) {
     infoEl.textContent = `Hasil "${queueSearchQuery}": ${filtered.length} dari ${queueAllList.length}`;
   } else {
     infoEl.textContent = '';
   }
 
-  if (userSpecificView) {
-    myQueue = filtered.slice().sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
-    if (!filtered.length) {
-      if (queueSearchQuery) {
-        wrap.innerHTML = `<div class="empty">Tidak ada pasien yang cocok dengan "${esc(queueSearchQuery)}".</div>`;
-      } else {
-        const targetName = isAdmin
-          ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini')
-          : 'Anda';
-        wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada ${dateVal}.
-          ${isAdmin
-            ? '<br><small>Pastikan kolom "petugas" di CSV sudah benar.</small>'
-            : '<br><small>Hubungi admin.</small>'}</div>`;
-      }
-      return;
+  if (!displayed.length) {
+    if (queueSearchQuery) {
+      wrap.innerHTML = `<div class="empty">Tidak ada pasien yang cocok dengan "${esc(queueSearchQuery)}".</div>`;
+    } else if (userSpecificView) {
+      const targetName = isAdmin
+        ? (allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas ini')
+        : 'Anda';
+      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk ${targetName} pada ${dateVal}.</div>`;
+    } else {
+      wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.</div>`;
     }
-    renderQueueUser(filtered);
-  } else {
-    myQueue = [];
-    let displayed = filtered;
-    const f = document.getElementById('queueFilter').value;
-    if (f === 'unassigned') displayed = filtered.filter(r => !r.assigned_to);
-    if (!displayed.length) {
-      if (queueSearchQuery) {
-        wrap.innerHTML = `<div class="empty">Tidak ada pasien yang cocok dengan "${esc(queueSearchQuery)}".</div>`;
-      } else {
-        wrap.innerHTML = `<div class="empty">Belum ada antrian untuk tanggal ${dateVal}.<br><small>Klik "📋 Paste Data dari Excel" di toolbar atas.</small></div>`;
-      }
-      return;
-    }
-    renderQueueAdmin(displayed, dateVal);
+    pagEl.innerHTML = '';
+    return;
   }
+
+  const total = displayed.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (queuePage > totalPages) queuePage = totalPages;
+  if (queuePage < 1) queuePage = 1;
+  const startIdx = (queuePage - 1) * PAGE_SIZE;
+  const endIdx = Math.min(startIdx + PAGE_SIZE, total);
+  const pageItems = displayed.slice(startIdx, endIdx);
+
+  if (userSpecificView) {
+    renderQueueUser(pageItems, startIdx);
+  } else {
+    renderQueueAdmin(pageItems, dateVal, startIdx);
+  }
+
+  const btnPrevDisabled = queuePage <= 1 ? 'disabled' : '';
+  const btnNextDisabled = queuePage >= totalPages ? 'disabled' : '';
+  pagEl.innerHTML = `
+    <div class="pagination">
+      <button class="ghost" ${btnPrevDisabled} onclick="gotoQueuePage(1)">« Awal</button>
+      <button class="ghost" ${btnPrevDisabled} onclick="gotoQueuePage(${queuePage-1})">‹ Prev</button>
+      <div class="page-info">Halaman <b>${queuePage}</b> / <b>${totalPages}</b> · Total <b>${total}</b> baris</div>
+      <button class="ghost" ${btnNextDisabled} onclick="gotoQueuePage(${queuePage+1})">Next ›</button>
+      <button class="ghost" ${btnNextDisabled} onclick="gotoQueuePage(${totalPages})">Akhir »</button>
+      <input type="number" class="page-jump" min="1" max="${totalPages}" placeholder="Ke hal."
+        onkeydown="if(event.key==='Enter'){ event.preventDefault(); gotoQueuePage(parseInt(this.value,10)||1); }">
+    </div>`;
 }
 
 // ============ PETA ============
@@ -1344,7 +1644,7 @@ function renderPastePreview(data, isHeader, headers) {
     <div class="info-box" style="background:#d1fae5;border-color:#34d399;margin-bottom:10px;">
       <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px;">
         <div><b>Total baris:</b> ${data.length}</div>
-        <div><b>Header terdeteksi:</b> ${isHeader ? 'Ya (' + headers.join(', ') + ')' : 'Tidak (asumsi: nama, alamat, no_hp, petugas)'}</div>
+        <div><b>Header terdeteksi:</b> ${isHeader ? 'Ya (' + headers.join(', ') + ')' : 'Tidak'}</div>
       </div>
       ${Object.keys(petugasCount).length ? `
         <div style="margin-top:8px;font-size:12px;">
@@ -1358,7 +1658,7 @@ function renderPastePreview(data, isHeader, headers) {
         <div style="margin-top:8px;padding:8px;background:#fef3c7;border-radius:6px;font-size:12px;color:#92400e;">
           ⚠️ <b>Perhatian:</b> Petugas berikut tidak ada di daftar user:
           <b>${tidakCocok.join(', ')}</b><br>
-          Baris tsb akan tersimpan tanpa assign (bisa di-assign manual dari mode admin setelah disimpan).
+          Baris tsb akan tersimpan tanpa assign.
         </div>` : ''}
     </div>
     <div style="font-size:12px;font-weight:800;color:var(--green-800);margin:10px 0 6px;">
@@ -1377,7 +1677,7 @@ function renderPastePreview(data, isHeader, headers) {
               <td><b>${esc(r.nama)}</b></td>
               <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(r.alamat || '-')}</td>
               <td>${esc(r.no_hp || '-')}</td>
-              <td>${r.petugas ? `<span class="badge" style="${petugasOk ? '' : 'background:#fecaca;color:#991b1b;'}">${esc(r.petugas)}</span>` : '<span style="color:#94a3b8;">-</span>'}</td>
+              <td>${r.petugas ? `<span class="badge" style="${petugasOk ? '' : 'background:#fecaca;color:#991b1b;'}">${esc(r.petugas)}</span>` : '-'}</td>
             </tr>`;
           }).join('')}
         </tbody>
@@ -1460,6 +1760,7 @@ async function savePasteToQueue() {
 async function loadQueue() {
   const wrap = document.getElementById('queueTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat...</div>';
+  queuePage = 1;
   const dateVal = isAdmin ? (document.getElementById('queueDate').value || todayStr()) : todayStr();
   const userSpecificView = !isAdmin || (isAdmin && viewAsUserId !== '');
   let q = sb.from('daily_deliveries').select('*').eq('delivery_date', dateVal);
@@ -1483,11 +1784,11 @@ async function loadQueue() {
   applyQueueFilter();
 }
 
-function renderQueueAdmin(list, dateVal) {
+function renderQueueAdmin(list, dateVal, startIdx = 0) {
   const wrap = document.getElementById('queueTableWrap');
   wrap.innerHTML = `
     <p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
-      ${list.length} baris · ${dateVal} · Belum assign: <b>${list.filter(r => !r.assigned_to).length}</b>
+      Total <b>${window.__queueDisplayedCount}</b> baris · ${dateVal}
     </p>
     <div class="table-wrap"><table>
       <thead><tr>
@@ -1497,7 +1798,7 @@ function renderQueueAdmin(list, dateVal) {
         ${list.map((r, i) => {
           const cod = hasCOD(r.alamat);
           return `<tr>
-            <td>${i+1}</td>
+            <td>${startIdx + i + 1}</td>
             <td class="col-aksi"><button class="danger" style="padding:6px 11px;font-size:12px" onclick="hapusAntrian(${r.id})">Hapus</button></td>
             <td><b>${esc(r.nama)}</b></td>
             <td class="${cod ? 'cod-cell' : ''}">${cod ? '<span class="cod-badge">COD</span>' : ''}${esc(r.alamat || '-')}</td>
@@ -1513,7 +1814,7 @@ function renderQueueAdmin(list, dateVal) {
     </table></div>`;
 }
 
-function renderQueueUser(list) {
+function renderQueueUser(list, startIdx = 0) {
   const wrap = document.getElementById('queueTableWrap');
   const banner = isAdmin
     ? `<div class="viewas-banner">👁️ Melihat antrian sebagai <b>${esc(allUsers.find(x => x.id === viewAsUserId)?.full_name || 'petugas')}</b>.</div>`
@@ -1524,10 +1825,10 @@ function renderQueueUser(list) {
   wrap.innerHTML = `
     ${banner}
     <div class="hint">
-      💡 <b>Ubah urutan:</b> isi nomor baru di kotak <b>Urut</b> pada setiap baris yang ingin dipindah, lalu klik tombol <b>💾 SAVE URUTAN</b> di bawah tabel.
+      💡 <b>Ubah urutan:</b> isi nomor baru di kotak <b>Urut</b>, lalu klik tombol <b>💾 SAVE URUTAN</b>.
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-      <p style="font-size:13px;color:#047857;margin:0;font-weight:700">Terdapat <b>${list.length}</b> pasien.</p>
+      <p style="font-size:13px;color:#047857;margin:0;font-weight:700">Menampilkan <b>${list.length}</b> dari <b>${myQueue.length}</b> pasien.</p>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
         <span id="reorderStatus" style="font-size:12px; color:#ca8a04; font-weight:700;"></span>
         <button class="save-master" id="btnSaveReorder" onclick="saveReorder()" disabled style="padding:9px 16px;font-size:13px;">💾 SAVE URUTAN</button>
@@ -1547,13 +1848,13 @@ function renderQueueUser(list) {
           const statusText = r.status === 'delivered' ? '✓ Terkirim' : 'Menunggu';
           const syncedMark = r.synced_to_master ? '<div class="status-synced">✓ master</div>' : '';
           const cod = hasCOD(r.alamat);
-          const displayOrder = r.urutan || (i + 1);
+          const displayOrder = r.urutan || (startIdx + i + 1);
           return `<tr data-id="${r.id}">
             <td>
               <div class="move-cell">
                 <span class="order-badge" data-badge="${r.id}">${displayOrder}</span>
                 <input type="number" class="move-input order-input" data-id="${r.id}"
-                  min="1" max="${list.length}" value="${displayOrder}"
+                  min="1" max="${myQueue.length}" value="${displayOrder}"
                   onchange="markReorder(${r.id}, this.value)"
                   oninput="markReorder(${r.id}, this.value)">
               </div>
@@ -1578,7 +1879,6 @@ function markReorder(id, val) {
   const statusEl = document.getElementById('reorderStatus');
   const saveBtn = document.getElementById('btnSaveReorder');
   const input = document.querySelector(`.order-input[data-id="${id}"]`);
-
   if (isNaN(n) || n < 1 || n > myQueue.length) {
     delete pendingReorder[id];
     if (input) input.classList.remove('changed');
@@ -1591,7 +1891,6 @@ function markReorder(id, val) {
       else input.classList.remove('changed');
     }
   }
-
   const changed = Object.keys(pendingReorder).length;
   if (changed > 0) {
     statusEl.textContent = `⚠️ ${changed} perubahan belum disimpan`;
@@ -1601,27 +1900,23 @@ function markReorder(id, val) {
     saveBtn.disabled = true;
   }
 }
-
 function resetReorder() {
   pendingReorder = {};
   applyQueueFilter();
 }
-
 async function saveReorder() {
   const ids = Object.keys(pendingReorder);
   if (!ids.length) return;
-
   const statusEl = document.getElementById('reorderStatus');
   const saveBtn = document.getElementById('btnSaveReorder');
   statusEl.textContent = '⏳ Menyimpan...';
   saveBtn.disabled = true;
-
   const newAssignments = {};
   const usedPositions = {};
   for (const id of ids) {
     const targetPos = pendingReorder[id];
     if (usedPositions[targetPos]) {
-      alert(`Ada dua baris dengan nomor urut ${targetPos}.\n\nSilakan periksa kembali sebelum SAVE.`);
+      alert(`Ada dua baris dengan nomor urut ${targetPos}.`);
       statusEl.textContent = '❌ Ada nomor bentrok';
       saveBtn.disabled = false;
       return;
@@ -1629,7 +1924,6 @@ async function saveReorder() {
     usedPositions[targetPos] = true;
     newAssignments[id] = targetPos - 1;
   }
-
   const maxPos = Math.max(...Object.values(pendingReorder), myQueue.length);
   const finalList = new Array(maxPos).fill(null);
   for (const id of ids) {
@@ -1644,7 +1938,6 @@ async function saveReorder() {
     if (!finalList[i]) finalList[i] = remaining[ri++];
   }
   const cleaned = finalList.filter(r => r);
-
   try {
     await Promise.all(cleaned.map((row, i) =>
       sb.from('daily_deliveries').update({ urutan: i + 1 }).eq('id', row.id)
@@ -1655,7 +1948,6 @@ async function saveReorder() {
     saveBtn.disabled = false;
     return;
   }
-
   pendingReorder = {};
   statusEl.textContent = '✅ Tersimpan';
   await loadQueue();
@@ -1664,7 +1956,6 @@ async function saveReorder() {
     if (s) s.textContent = '';
   }, 2000);
 }
-
 async function assignTo(deliveryId, userId) {
   if (!userId) {
     const { error } = await sb.from('daily_deliveries').update({ assigned_to: null, urutan: 0 }).eq('id', deliveryId);
@@ -1816,12 +2107,10 @@ function closeQDetail() {
 function recordDelivery(deliveryId) {
   const statusEl = document.getElementById('qGeoStatus');
   if (!navigator.geolocation) { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Geolocation tidak didukung.'; return; }
-
   const r = myQueue.find(x => x.id === deliveryId);
   const latNum = r ? parseFloat(r.latitude) : NaN;
   const lngNum = r ? parseFloat(r.longitude) : NaN;
   const alreadyHasCoord = !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
-
   if (alreadyHasCoord) {
     statusEl.className = 'geo-status ok';
     statusEl.textContent = `✅ Koordinat sudah tersimpan (${latNum.toFixed(5)}, ${lngNum.toFixed(5)}) — tidak diubah.`;
@@ -1836,7 +2125,6 @@ function recordDelivery(deliveryId) {
     });
     return;
   }
-
   statusEl.className = 'geo-status wait';
   statusEl.textContent = '📡 Mengambil titik koordinat GPS Anda...';
   navigator.geolocation.getCurrentPosition(
@@ -1895,7 +2183,6 @@ function buildWAText(patient) {
     const daftar = myQueue.map((p, i) => `${i+1}. ${p.nama}`).join('\n');
     listPart = `\nDaftar pasien yang akan saya antar hari ini (urut pengantaran):\n${daftar}\n`;
   }
-
   let locPart = '';
   const liveLink = getLiveLocationLink();
   if (liveLink) {
@@ -1905,7 +2192,6 @@ function buildWAText(patient) {
   } else {
     locPart = `\n📍 Lokasi saya belum tersedia.\n`;
   }
-
   let codPart = '';
   if (hasCOD(patient.alamat)) {
     codPart =
@@ -1916,7 +2202,6 @@ function buildWAText(patient) {
       `Terima kasih\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n`;
   }
-
   return `Assalamualaikum selamat ${salam} Bpk/Ibu ${patient.nama},\n\n` +
     `Kami dari Sobat Parikesit (${petugas}) akan mengantarkan obat ke alamat Anda.\n` +
     listPart + locPart + codPart +
@@ -1992,10 +2277,13 @@ function onSearchPatient() {
   patientPage = 1;
   renderPatients();
 }
-function onPatientPageSizeChange() {
-  patientPageSize = parseInt(document.getElementById('patientPageSize').value, 10) || 100;
-  patientPage = 1;
+function gotoPatientPage(n) {
+  const totalPages = Math.max(1, Math.ceil(patientFilteredCache.length / patientPageSize));
+  if (n < 1) n = 1;
+  if (n > totalPages) n = totalPages;
+  patientPage = n;
   renderPatients();
+  document.getElementById('patientsTableWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function renderPatients() {
   const wrap = document.getElementById('patientsTableWrap');
@@ -2010,7 +2298,7 @@ function renderPatients() {
   const q = (document.getElementById('searchPatient').value || '').trim();
   if (!total) {
     wrap.innerHTML = `<p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
-      Total master: <b>${patientsCache.length}</b>${q ? ` · Pencarian "${esc(q)}" tidak ditemukan` : ''}</p>
+      Total master: <b>${patientsCache.length}</b></p>
       <div class="empty">Data tidak ditemukan.</div>`;
     pagEl.innerHTML = ''; return;
   }
@@ -2044,20 +2332,12 @@ function renderPatients() {
     <div class="pagination">
       <button class="ghost" ${btnPrevDisabled} onclick="gotoPatientPage(1)">« Awal</button>
       <button class="ghost" ${btnPrevDisabled} onclick="gotoPatientPage(${patientPage-1})">‹ Prev</button>
-      <div class="page-info">Halaman <b>${patientPage}</b> / <b>${totalPages}</b></div>
+      <div class="page-info">Halaman <b>${patientPage}</b> / <b>${totalPages}</b> · Total <b>${total}</b> baris</div>
       <button class="ghost" ${btnNextDisabled} onclick="gotoPatientPage(${patientPage+1})">Next ›</button>
       <button class="ghost" ${btnNextDisabled} onclick="gotoPatientPage(${totalPages})">Akhir »</button>
       <input type="number" class="page-jump" min="1" max="${totalPages}" placeholder="Ke hal."
         onkeydown="if(event.key==='Enter'){ event.preventDefault(); gotoPatientPage(parseInt(this.value,10)||1); }">
     </div>`;
-}
-function gotoPatientPage(n) {
-  const totalPages = Math.max(1, Math.ceil(patientFilteredCache.length / patientPageSize));
-  if (n < 1) n = 1;
-  if (n > totalPages) n = totalPages;
-  patientPage = n;
-  renderPatients();
-  document.getElementById('patientsTableWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function openPatientForm(id) {
   document.getElementById('formModal').classList.remove('hidden');
@@ -2119,7 +2399,6 @@ async function deletePatient(id) {
 async function loadSobatPatients() {
   const wrap = document.getElementById('sobatTableWrap');
   wrap.innerHTML = '<div class="empty">Memuat data pasien sobat...</div>';
-
   const bulanSel = document.getElementById('sobatFilterBulan');
   if (bulanSel.options.length <= 1) {
     bulanSel.innerHTML = '<option value="">Semua Bulan</option>';
@@ -2127,7 +2406,6 @@ async function loadSobatPatients() {
       const o = document.createElement('option'); o.value = i; o.textContent = BULAN_NAMA[i]; bulanSel.appendChild(o);
     }
   }
-
   const pageSize = 1000;
   let all = [];
   let from = 0;
@@ -2145,26 +2423,22 @@ async function loadSobatPatients() {
     else from += pageSize;
   }
   sobatCache = all;
-
   const tahunSel = document.getElementById('sobatFilterTahun');
   const years = [...new Set(all.map(d => d.tahun).filter(Boolean))].sort((a, b) => b - a);
   const currentVal = tahunSel.value;
   tahunSel.innerHTML = '<option value="">Semua Tahun</option>' +
     years.map(y => `<option value="${y}">${y}</option>`).join('');
   tahunSel.value = currentVal;
-
   const petugasSel = document.getElementById('sobatFilterPetugas');
   const petugasList = [...new Set(all.map(d => d.petugas).filter(Boolean))].sort();
   const currentP = petugasSel.value;
   petugasSel.innerHTML = '<option value="">Semua Petugas</option>' +
     petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
   petugasSel.value = currentP;
-
   const sfPetugas = document.getElementById('sfPetugas');
   sfPetugas.innerHTML = '<option value="">— Pilih Petugas —</option>' +
     (petugasList.length ? petugasList.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('')
       : allUsers.map(u => `<option value="${esc(u.full_name)}">${esc(u.full_name)}</option>`).join(''));
-
   onSearchSobat();
 }
 function onSearchSobat() {
@@ -2186,10 +2460,13 @@ function onSearchSobat() {
   sobatPage = 1;
   renderSobatPatients();
 }
-function onSobatPageSizeChange() {
-  sobatPageSize = parseInt(document.getElementById('sobatPageSize').value, 10) || 100;
-  sobatPage = 1;
+function gotoSobatPage(n) {
+  const totalPages = Math.max(1, Math.ceil(sobatFilteredCache.length / sobatPageSize));
+  if (n < 1) n = 1;
+  if (n > totalPages) n = totalPages;
+  sobatPage = n;
   renderSobatPatients();
+  document.getElementById('sobatTableWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function renderSobatPatients() {
   const wrap = document.getElementById('sobatTableWrap');
@@ -2203,8 +2480,8 @@ function renderSobatPatients() {
   const pageItems = sobatFilteredCache.slice(startIdx, endIdx);
   if (!total) {
     wrap.innerHTML = `<p style="font-size:13px;color:#047857;margin:0 0 12px;font-weight:700">
-      Total: <b>${sobatCache.length}</b> baris · Tidak ada hasil.</p>
-      <div class="empty">Belum ada data. Upload CSV Dok atau tambah manual.</div>`;
+      Total: <b>${sobatCache.length}</b> baris</p>
+      <div class="empty">Belum ada data.</div>`;
     pagEl.innerHTML = '';
     return;
   }
@@ -2217,7 +2494,6 @@ function renderSobatPatients() {
       · Tarif: <span class="rupiah">${formatRupiah(totalTarif)}</span>
       · RS: <span class="rupiah rs">${formatRupiah(totalRs)}</span>
       · Petugas: <span class="rupiah ptg">${formatRupiah(totalPtg)}</span>
-      · Menampilkan <b>${startIdx+1}–${endIdx}</b>
     </p>
     <div class="table-wrap"><table>
       <thead><tr>
@@ -2252,20 +2528,12 @@ function renderSobatPatients() {
     <div class="pagination">
       <button class="ghost" ${btnPrevDisabled} onclick="gotoSobatPage(1)">« Awal</button>
       <button class="ghost" ${btnPrevDisabled} onclick="gotoSobatPage(${sobatPage-1})">‹ Prev</button>
-      <div class="page-info">Halaman <b>${sobatPage}</b> / <b>${totalPages}</b></div>
+      <div class="page-info">Halaman <b>${sobatPage}</b> / <b>${totalPages}</b> · Total <b>${total}</b> baris</div>
       <button class="ghost" ${btnNextDisabled} onclick="gotoSobatPage(${sobatPage+1})">Next ›</button>
       <button class="ghost" ${btnNextDisabled} onclick="gotoSobatPage(${totalPages})">Akhir »</button>
       <input type="number" class="page-jump" min="1" max="${totalPages}" placeholder="Ke hal."
         onkeydown="if(event.key==='Enter'){ event.preventDefault(); gotoSobatPage(parseInt(this.value,10)||1); }">
     </div>`;
-}
-function gotoSobatPage(n) {
-  const totalPages = Math.max(1, Math.ceil(sobatFilteredCache.length / sobatPageSize));
-  if (n < 1) n = 1;
-  if (n > totalPages) n = totalPages;
-  sobatPage = n;
-  renderSobatPatients();
-  document.getElementById('sobatTableWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function openSobatForm(id) {
   document.getElementById('sobatFormModal').classList.remove('hidden');
@@ -2339,7 +2607,7 @@ async function handleDokCSVUpload(ev) {
   }
   const headers = Object.keys(rows[0]);
   if (!headers.includes('nama')) {
-    resultEl.innerHTML = `<div class="info-box" style="background:#fee2e2;border-color:#fca5a5">❌ Header "nama" tidak ditemukan.<br>Header terdeteksi: <code>${esc(headers.join(', '))}</code></div>`;
+    resultEl.innerHTML = `<div class="info-box" style="background:#fee2e2;border-color:#fca5a5">❌ Header "nama" tidak ditemukan.</div>`;
     ev.target.value = ''; return;
   }
   const tarifKey = headers.find(h => h.startsWith('tarif')) || 'tarif';
@@ -2383,7 +2651,7 @@ async function handleDokCSVUpload(ev) {
     };
   });
   if (!payloads.length) {
-    resultEl.innerHTML = '<div class="info-box" style="background:#fef9c3;border-color:#fde68a">⚠️ Tidak ada data untuk diimpor.</div>';
+    resultEl.innerHTML = '<div class="info-box" style="background:#fef9c3;border-color:#fde68a">⚠️ Tidak ada data.</div>';
     ev.target.value = ''; return;
   }
   let totalInserted = 0;
@@ -2403,9 +2671,8 @@ async function handleDokCSVUpload(ev) {
       <table style="width:100%; background:transparent; box-shadow:none; min-width:auto;">
         <tr><td>Total baris di file</td><td style="text-align:right;"><b>${valid.length}</b></td></tr>
         <tr><td><b>Berhasil diimpor</b></td><td style="text-align:right;"><b style="color:#065f46;">${totalInserted}</b></td></tr>
-        ${errors ? `<tr><td>Batch gagal</td><td style="text-align:right; color:#dc2626;"><b>${errors}</b> <br><small style="color:#666">${esc(lastErrorMsg)}</small></td></tr>` : ''}
+        ${errors ? `<tr><td>Batch gagal</td><td style="text-align:right; color:#dc2626;"><b>${errors}</b></td></tr>` : ''}
       </table>
-      <p style="margin:10px 0 0; font-size:12px; color:#065f46;">ℹ️ Semua baris diimpor apa adanya — duplikat dibiarkan.</p>
     </div>`;
   ev.target.value = '';
 }
