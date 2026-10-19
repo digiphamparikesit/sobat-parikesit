@@ -19,7 +19,7 @@
     --bg:#ecfdf5; --ink:#052e16;
   }
   * { box-sizing:border-box; font-family:'Manrope',system-ui,-apple-system,sans-serif; font-weight:600; }
-  html, body { height:100%; margin:0; background:var(--bg); color:var(--ink); overflow:hidden; }
+  html, body { height:100%; margin:0; background:var(--bg); color:var(--ink); overflow:hidden; height:100dvh; }
   .hidden { display:none !important; }
 
   #loginPage { min-height:100vh; display:flex; align-items:center; justify-content:center;
@@ -59,7 +59,7 @@
     background:linear-gradient(180deg,#052e16 0%,#064e3b 100%);
     color:#d1fae5; padding:24px 14px;
     display:flex; flex-direction:column;
-    height:100vh; overflow-y:auto;
+    height:100vh; height:100dvh; overflow-y:auto;
   }
   .sidebar h2 { color:#fff; font-size:17px; margin:0 0 4px 10px; font-weight:800; letter-spacing:-.3px; }
   .sidebar small { display:block; margin:0 0 22px 10px; color:#6ee7b7; font-size:11px; letter-spacing:1px; }
@@ -150,17 +150,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
   }
   .mbn-item .mbn-icon { font-size: 20px; line-height: 1; }
   .mbn-item:hover { background: #f7fefb; }
-  .mbn-item.active {
-    color: var(--green-700);
-    font-weight: 800;
-  }
-  .mbn-item.active .mbn-icon {
-    transform: scale(1.12);
-    transition: transform .15s;
-  }
+  .mbn-item.active { color: var(--green-700); font-weight: 800; }
+  .mbn-item.active .mbn-icon { transform: scale(1.12); transition: transform .15s; }
   .mbn-item.active::before {
     content: '';
     position: absolute;
@@ -170,7 +165,6 @@
     background: var(--green-500);
     border-radius: 0 0 3px 3px;
   }
-  .mbn-item { position: relative; }
 
   /* ==== DRAWER (mobile) ==== */
   .drawer-overlay {
@@ -250,9 +244,10 @@
   /* ==== MAIN ==== */
   .main {
     flex:1; min-width:0;
-  height:100vh; height:100dvh; overflow:hidden;
-  display:flex; flex-direction:column;
- }
+    height:100vh; height:100dvh; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+
   .page { flex:1; display:flex; flex-direction:column; overflow:hidden; padding:24px 28px 0; min-height:0; }
   .page-fixed { flex-shrink:0; }
   .page-scroll {
@@ -317,6 +312,18 @@
     text-transform:uppercase; letter-spacing:.4px; margin-bottom:5px; display:block; }
   .live-link-panel input { font-size:12px; padding:8px 10px; font-family:'Courier New',monospace; }
   .live-link-panel .ll-status { font-size:11px; font-weight:700; margin-top:5px; color:#ca8a04; }
+
+  /* ==== ROUTE PANEL ==== */
+  .route-panel { background:#fff; border:2px solid #fde68a; border-radius:12px;
+    padding:12px 14px; margin-bottom:12px; display:flex; gap:12px; align-items:flex-start;
+    box-shadow:0 2px 8px rgba(5,46,22,.06); }
+  .route-panel.ok { border-color:var(--green-400); background:#f0fdf4; }
+  .route-panel .rp-icon { font-size:20px; margin-top:2px; }
+  .route-panel .rp-body { flex:1; min-width:200px; }
+  .route-panel .rp-label { font-size:11px; font-weight:800; color:var(--green-800);
+    text-transform:uppercase; letter-spacing:.4px; margin-bottom:5px; display:block; }
+  .route-panel select { font-size:12px; padding:8px 10px; width:100%; }
+  .route-panel .rp-status { font-size:11px; font-weight:700; margin-top:5px; color:#ca8a04; }
 
   .table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
   table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px;
@@ -458,8 +465,8 @@
 
   /* ============ MOBILE ============ */
   @media (max-width:768px) {
-  #appPage { flex-direction: column; height: 100dvh; }
-  .sidebar { display: none; }
+    #appPage { flex-direction: column; height: 100dvh; }
+    .sidebar { display: none; }
 
     .mobile-topbar { display: flex; }
     .mobile-bottom-nav { display: flex; }
@@ -507,6 +514,17 @@
     .live-link-panel .ll-label { font-size:10px; margin-bottom:3px; }
     .live-link-panel input { font-size:11px; padding:6px 8px; }
     .live-link-panel .ll-status { font-size:10px; margin-top:3px; }
+
+    .route-panel {
+      padding:8px 10px !important;
+      gap:8px !important;
+      margin-bottom:8px !important;
+      border-radius:10px;
+    }
+    .route-panel .rp-icon { font-size:16px; }
+    .route-panel .rp-label { font-size:10px; margin-bottom:3px; }
+    .route-panel select { font-size:11px; padding:6px 8px; }
+    .route-panel .rp-status { font-size:10px; margin-top:3px; }
 
     .toolbar { gap:6px; margin-bottom:8px; }
     .toolbar input[type=text],.toolbar select { min-width:0; flex:1; }
@@ -567,7 +585,7 @@
   <!-- ========== DESKTOP SIDEBAR ========== -->
   <aside class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.8</small>
+    <small>v3.9</small>
     <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
     <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
     <div class="nav-item" data-page="map" onclick="showPage('map')">🗺️ Peta Pasien</div>
@@ -627,6 +645,17 @@
               <input id="liveLocationLink" type="text" placeholder="Paste link live share lokasi di sini..."
                 oninput="saveLiveLocationLink()">
               <div class="ll-status" id="liveLinkStatus">ℹ️ Belum ada link.</div>
+            </div>
+          </div>
+
+          <div class="route-panel" id="routePanel">
+            <div class="rp-icon">🛣️</div>
+            <div class="rp-body">
+              <label class="rp-label" for="routeSelect">Rute Antaran Hari Ini</label>
+              <select id="routeSelect" onchange="saveSelectedRoute()">
+                <option value="">— Tidak pakai rute —</option>
+              </select>
+              <div class="rp-status" id="routeStatus">ℹ️ Belum memilih rute.</div>
             </div>
           </div>
         </div>
@@ -835,7 +864,7 @@
   <aside class="mobile-drawer" id="mobileDrawer">
     <div class="md-header">
       <h3>🌿 Sobat Parikesit</h3>
-      <small>v3.8</small>
+      <small>v3.9</small>
     </div>
 
     <div class="md-user">
@@ -855,6 +884,9 @@
     </div>
     <div class="drawer-item" data-page="users" onclick="navigateFromDrawer('users')">
       <span class="di-icon">👥</span> User
+    </div>
+    <div class="drawer-item" onclick="openRouteManageModal()">
+      <span class="di-icon">🛣️</span> Kelola Rute
     </div>
 
     <div class="md-footer">
@@ -939,7 +971,6 @@
       </ol>
       <p style="margin:8px 0 0; font-size:11px; color:#047857;">
         Kolom yang dibutuhkan: <code>nama</code>, <code>alamat</code>, <code>no_hp</code>, <code>petugas</code> (opsional).
-        Urutan kolom bebas, asal ada header.
       </p>
     </div>
 
@@ -959,6 +990,37 @@
     <div class="row">
       <button class="ghost" onclick="closePasteModal()">Batal</button>
       <button class="save-master" id="btnPasteSave" onclick="savePasteToQueue()" disabled>💾 Simpan ke Antrian</button>
+    </div>
+  </div>
+</div>
+
+<div id="routeManageModal" class="modal-bg hidden">
+  <div class="modal" style="max-width:760px;">
+    <h3>🛣️ Kelola Template Rute</h3>
+
+    <div class="info-box" style="font-size:12px;">
+      <b>Info:</b> Template rute dipakai petugas saat broadcast WA. Petugas pilih salah satu di menu Antrian → Tools → Rute Antaran.
+    </div>
+
+    <div style="display:grid; gap:8px; margin-bottom:14px;">
+      <input id="rtJudul" type="text" placeholder="Judul template (contoh: Rute Standar)">
+      <textarea id="rtIsi" rows="3" placeholder="Isi rute (contoh: Loa Ipuh → Melayu → Barong Tongkok)"></textarea>
+      <input type="hidden" id="rtId">
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="ghost" onclick="clearRouteForm()">✖ Bersihkan</button>
+        <button class="save-master" onclick="saveRouteTemplate()">💾 Simpan</button>
+      </div>
+    </div>
+
+    <div style="font-size:12px; font-weight:800; color:var(--green-800); margin-bottom:6px;">
+      Daftar Template
+    </div>
+    <div id="routeTemplatesList" class="table-wrap" style="max-height:300px; overflow-y:auto; border:2px solid var(--green-100); border-radius:8px;">
+      <div class="empty" style="padding:20px;">Memuat...</div>
+    </div>
+
+    <div class="row">
+      <button class="ghost" onclick="closeRouteManageModal()">Tutup</button>
     </div>
   </div>
 </div>
@@ -1015,6 +1077,9 @@ let pendingReorder = {};
 
 let queueAllList = [];
 let queueSearchQuery = '';
+
+// Rute templates
+let routeTemplatesCache = [];
 
 const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const BULAN_SINGKAT = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
@@ -1151,6 +1216,8 @@ function updateToolsBadges() {
   if (officerLocation) badges.push('<span class="tt-dot ok" title="Lokasi aktif"></span>');
   else badges.push('<span class="tt-dot wait" title="Lokasi belum diambil"></span>');
   if (getLiveLocationLink()) badges.push('<span class="tt-dot live" title="Link live aktif"></span>');
+  const rute = getSelectedRoute();
+  if (rute && rute.isi) badges.push('<span class="tt-dot ok" title="Rute aktif"></span>');
   el.innerHTML = badges.join('');
 }
 
@@ -1189,6 +1256,156 @@ function renderLiveLinkStatus() {
     el.style.color = '#ca8a04';
     if (panel) panel.classList.remove('ok');
   }
+}
+
+// ============ RUTE ANTARAN ============
+function routeStorageKey() {
+  return `selected_route_${currentUser?.id || 'anon'}`;
+}
+function getSelectedRoute() {
+  if (!currentUser) return null;
+  try {
+    const raw = localStorage.getItem(routeStorageKey());
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+function saveSelectedRoute() {
+  const sel = document.getElementById('routeSelect');
+  if (!sel) return;
+  const val = sel.value;
+  if (!val) {
+    localStorage.removeItem(routeStorageKey());
+  } else {
+    const tpl = routeTemplatesCache.find(t => t.id === Number(val));
+    if (tpl) {
+      localStorage.setItem(routeStorageKey(), JSON.stringify({
+        id: tpl.id, judul: tpl.judul, isi: tpl.isi || ''
+      }));
+    }
+  }
+  renderRouteStatus();
+  updateToolsBadges();
+}
+function renderRouteStatus() {
+  const el = document.getElementById('routeStatus');
+  const panel = document.getElementById('routePanel');
+  if (!el) return;
+  const cur = getSelectedRoute();
+  if (cur && cur.isi) {
+    el.innerHTML = `✅ Rute aktif: <b>${esc(cur.judul)}</b>`;
+    el.style.color = '#047857';
+    if (panel) panel.classList.add('ok');
+  } else if (cur) {
+    el.innerHTML = `✅ Rute dipilih: <b>${esc(cur.judul)}</b> (kosong)`;
+    el.style.color = '#ca8a04';
+    if (panel) panel.classList.add('ok');
+  } else {
+    el.innerHTML = 'ℹ️ Belum memilih rute. Rute akan muncul di pesan WA.';
+    el.style.color = '#ca8a04';
+    if (panel) panel.classList.remove('ok');
+  }
+}
+async function loadRouteTemplates() {
+  const sel = document.getElementById('routeSelect');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Memuat... —</option>';
+  const { data, error } = await sb.from('route_templates')
+    .select('*').order('urutan', { ascending: true }).order('id', { ascending: true });
+  if (error) {
+    sel.innerHTML = '<option value="">— Gagal memuat —</option>';
+    return;
+  }
+  routeTemplatesCache = data || [];
+  const cur = getSelectedRoute();
+  let html = '<option value="">— Tidak pakai rute —</option>';
+  routeTemplatesCache.forEach(t => {
+    const selected = cur && cur.id === t.id ? ' selected' : '';
+    html += `<option value="${t.id}"${selected}>${esc(t.judul)}</option>`;
+  });
+  sel.innerHTML = html;
+  renderRouteStatus();
+  updateToolsBadges();
+}
+function openRouteManageModal() {
+  closeDrawer();
+  if (!isAdmin) {
+    return alert('Hanya admin yang bisa mengelola template rute.');
+  }
+  document.getElementById('routeManageModal').classList.remove('hidden');
+  clearRouteForm();
+  loadRouteTemplatesList();
+}
+function closeRouteManageModal() {
+  document.getElementById('routeManageModal').classList.add('hidden');
+}
+function clearRouteForm() {
+  document.getElementById('rtId').value = '';
+  document.getElementById('rtJudul').value = '';
+  document.getElementById('rtIsi').value = '';
+}
+async function loadRouteTemplatesList() {
+  const wrap = document.getElementById('routeTemplatesList');
+  wrap.innerHTML = '<div class="empty" style="padding:20px;">Memuat...</div>';
+  const { data, error } = await sb.from('route_templates')
+    .select('*').order('urutan', { ascending: true }).order('id', { ascending: true });
+  if (error) {
+    wrap.innerHTML = `<div class="empty" style="padding:20px;">Gagal: ${esc(error.message)}</div>`;
+    return;
+  }
+  if (!data || !data.length) {
+    wrap.innerHTML = '<div class="empty" style="padding:20px;">Belum ada template. Tambahkan di atas.</div>';
+    return;
+  }
+  wrap.innerHTML = `
+    <table style="min-width:auto;box-shadow:none;border-radius:8px;">
+      <thead><tr><th>Judul</th><th>Isi Rute</th><th class="col-aksi">Aksi</th></tr></thead>
+      <tbody>
+        ${data.map(t => `
+          <tr>
+            <td><b>${esc(t.judul)}</b></td>
+            <td style="font-size:12px;color:#475569;">${esc(t.isi || '-')}</td>
+            <td class="col-aksi"><div class="actions">
+              <button class="ghost" onclick='editRouteTemplate(${t.id})'>Edit</button>
+              <button class="danger" onclick='deleteRouteTemplate(${t.id})'>Hapus</button>
+            </div></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+function editRouteTemplate(id) {
+  const t = routeTemplatesCache.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('rtId').value = t.id;
+  document.getElementById('rtJudul').value = t.judul || '';
+  document.getElementById('rtIsi').value = t.isi || '';
+  document.getElementById('rtJudul').focus();
+}
+async function saveRouteTemplate() {
+  const id = document.getElementById('rtId').value;
+  const judul = document.getElementById('rtJudul').value.trim();
+  const isi = document.getElementById('rtIsi').value.trim();
+  if (!judul) return alert('Judul wajib diisi.');
+  const payload = { judul, isi, created_by: currentUser.id };
+  let error;
+  if (id) {
+    ({ error } = await sb.from('route_templates').update({ judul, isi }).eq('id', id));
+  } else {
+    ({ error } = await sb.from('route_templates').insert(payload));
+  }
+  if (error) return alert('Gagal: ' + error.message);
+  alert('✅ Template tersimpan.');
+  clearRouteForm();
+  await loadRouteTemplatesList();
+  await loadRouteTemplates();
+}
+async function deleteRouteTemplate(id) {
+  if (!confirm('Hapus template ini?')) return;
+  const { error } = await sb.from('route_templates').delete().eq('id', id);
+  if (error) return alert('Gagal: ' + error.message);
+  await loadRouteTemplatesList();
+  await loadRouteTemplates();
 }
 
 // ============ AUTH ============
@@ -1235,6 +1452,7 @@ async function initApp() {
   }
   updateActionButtonsVisibility();
   loadLiveLocationLink();
+  await loadRouteTemplates();
   updateToolsBadges();
   await loadPatients();
   showPage('queue');
@@ -1261,26 +1479,20 @@ function showPage(page) {
   ['queue','patients','map','sobat','uploadDok','dashboard','history','users'].forEach(p =>
     document.getElementById('page-' + p).classList.toggle('hidden', p !== page));
 
-  // Sync desktop sidebar
   document.querySelectorAll('.sidebar .nav-item').forEach(n =>
     n.classList.toggle('active', n.dataset.page === page));
 
-  // Sync bottom nav (mobile)
   document.querySelectorAll('.mobile-bottom-nav .mbn-item').forEach(n =>
     n.classList.toggle('active', n.dataset.page === page));
 
-  // Sync drawer items
   document.querySelectorAll('.mobile-drawer .drawer-item').forEach(n =>
     n.classList.toggle('active', n.dataset.page === page));
 
-  // Update topbar title
   const mt = document.getElementById('mtTitle');
   if (mt) mt.textContent = PAGE_TITLES[page] || 'Sobat Parikesit';
 
-  // Close drawer saat navigasi
   closeDrawer();
 
-  // Load data
   if (page === 'queue') { renderLocPanel(); loadQueue(); }
   if (page === 'map') {
     setTimeout(() => {
@@ -2191,6 +2403,13 @@ function buildWAText(patient) {
   } else {
     locPart = `\n📍 Lokasi saya belum tersedia.\n`;
   }
+
+  let routePart = '';
+  const selectedRoute = getSelectedRoute();
+  if (selectedRoute && selectedRoute.isi) {
+    routePart = `\n🛣️ Rute pengantaran hari ini:\n${selectedRoute.isi}\n`;
+  }
+
   let codPart = '';
   if (hasCOD(patient.alamat)) {
     codPart =
@@ -2201,9 +2420,10 @@ function buildWAText(patient) {
       `Terima kasih\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n`;
   }
+
   return `Assalamualaikum selamat ${salam} Bpk/Ibu ${patient.nama},\n\n` +
     `Kami dari Sobat Parikesit (${petugas}) akan mengantarkan obat ke alamat Anda.\n` +
-    listPart + locPart + codPart +
+    listPart + locPart + routePart + codPart +
     `\nMohon maaf untuk pasien yang terakhir karena sedikit terlambat.\n\nTerima kasih.`;
 }
 function openWAFromQueue(deliveryId) {
