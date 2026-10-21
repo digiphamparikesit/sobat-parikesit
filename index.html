@@ -163,8 +163,12 @@
   .search-bar input[type=text] { flex:1; min-width:220px; }
 
   /* =========================================
-     PANEL TOOLS 1 BARIS (DESKTOP)
+     PANEL TOOLS (Desktop: 1 Baris, Mobile: Vertikal)
      ========================================= */
+  .tools-toggle {
+    display: none; /* Default: Sembunyi di desktop */
+  }
+
   .tools-panel {
     display: flex;
     gap: 12px;
@@ -184,7 +188,6 @@
   .loc-panel.err { border-color: #fca5a5; background: #fef2f2; }
   .loc-panel.wait, .route-panel.wait { border-color: #fde68a; background: #fefce8; }
 
-  /* Lebar masing-masing panel */
   .loc-panel { flex: 1.2; }
   .live-link-panel { flex: 1.5; border-color: #c7d2fe; }
   .route-panel { flex: 1.3; border-color: #fde68a; }
@@ -208,10 +211,8 @@
   .route-panel select { font-size: 11px; padding: 6px 8px; width: 100%; }
   .route-panel .rp-status { font-size: 10px; font-weight: 700; margin-top: 4px; color: #ca8a04; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* Tombol di dalam panel desktop diperkecil agar muat */
   .loc-panel .loc-actions button { font-size: 10px; padding: 6px 8px; white-space: nowrap; }
 
-  /* Responsivitas untuk layar desktop agak kecil */
   @media (max-width: 1200px) {
     .tools-panel { flex-direction: column; }
     .loc-panel, .live-link-panel, .route-panel { width: 100%; }
@@ -222,9 +223,6 @@
     .live-link-panel input, .route-panel select { font-size: 13px; padding: 9px 12px; }
   }
 
-  /* =========================================
-     TABEL & LAIN-LAIN
-     ========================================= */
   .table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
   table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px;
     overflow:hidden; box-shadow:0 2px 8px rgba(5,46,22,.08); min-width:820px; }
@@ -374,8 +372,47 @@
     .page-scroll { padding-bottom:12px; margin-right:-6px; padding-right:6px; }
     .main h1 { font-size:17px; margin-bottom:10px; }
 
-    /* Di HP, tools kembali ke layout vertikal */
-    .tools-panel { flex-direction: column; gap: 0; }
+    /* Tombol Toggle Tampil di Mobile */
+    .tools-toggle {
+      display: flex;
+      width: 100%;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #059669, #047857);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(5,46,22,.15);
+      transition: all .2s;
+    }
+    .tools-toggle:hover { background: linear-gradient(135deg, #047857, #065f46); }
+    .tools-toggle .tt-left { display:flex; align-items:center; gap:8px; }
+    .tools-toggle .tt-icon { font-size:16px; }
+    .tools-toggle .tt-badges { display:inline-flex; gap:4px; margin-left:4px; }
+    .tools-toggle .tt-dot {
+      display:inline-block; width:8px; height:8px; border-radius:50%;
+      border:1.5px solid #fff; box-shadow:0 1px 2px rgba(0,0,0,.2);
+    }
+    .tools-toggle .tt-dot.ok { background: #4ade80; }
+    .tools-toggle .tt-dot.wait { background: #fbbf24; }
+    .tools-toggle .tt-dot.live { background: #60a5fa; }
+    .tools-toggle .tt-arrow { font-size:11px; transition: transform .2s; }
+
+    /* Sembunyikan tools panel secara default di mobile, tampilkan jika ada class .open */
+    .tools-panel {
+      display: none !important;
+      flex-direction: column;
+      gap: 0;
+    }
+    .tools-panel.open {
+      display: flex !important;
+    }
+
     .loc-panel, .live-link-panel, .route-panel { width: 100%; margin-bottom: 8px; padding: 9px 10px; }
     .loc-panel .loc-icon, .live-link-panel .ll-icon, .route-panel .rp-icon { font-size: 18px; }
     .loc-panel .loc-title { font-size: 12px; }
@@ -440,10 +477,9 @@
 </div>
 
 <div id="appPage" class="hidden">
-  <!-- ========== DESKTOP SIDEBAR ========== -->
   <aside class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v4.0</small>
+    <small>v4.1</small>
     <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
     <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
     <div class="nav-item" data-page="map" onclick="showPage('map')">🗺️ Peta Pasien</div>
@@ -460,20 +496,17 @@
     </div>
   </aside>
 
-  <!-- ========== MOBILE TOPBAR ========== -->
   <header class="mobile-topbar">
     <button class="mt-menu-btn" onclick="toggleDrawer()" aria-label="Menu">☰</button>
     <div class="mt-title" id="mtTitle">Sobat Parikesit</div>
     <div class="mt-user" id="mtUser">-</div>
   </header>
 
-  <!-- ========== MAIN ========== -->
   <div class="main">
     <div id="page-queue" class="page">
       <div class="page-fixed">
         <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
 
-        <!-- Desktop: tombol toggle disembunyikan, panel langsung tampil 1 baris -->
         <button type="button" class="tools-toggle" id="toolsToggle" onclick="toggleTools()">
           <span class="tt-left">
             <span class="tt-icon">⚙️</span>
@@ -695,7 +728,6 @@
     </div>
   </div>
 
-  <!-- ========== MOBILE BOTTOM NAV ========== -->
   <nav class="mobile-bottom-nav">
     <button class="mbn-item active" data-page="queue" onclick="showPage('queue')">
       <span class="mbn-icon">📦</span>
@@ -719,12 +751,11 @@
     </button>
   </nav>
 
-  <!-- ========== MOBILE DRAWER ========== -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
   <aside class="mobile-drawer" id="mobileDrawer">
     <div class="md-header">
       <h3>🌿 Sobat Parikesit</h3>
-      <small>v4.0</small>
+      <small>v4.1</small>
     </div>
 
     <div class="md-user">
@@ -938,7 +969,6 @@ let pendingReorder = {};
 let queueAllList = [];
 let queueSearchQuery = '';
 
-// Rute templates
 let routeTemplatesCache = [];
 
 const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -1061,7 +1091,7 @@ function navigateFromDrawer(page) {
   showPage(page);
 }
 
-// ============ TOOLS TOGGLE ============
+// ============ TOOLS TOGGLE (Mobile Only) ============
 function toggleTools() {
   const panel = document.getElementById('toolsPanel');
   const arrow = document.getElementById('toolsArrow');
@@ -1323,7 +1353,7 @@ function showLogin() {
 }
 sb.auth.getSession().then(({ data: { session } }) => { if (session) initApp(); else showLogin(); });
 
-// ====== PAGE TITLES untuk topbar mobile ======
+// ====== PAGE TITLES ======
 const PAGE_TITLES = {
   queue: 'Antrian',
   patients: 'Data Pasien',
