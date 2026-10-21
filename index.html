@@ -46,14 +46,10 @@
   button.update { background:#ca8a04; } button.update:hover { background:#a16207; }
   button.broadcast { background:#7c3aed; } button.broadcast:hover { background:#6d28d9; }
   button.save-master { background:var(--green-500); } button.save-master:hover { background:var(--green-600); }
-  button.updown { background:var(--green-100); color:var(--green-800); padding:4px 8px; font-size:13px; font-weight:800; }
-  button.updown:hover { background:var(--green-400); color:#fff; }
   button:disabled { opacity:.35; cursor:not-allowed; }
 
-  /* ========== LAYOUT ========== */
   #appPage { display:flex; height:100vh; height:100dvh; overflow:hidden; }
 
-  /* ==== SIDEBAR (desktop) ==== */
   .sidebar {
     width:250px; flex-shrink:0;
     background:linear-gradient(180deg,#052e16 0%,#064e3b 100%);
@@ -71,137 +67,57 @@
   .sidebar .user-info b { color:#fff; display:block; margin-bottom:8px; font-weight:700; font-size:14px; }
   .sidebar .user-info .badge { background:var(--green-500); color:#052e16; }
 
-  /* ==== TOPBAR (mobile) ==== */
   .mobile-topbar {
-    display: none;
-    height: 52px;
-    flex-shrink: 0;
+    display: none; height: 52px; flex-shrink: 0;
     background: linear-gradient(135deg, #052e16, #065f46);
-    color: #d1fae5;
-    align-items: center;
-    padding: 0 12px;
-    gap: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    z-index: 40;
+    color: #d1fae5; align-items: center; padding: 0 12px; gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15); z-index: 40;
   }
   .mobile-topbar .mt-menu-btn {
-    background: rgba(16,185,129,.15);
-    color: #d1fae5;
-    padding: 8px 11px;
-    font-size: 18px;
-    border-radius: 8px;
-    font-weight: 800;
-    line-height: 1;
-    display: flex;
-    align-items: center;
+    background: rgba(16,185,129,.15); color: #d1fae5; padding: 8px 11px; font-size: 18px;
+    border-radius: 8px; font-weight: 800; line-height: 1; display: flex; align-items: center;
   }
   .mobile-topbar .mt-menu-btn:hover { background: rgba(16,185,129,.3); color: #fff; }
-  .mobile-topbar .mt-title {
-    flex: 1;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: -.2px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  .mobile-topbar .mt-title { flex: 1; color: #fff; font-size: 15px; font-weight: 800; letter-spacing: -.2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .mobile-topbar .mt-user {
-    font-size: 11px;
-    font-weight: 800;
-    background: var(--green-500);
-    color: #052e16;
-    padding: 4px 9px;
-    border-radius: 999px;
-    white-space: nowrap;
-    max-width: 90px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 11px; font-weight: 800; background: var(--green-500); color: #052e16;
+    padding: 4px 9px; border-radius: 999px; white-space: nowrap; max-width: 90px; overflow: hidden; text-overflow: ellipsis;
   }
 
-  /* ==== BOTTOM NAV (mobile) ==== */
   .mobile-bottom-nav {
-    display: none;
-    height: 62px;
-    flex-shrink: 0;
-    background: #fff;
-    border-top: 1px solid var(--green-100);
-    box-shadow: 0 -3px 12px rgba(5,46,22,.08);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    z-index: 40;
+    display: none; height: 62px; flex-shrink: 0; background: #fff;
+    border-top: 1px solid var(--green-100); box-shadow: 0 -3px 12px rgba(5,46,22,.08);
+    padding-bottom: env(safe-area-inset-bottom, 0); z-index: 40;
   }
   .mbn-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    padding: 6px 2px;
-    cursor: pointer;
-    color: #64748b;
-    font-size: 10px;
-    font-weight: 700;
-    transition: all .15s;
-    border: none;
-    background: transparent;
-    border-radius: 0;
-    letter-spacing: -.2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    position: relative;
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; padding: 6px 2px; cursor: pointer; color: #64748b; font-size: 10px; font-weight: 700;
+    transition: all .15s; border: none; background: transparent; border-radius: 0;
+    letter-spacing: -.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;
   }
   .mbn-item .mbn-icon { font-size: 20px; line-height: 1; }
   .mbn-item:hover { background: #f7fefb; }
   .mbn-item.active { color: var(--green-700); font-weight: 800; }
   .mbn-item.active .mbn-icon { transform: scale(1.12); transition: transform .15s; }
   .mbn-item.active::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 32px;
-    height: 3px;
-    background: var(--green-500);
-    border-radius: 0 0 3px 3px;
+    content: ''; position: absolute; top: 0; width: 32px; height: 3px;
+    background: var(--green-500); border-radius: 0 0 3px 3px;
   }
 
-  /* ==== DRAWER (mobile) ==== */
   .drawer-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(5,46,22,.6);
-    z-index: 50;
-    backdrop-filter: blur(2px);
-    opacity: 0;
-    transition: opacity .2s;
+    display: none; position: fixed; inset: 0; background: rgba(5,46,22,.6); z-index: 50;
+    backdrop-filter: blur(2px); opacity: 0; transition: opacity .2s;
   }
   .drawer-overlay.open { display: block; opacity: 1; }
 
   .mobile-drawer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 82%;
-    max-width: 300px;
-    background: linear-gradient(180deg, #052e16 0%, #064e3b 100%);
-    color: #d1fae5;
-    z-index: 51;
-    transform: translateX(-100%);
-    transition: transform .25s ease-out;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 20px 14px;
+    position: fixed; top: 0; left: 0; bottom: 0; width: 82%; max-width: 300px;
+    background: linear-gradient(180deg, #052e16 0%, #064e3b 100%); color: #d1fae5;
+    z-index: 51; transform: translateX(-100%); transition: transform .25s ease-out;
+    display: flex; flex-direction: column; overflow-y: auto; padding: 20px 14px;
   }
   .mobile-drawer.open { transform: translateX(0); }
-  .mobile-drawer .md-header {
-    padding: 0 0 18px;
-    border-bottom: 1px solid rgba(16,185,129,.25);
-    margin-bottom: 14px;
-  }
+  .mobile-drawer .md-header { padding: 0 0 18px; border-bottom: 1px solid rgba(16,185,129,.25); margin-bottom: 14px; }
   .mobile-drawer .md-header h3 { color: #fff; font-size: 17px; margin: 0 0 3px; font-weight: 800; }
   .mobile-drawer .md-header small { color: #6ee7b7; font-size: 11px; letter-spacing: 1px; }
   .mobile-drawer .md-user { padding: 12px; background: rgba(16,185,129,.12); border-radius: 10px; margin-bottom: 14px; }
@@ -212,36 +128,16 @@
     padding: 10px 12px 6px; text-transform: uppercase;
   }
   .drawer-item {
-    padding: 12px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 4px;
-    color: #a7f3d0;
-    transition: all .15s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    padding: 12px 14px; border-radius: 10px; cursor: pointer; font-size: 14px; margin-bottom: 4px;
+    color: #a7f3d0; transition: all .15s; display: flex; align-items: center; gap: 10px;
   }
   .drawer-item:hover { background: rgba(16,185,129,.15); color: #fff; }
   .drawer-item.active { background: var(--green-500); color: #052e16; font-weight: 800; }
   .drawer-item .di-icon { font-size: 18px; width: 22px; text-align: center; }
-  .mobile-drawer .md-footer {
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid rgba(16,185,129,.25);
-  }
-  .mobile-drawer .md-logout {
-    width: 100%;
-    background: var(--green-100);
-    color: var(--green-900);
-    font-weight: 800;
-    padding: 12px;
-    border-radius: 9px;
-  }
+  .mobile-drawer .md-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(16,185,129,.25); }
+  .mobile-drawer .md-logout { width: 100%; background: var(--green-100); color: var(--green-900); font-weight: 800; padding: 12px; border-radius: 9px; }
   .mobile-drawer .md-logout:hover { background: var(--green-400); color: #fff; }
 
-  /* ==== MAIN ==== */
   .main {
     flex:1; min-width:0;
     height:100vh; height:100dvh; overflow:hidden;
@@ -266,65 +162,69 @@
   .search-bar { display:flex; gap:8px; margin-bottom:14px; align-items:center; flex-wrap:wrap; }
   .search-bar input[type=text] { flex:1; min-width:220px; }
 
-  .tools-toggle {
-    display: none; width: 100%; padding: 10px 14px;
-    background: linear-gradient(135deg, #059669, #047857);
-    color: #fff; border: none; border-radius: 10px; margin-bottom: 8px;
-    font-weight: 800; font-size: 13px; cursor: pointer;
-    justify-content: space-between; align-items: center;
-    box-shadow: 0 2px 8px rgba(5,46,22,.15); transition: all .2s;
+  /* =========================================
+     PANEL TOOLS 1 BARIS (DESKTOP)
+     ========================================= */
+  .tools-panel {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    align-items: stretch;
+    flex-wrap: wrap;
   }
-  .tools-toggle:hover { background: linear-gradient(135deg, #047857, #065f46); }
-  .tools-toggle .tt-left { display:flex; align-items:center; gap:8px; }
-  .tools-toggle .tt-icon { font-size:16px; }
-  .tools-toggle .tt-badges { display:inline-flex; gap:4px; margin-left:4px; }
-  .tools-toggle .tt-dot {
-    display:inline-block; width:8px; height:8px; border-radius:50%;
-    border:1.5px solid #fff; box-shadow:0 1px 2px rgba(0,0,0,.2);
+
+  .loc-panel, .live-link-panel, .route-panel {
+    background: #fff; border: 2px solid var(--green-100); border-radius: 12px;
+    padding: 12px 14px; display: flex; gap: 10px; align-items: center;
+    box-shadow: 0 2px 8px rgba(5,46,22,.06);
+    transition: all .15s;
+    min-width: 0;
   }
-  .tools-toggle .tt-dot.ok { background: #4ade80; }
-  .tools-toggle .tt-dot.wait { background: #fbbf24; }
-  .tools-toggle .tt-dot.live { background: #60a5fa; }
-  .tools-toggle .tt-arrow { font-size:11px; transition: transform .2s; }
+  .loc-panel.ok, .live-link-panel.ok, .route-panel.ok { border-color: var(--green-400); background: #f0fdf4; }
+  .loc-panel.err { border-color: #fca5a5; background: #fef2f2; }
+  .loc-panel.wait, .route-panel.wait { border-color: #fde68a; background: #fefce8; }
 
-  .tools-panel { display: block; }
+  /* Lebar masing-masing panel */
+  .loc-panel { flex: 1.2; }
+  .live-link-panel { flex: 1.5; border-color: #c7d2fe; }
+  .route-panel { flex: 1.3; border-color: #fde68a; }
 
-  .loc-panel { background:#fff; border:2px solid var(--green-100); border-radius:12px;
-    padding:16px 18px; margin-bottom:12px; display:flex; gap:14px; align-items:center;
-    flex-wrap:wrap; box-shadow:0 2px 8px rgba(5,46,22,.06); }
-  .loc-panel .loc-icon { font-size:24px; }
-  .loc-panel .loc-body { flex:1; min-width:220px; }
-  .loc-panel .loc-title { font-weight:800; font-size:14px; margin-bottom:3px; color:var(--green-900); }
-  .loc-panel .loc-sub { font-size:12px; color:#047857; }
-  .loc-panel .loc-sub a { color:var(--green-700); font-weight:700; }
-  .loc-panel.ok { border-color:var(--green-400); background:#ecfdf5; }
-  .loc-panel.err { border-color:#fca5a5; background:#fef2f2; }
-  .loc-panel.wait { border-color:#fde68a; background:#fefce8; }
-  .loc-panel .loc-actions { display:flex; gap:6px; flex-wrap:wrap; }
+  .loc-panel .loc-icon { font-size: 22px; flex-shrink: 0; }
+  .loc-panel .loc-body { flex: 1; min-width: 0; }
+  .loc-panel .loc-title { font-weight: 800; font-size: 13px; margin-bottom: 2px; color: var(--green-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .loc-panel .loc-sub { font-size: 11px; color: #047857; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .loc-panel .loc-sub a { color: var(--green-700); font-weight: 700; }
+  .loc-panel .loc-actions { display: flex; gap: 4px; flex-shrink: 0; flex-wrap: wrap; }
 
-  .live-link-panel { background:#fff; border:2px solid #c7d2fe; border-radius:12px;
-    padding:12px 14px; margin-bottom:12px; display:flex; gap:12px; align-items:flex-start;
-    box-shadow:0 2px 8px rgba(5,46,22,.06); }
-  .live-link-panel.ok { border-color:var(--green-400); background:#f0fdf4; }
-  .live-link-panel .ll-icon { font-size:20px; margin-top:2px; }
-  .live-link-panel .ll-body { flex:1; min-width:200px; }
-  .live-link-panel .ll-label { font-size:11px; font-weight:800; color:var(--green-800);
-    text-transform:uppercase; letter-spacing:.4px; margin-bottom:5px; display:block; }
-  .live-link-panel input { font-size:12px; padding:8px 10px; font-family:'Courier New',monospace; }
-  .live-link-panel .ll-status { font-size:11px; font-weight:700; margin-top:5px; color:#ca8a04; }
+  .live-link-panel .ll-icon { font-size: 20px; flex-shrink: 0; }
+  .live-link-panel .ll-body { flex: 1; min-width: 0; }
+  .live-link-panel .ll-label { font-size: 10px; font-weight: 800; color: var(--green-800); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .live-link-panel input { font-size: 11px; padding: 6px 8px; font-family: 'Courier New', monospace; margin-bottom: 0; }
+  .live-link-panel .ll-status { font-size: 10px; font-weight: 700; margin-top: 4px; color: #ca8a04; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* ==== ROUTE PANEL ==== */
-  .route-panel { background:#fff; border:2px solid #fde68a; border-radius:12px;
-    padding:12px 14px; margin-bottom:12px; display:flex; gap:12px; align-items:flex-start;
-    box-shadow:0 2px 8px rgba(5,46,22,.06); }
-  .route-panel.ok { border-color:var(--green-400); background:#f0fdf4; }
-  .route-panel .rp-icon { font-size:20px; margin-top:2px; }
-  .route-panel .rp-body { flex:1; min-width:200px; }
-  .route-panel .rp-label { font-size:11px; font-weight:800; color:var(--green-800);
-    text-transform:uppercase; letter-spacing:.4px; margin-bottom:5px; display:block; }
-  .route-panel select { font-size:12px; padding:8px 10px; width:100%; }
-  .route-panel .rp-status { font-size:11px; font-weight:700; margin-top:5px; color:#ca8a04; }
+  .route-panel .rp-icon { font-size: 20px; flex-shrink: 0; }
+  .route-panel .rp-body { flex: 1; min-width: 0; }
+  .route-panel .rp-label { font-size: 10px; font-weight: 800; color: var(--green-800); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .route-panel select { font-size: 11px; padding: 6px 8px; width: 100%; }
+  .route-panel .rp-status { font-size: 10px; font-weight: 700; margin-top: 4px; color: #ca8a04; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+  /* Tombol di dalam panel desktop diperkecil agar muat */
+  .loc-panel .loc-actions button { font-size: 10px; padding: 6px 8px; white-space: nowrap; }
+
+  /* Responsivitas untuk layar desktop agak kecil */
+  @media (max-width: 1200px) {
+    .tools-panel { flex-direction: column; }
+    .loc-panel, .live-link-panel, .route-panel { width: 100%; }
+    .loc-panel .loc-actions button { font-size: 12px; padding: 9px 12px; }
+    .loc-panel .loc-title { font-size: 14px; }
+    .loc-panel .loc-sub { font-size: 12px; }
+    .live-link-panel .ll-label, .route-panel .rp-label { font-size: 11px; }
+    .live-link-panel input, .route-panel select { font-size: 13px; padding: 9px 12px; }
+  }
+
+  /* =========================================
+     TABEL & LAIN-LAIN
+     ========================================= */
   .table-wrap { width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px; }
   table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px;
     overflow:hidden; box-shadow:0 2px 8px rgba(5,46,22,.08); min-width:820px; }
@@ -467,64 +367,23 @@
   @media (max-width:768px) {
     #appPage { flex-direction: column; height: 100dvh; }
     .sidebar { display: none; }
-
     .mobile-topbar { display: flex; }
     .mobile-bottom-nav { display: flex; }
-
     .main { height: auto; flex: 1; min-height: 0; }
-
     .page { padding:12px 10px 0; }
     .page-scroll { padding-bottom:12px; margin-right:-6px; padding-right:6px; }
-
     .main h1 { font-size:17px; margin-bottom:10px; }
 
-    .tools-toggle { display: flex; }
-    .tools-panel { display: none; }
-    .tools-panel.open { display: block; }
-
-    .loc-panel {
-      padding:9px 10px !important;
-      gap:8px !important;
-      margin-bottom:8px !important;
-      border-radius:10px;
-    }
-    .loc-panel .loc-icon { font-size:18px; }
-    .loc-panel .loc-body { min-width:0; flex:1 1 100%; }
-    .loc-panel .loc-title { font-size:12px; margin-bottom:1px; }
-    .loc-panel .loc-sub { font-size:10px; }
-    .loc-panel .loc-actions {
-      width:100%;
-      display:grid;
-      grid-template-columns:repeat(4, 1fr);
-      gap:4px;
-    }
-    .loc-panel .loc-actions button {
-      font-size:10px; padding:6px 2px; min-width:0;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      border-radius:7px; font-weight:700;
-    }
-
-    .live-link-panel {
-      padding:8px 10px !important;
-      gap:8px !important;
-      margin-bottom:8px !important;
-      border-radius:10px;
-    }
-    .live-link-panel .ll-icon { font-size:16px; }
-    .live-link-panel .ll-label { font-size:10px; margin-bottom:3px; }
-    .live-link-panel input { font-size:11px; padding:6px 8px; }
-    .live-link-panel .ll-status { font-size:10px; margin-top:3px; }
-
-    .route-panel {
-      padding:8px 10px !important;
-      gap:8px !important;
-      margin-bottom:8px !important;
-      border-radius:10px;
-    }
-    .route-panel .rp-icon { font-size:16px; }
-    .route-panel .rp-label { font-size:10px; margin-bottom:3px; }
-    .route-panel select { font-size:11px; padding:6px 8px; }
-    .route-panel .rp-status { font-size:10px; margin-top:3px; }
+    /* Di HP, tools kembali ke layout vertikal */
+    .tools-panel { flex-direction: column; gap: 0; }
+    .loc-panel, .live-link-panel, .route-panel { width: 100%; margin-bottom: 8px; padding: 9px 10px; }
+    .loc-panel .loc-icon, .live-link-panel .ll-icon, .route-panel .rp-icon { font-size: 18px; }
+    .loc-panel .loc-title { font-size: 12px; }
+    .loc-panel .loc-sub { font-size: 10px; }
+    .loc-panel .loc-actions { width:100%; display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; margin-top: 6px; }
+    .loc-panel .loc-actions button { font-size:10px; padding:6px 2px; border-radius:7px; }
+    .live-link-panel .ll-label, .route-panel .rp-label { font-size: 10px; }
+    .live-link-panel input, .route-panel select { font-size: 11px; padding: 6px 8px; }
 
     .toolbar { gap:6px; margin-bottom:8px; }
     .toolbar input[type=text],.toolbar select { min-width:0; flex:1; }
@@ -536,7 +395,6 @@
     th,td { padding:9px 10px; font-size:12px; }
     .order-badge { width:24px; height:24px; font-size:11px; }
     .move-input { width:44px !important; font-size:12px; }
-    button.updown { padding:3px 7px; font-size:11px; }
     td .actions button,td .actions a button { padding:5px 9px; font-size:11px; }
     .modal { padding:20px 16px; }
     .modal h3 { font-size:16px; }
@@ -585,7 +443,7 @@
   <!-- ========== DESKTOP SIDEBAR ========== -->
   <aside class="sidebar">
     <h2>🌿 Sobat Parikesit</h2>
-    <small>v3.9</small>
+    <small>v4.0</small>
     <div class="nav-item active" data-page="queue" onclick="showPage('queue')">📦 Antrian</div>
     <div class="nav-item" data-page="patients" onclick="showPage('patients')">📋 Data Pasien</div>
     <div class="nav-item" data-page="map" onclick="showPage('map')">🗺️ Peta Pasien</div>
@@ -615,6 +473,7 @@
       <div class="page-fixed">
         <h1 id="queueTitle">Antrian Pengantaran Hari Ini</h1>
 
+        <!-- Desktop: tombol toggle disembunyikan, panel langsung tampil 1 baris -->
         <button type="button" class="tools-toggle" id="toolsToggle" onclick="toggleTools()">
           <span class="tt-left">
             <span class="tt-icon">⚙️</span>
@@ -628,8 +487,8 @@
           <div class="loc-panel wait" id="locPanel">
             <div class="loc-icon">📍</div>
             <div class="loc-body">
-              <div class="loc-title" id="locTitle">Lokasi Saya Belum Diambil</div>
-              <div class="loc-sub" id="locSub">Klik <b>Perbarui Lokasi</b> di awal shift.</div>
+              <div class="loc-title" id="locTitle">Lokasi Belum Diambil</div>
+              <div class="loc-sub" id="locSub">Klik Perbarui di awal shift.</div>
             </div>
             <div class="loc-actions">
               <button class="maps" onclick="perbaruiLokasiSaya()">📍 Perbarui</button>
@@ -642,8 +501,8 @@
           <div class="live-link-panel" id="liveLinkPanel">
             <div class="ll-icon">🔗</div>
             <div class="ll-body">
-              <label class="ll-label" for="liveLocationLink">Link Live Lokasi (share dari Google Maps)</label>
-              <input id="liveLocationLink" type="text" placeholder="Paste link live share lokasi di sini..."
+              <label class="ll-label" for="liveLocationLink">Link Live Lokasi (Share Maps)</label>
+              <input id="liveLocationLink" type="text" placeholder="Paste link share lokasi..."
                 oninput="saveLiveLocationLink()">
               <div class="ll-status" id="liveLinkStatus">ℹ️ Belum ada link.</div>
             </div>
@@ -865,7 +724,7 @@
   <aside class="mobile-drawer" id="mobileDrawer">
     <div class="md-header">
       <h3>🌿 Sobat Parikesit</h3>
-      <small>v3.9</small>
+      <small>v4.0</small>
     </div>
 
     <div class="md-user">
@@ -1757,7 +1616,7 @@ function renderLocPanel() {
   const sub = document.getElementById('locSub');
   if (!officerLocation) {
     panel.className = 'loc-panel wait';
-    title.textContent = 'Lokasi Saya Belum Diambil';
+    title.textContent = 'Lokasi Belum Diambil';
     sub.innerHTML = 'Klik <b>Perbarui Lokasi</b> di awal shift.';
     return;
   }
@@ -1766,9 +1625,7 @@ function renderLocPanel() {
   const menit = Math.floor((Date.now() - time.getTime()) / 60000);
   panel.className = 'loc-panel ok';
   title.textContent = '✅ Lokasi Aktif';
-  sub.innerHTML = `Koordinat: <span class="coord">${lat.toFixed(5)}, ${lng.toFixed(5)}</span>
-    · Diperbarui ${menit < 1 ? 'baru saja' : menit + ' menit lalu'}
-    · <a href="${link}" target="_blank">Lihat di Maps</a>`;
+  sub.innerHTML = `${lat.toFixed(5)}, ${lng.toFixed(5)} · ${menit < 1 ? 'baru' : menit + 'm lalu'} · <a href="${link}" target="_blank">Maps</a>`;
 }
 
 // ============ PASTE DATA DARI EXCEL ============
