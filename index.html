@@ -2206,13 +2206,18 @@ function closeQDetail() {
 function recordDelivery(deliveryId) {
   const statusEl = document.getElementById('qGeoStatus');
   if (!navigator.geolocation) { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Geolocation tidak didukung.'; return; }
+
   const r = myQueue.find(x => x.id === deliveryId);
   const latNum = r ? parseFloat(r.latitude) : NaN;
   const lngNum = r ? parseFloat(r.longitude) : NaN;
   const alreadyHasCoord = !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
+
+  // Jika koordinat SUDAH ADA
   if (alreadyHasCoord) {
     statusEl.className = 'geo-status ok';
-    statusEl.textContent = `✅ Koordinat sudah tersimpan (${latNum.toFixed(5)}, ${lngNum.toFixed(5)}) — tidak diubah.`;
+    statusEl.textContent = `✅ Koordinat sudah tersimpan (${latNum.toFixed(5)}, ${lngNum.toFixed(5)}) — tidak diubah otomatis.`;
+    
+    // Hanya update status jadi 'delivered' tanpa mengubah koordinat
     sb.from('daily_deliveries').update({
       status: 'delivered',
       delivered_at: new Date().toISOString(),
@@ -2224,26 +2229,50 @@ function recordDelivery(deliveryId) {
     });
     return;
   }
+
+  // Jika koordinat KOSONG
   statusEl.className = 'geo-status wait';
   statusEl.textContent = '📡 Mengambil titik koordinat GPS Anda...';
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       const { latitude, longitude } = pos.coords;
+      
       const { error } = await sb.from('daily_deliveries').update({
         latitude, longitude, status: 'delivered',
-        delivered_at: new Date().toISOString(), updated_at: new Date().toISOString()
+        delivered_at: new Date().toISOString(), 
+        updated_at: new Date().toISOString(),
+        synced_to_master: false // <-- Kunci: set false agar tombol save aktif
       }).eq('id', deliveryId);
-      if (error) { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Gagal: ' + error.message; return; }
+      
+      if (error) { 
+        statusEl.className = 'geo-status err'; 
+        statusEl.textContent = '❌ Gagal simpan koordinat awal: ' + error.message; 
+        return; 
+      }
+      
       statusEl.className = 'geo-status ok';
       statusEl.textContent = `✅ Kunjungan tersimpan (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
+      
+      // Update cache lokal
       const idx = myQueue.findIndex(x => x.id === deliveryId);
       if (idx >= 0) {
-        myQueue[idx].latitude = latitude; myQueue[idx].longitude = longitude;
-        myQueue[idx].status = 'delivered'; myQueue[idx].synced_to_master = false;
+        myQueue[idx].latitude = latitude; 
+        myQueue[idx].longitude = longitude;
+        myQueue[idx].status = 'delivered'; 
+        myQueue[idx].synced_to_master = false;
       }
+
+      // AKTIFKAN TOMBOL SIMPAN MASTER DI MODAL
+      const btnSave = document.getElementById('btnSaveMaster');
+      if (btnSave) {
+        btnSave.disabled = false;
+        // (Opsional) Ubah teks tombol agar lebih jelas
+        // btnSave.textContent = '💾 Simpan Koordinat ke Data Pasien';
+      }
+      
       loadQueue();
     },
-    (err) => { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Gagal: ' + err.message; },
+    (err) => { statusEl.className = 'geo-status err'; statusEl.textContent = '❌ Gagal ambil GPS: ' + err.message; },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
 }
