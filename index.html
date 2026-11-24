@@ -361,362 +361,308 @@
     color:var(--green-900); letter-spacing:-.2px; }
   .chart-box .chart-wrap { position:relative; height:340px; width:100%; }
 
-  /* ============ MOBILE ============ */
+  /* ============ MOBILE (MODERN) ============ */
   @media (max-width:768px) {
-    #appPage { flex-direction: column; height: 100dvh; }
-    .sidebar { display: none; }
-    .mobile-topbar { display: flex; }
-    .mobile-bottom-nav { display: flex; }
-    .main { height: auto; flex: 1; min-height: 0; }
-    .page { padding:12px 10px 0; }
+
+    /* ---------- STRUKTUR DASAR ---------- */
+    #appPage { flex-direction:column; height:100dvh; }
+    .sidebar { display:none; }
+    .mobile-topbar { display:flex; }
+    .mobile-bottom-nav { display:flex; }
+    .main { height:auto; flex:1; min-height:0; background:linear-gradient(180deg,#f3faf6 0%,#e9f7f0 100%); }
+    .page { padding:12px 14px 0; }
     .page-scroll { padding-bottom:12px; margin-right:-6px; padding-right:6px; }
-    .main h1 { font-size:17px; margin-bottom:10px; }
+    .main h1 { font-size:20px; font-weight:800; letter-spacing:-.5px; margin:2px 0 12px; color:#064e3b; }
+    html, body { background:#f3faf6; }
 
-    /* Tombol Toggle Tampil di Mobile */
+    /* ---------- LOGIN ---------- */
+    #loginPage { background:radial-gradient(circle at 20% 10%,#10b981 0%,#065f46 45%,#052e16 100%); padding:24px; }
+    .login-box { border-radius:28px; border-top:none; padding:34px 26px; box-shadow:0 30px 70px rgba(0,0,0,.4); }
+    .login-box input { margin-bottom:12px; }
+
+    /* ---------- TOP BAR ---------- */
+    .mobile-topbar {
+      height:56px; background:rgba(255,255,255,.82);
+      -webkit-backdrop-filter:saturate(180%) blur(14px); backdrop-filter:saturate(180%) blur(14px);
+      border-bottom:1px solid rgba(16,185,129,.15); box-shadow:0 4px 20px rgba(5,46,22,.06);
+      color:#064e3b; padding:0 14px;
+    }
+    .mobile-topbar .mt-menu-btn { background:#d1fae5; color:#065f46; border-radius:12px; padding:9px 12px; }
+    .mobile-topbar .mt-menu-btn:hover { background:#a7f3d0; color:#064e3b; }
+    .mobile-topbar .mt-title { color:#064e3b; font-size:17px; font-weight:800; }
+    .mobile-topbar .mt-user {
+      background:linear-gradient(135deg,#10b981,#059669); color:#fff;
+      padding:6px 12px; font-size:11px; box-shadow:0 2px 8px rgba(16,185,129,.35);
+    }
+
+    /* ---------- BOTTOM NAV ---------- */
+    .mobile-bottom-nav {
+      height:64px; margin:0 12px calc(10px + env(safe-area-inset-bottom,0));
+      padding:6px; border-radius:22px; border-top:none; gap:2px;
+      background:rgba(255,255,255,.92);
+      -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+      box-shadow:0 10px 30px rgba(5,46,22,.18), 0 0 0 1px rgba(16,185,129,.12);
+    }
+    .mbn-item { border-radius:16px; font-size:10px; gap:2px; padding:4px 2px; }
+    .mbn-item:hover { background:transparent; }
+    .mbn-item.active { background:linear-gradient(135deg,#d1fae5,#a7f3d0); color:#065f46; }
+    .mbn-item.active::before { display:none; }
+    .mbn-item.active .mbn-icon { transform:translateY(-1px) scale(1.12); }
+
+    /* ---------- DRAWER ---------- */
+    .mobile-drawer { border-radius:0 26px 26px 0; width:84%; box-shadow:12px 0 40px rgba(0,0,0,.35); }
+    .mobile-drawer .md-user { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:16px; }
+    .drawer-item { border-radius:14px; padding:13px 14px; }
+    .mobile-drawer .md-logout { border-radius:14px; }
+
+    /* ---------- INPUT / TOMBOL ---------- */
+    input, textarea, select { border-radius:14px; border:1.5px solid #cfeede; padding:12px 14px; background:#fff; }
+    input:focus, textarea:focus, select:focus { box-shadow:0 0 0 4px rgba(16,185,129,.15); }
+    button { border-radius:14px; padding:12px 16px; }
+    button:active { transform:scale(.97); }
+
+    /* ---------- ANTRIAN: JUDUL + TOMBOL TOOLS SEJAJAR ---------- */
+    #page-queue .page-fixed { display:flex; flex-wrap:wrap; align-items:center; gap:0 10px; }
+    #page-queue .page-fixed > h1 { flex:1 1 0; min-width:0; margin:0 0 10px; font-size:16px; line-height:1.25; }
     .tools-toggle {
-      display: flex;
-      width: 100%;
-      padding: 10px 14px;
-      background: linear-gradient(135deg, #059669, #047857);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(5,46,22,.15);
-      transition: all .2s;
+      display:flex; flex:0 0 auto; width:auto; margin:0 0 10px; padding:9px 12px; gap:8px;
+      justify-content:space-between; align-items:center; cursor:pointer;
+      background:#fff; color:#064e3b; border:1px solid #d1fae5; border-radius:14px;
+      font-weight:800; font-size:13px; box-shadow:0 4px 16px rgba(5,46,22,.07); transition:all .2s;
     }
-    .tools-toggle:hover { background: linear-gradient(135deg, #047857, #065f46); }
-    .tools-toggle .tt-left { display:flex; align-items:center; gap:8px; }
+    .tools-toggle:hover { background:#f7fefb; }
+    .tools-toggle .tt-left { display:flex; align-items:center; gap:6px; }
     .tools-toggle .tt-icon { font-size:16px; }
-    .tools-toggle .tt-badges { display:inline-flex; gap:4px; margin-left:4px; }
-    .tools-toggle .tt-dot {
-      display:inline-block; width:8px; height:8px; border-radius:50%;
-      border:1.5px solid #fff; box-shadow:0 1px 2px rgba(0,0,0,.2);
+    .tools-toggle .tt-title { font-size:0; }
+    .tools-toggle .tt-title::after { content:"Tools"; font-size:12px; font-weight:800; }
+    .tools-toggle .tt-badges { display:inline-flex; gap:4px; margin-left:0; }
+    .tools-toggle .tt-dot { display:inline-block; width:8px; height:8px; border-radius:50%; border:1.5px solid #fff; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+    .tools-toggle .tt-dot.ok { background:#4ade80; }
+    .tools-toggle .tt-dot.wait { background:#fbbf24; }
+    .tools-toggle .tt-dot.live { background:#60a5fa; }
+    .tools-toggle .tt-arrow { font-size:11px; transition:transform .2s; }
+
+    /* Elemen lain di header Antrian tetap satu baris penuh */
+    #page-queue .tools-panel,
+    #page-queue .toolbar,
+    #page-queue .search-bar { flex:1 1 100%; }
+
+    /* Panel tools: tersembunyi default, tampil jika .open */
+    .tools-panel { display:none !important; flex-direction:column; gap:0; }
+    .tools-panel.open { display:flex !important; }
+
+    .loc-panel, .live-link-panel, .route-panel {
+      width:100%; margin-bottom:8px; border:none; border-radius:18px; padding:14px;
+      box-shadow:0 4px 18px rgba(5,46,22,.08); background:#fff;
     }
-    .tools-toggle .tt-dot.ok { background: #4ade80; }
-    .tools-toggle .tt-dot.wait { background: #fbbf24; }
-    .tools-toggle .tt-dot.live { background: #60a5fa; }
-    .tools-toggle .tt-arrow { font-size:11px; transition: transform .2s; }
+    .loc-panel.ok, .live-link-panel.ok, .route-panel.ok { background:linear-gradient(135deg,#f0fdf4,#dcfce7); }
+    .loc-panel.wait, .route-panel.wait { background:linear-gradient(135deg,#fffbeb,#fef3c7); }
+    .loc-panel.err { background:linear-gradient(135deg,#fef2f2,#fee2e2); }
+    .loc-panel .loc-icon, .live-link-panel .ll-icon, .route-panel .rp-icon { font-size:18px; }
+    .loc-panel .loc-title { font-size:12px; }
+    .loc-panel .loc-sub { font-size:10px; }
+    .loc-panel .loc-actions { width:100%; display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:6px; }
+    .loc-panel .loc-actions button { font-size:12px; padding:10px 6px; border-radius:12px; }
+    .live-link-panel .ll-label, .route-panel .rp-label { font-size:10px; }
+    .live-link-panel input, .route-panel select { font-size:11px; padding:8px 10px; }
 
-    /* Sembunyikan tools panel secara default di mobile, tampilkan jika ada class .open */
-    .tools-panel {
-      display: none !important;
-      flex-direction: column;
-      gap: 0;
+    /* ---------- TOOLBAR ADMIN ---------- */
+    .toolbar { gap:8px; margin-bottom:8px; }
+    .toolbar input[type=text] { min-width:0; flex:1; }
+    .toolbar input[type=date], .toolbar select { min-width:0; flex:1 1 45%; }
+    .toolbar > button { flex:1 1 100%; }
+
+    /* ---------- PENCARIAN (LEBIH LEBAR) ---------- */
+    .search-bar { margin-bottom:8px; gap:6px; flex-wrap:wrap; }
+    .search-bar input[type=text] {
+      flex:1 1 0; min-width:0; border-radius:999px; padding:12px 16px; font-size:12.5px;
+      box-shadow:0 2px 10px rgba(5,46,22,.05);
     }
-    .tools-panel.open {
-      display: flex !important;
+    .search-bar button { flex:0 0 auto; border-radius:999px !important; font-size:0 !important; padding:11px 13px !important; }
+    .search-bar button::before { content:"\2716"; font-size:13px; }
+    #queueSearchInfo { flex:1 1 100%; order:3; }
+    #queueSearchInfo:empty { display:none; }
+    .hint, .viewas-banner { border-radius:14px; font-size:12px; }
+
+    /* ---------- TABEL -> KARTU ---------- */
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) .table-wrap { overflow:visible; border-radius:0; }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) table {
+      display:block; min-width:0; background:transparent; box-shadow:none; border-radius:0;
     }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) thead { display:none; }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) tbody { display:flex; flex-direction:column; gap:12px; }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) tr {
+      display:grid; background:#fff; border-radius:20px; padding:14px; gap:8px 12px;
+      box-shadow:0 6px 20px rgba(5,46,22,.08); border:1px solid #e3f4ec;
+    }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td {
+      display:block; padding:0; border:none; font-size:13px; min-width:0; word-break:break-word;
+    }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) tr:hover td { background:transparent; }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td.cod-cell {
+      background:#fee2e2 !important; border-radius:12px; padding:8px 10px; border-left:4px solid #dc2626;
+    }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) .col-aksi { width:auto; white-space:normal; }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions { gap:8px; flex-wrap:nowrap; }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions > * { flex:1; }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions button {
+      width:100%; min-height:42px; padding:10px 8px !important; font-size:13px !important; border-radius:12px !important;
+    }
+    :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions a { display:block; }
 
-    .loc-panel, .live-link-panel, .route-panel { width: 100%; margin-bottom: 8px; padding: 9px 10px; }
-    .loc-panel .loc-icon, .live-link-panel .ll-icon, .route-panel .rp-icon { font-size: 18px; }
-    .loc-panel .loc-title { font-size: 12px; }
-    .loc-panel .loc-sub { font-size: 10px; }
-    .loc-panel .loc-actions { width:100%; display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; margin-top: 6px; }
-    .loc-panel .loc-actions button { font-size:10px; padding:6px 2px; border-radius:7px; }
-    .live-link-panel .ll-label, .route-panel .rp-label { font-size: 10px; }
-    .live-link-panel input, .route-panel select { font-size: 11px; padding: 6px 8px; }
+    /* Antrian */
+    #queueTableWrap tr { grid-template-columns:auto 1fr; }
+    #queueTableWrap td:nth-child(1) { grid-column:1; grid-row:1 / span 2; align-self:center; font-weight:800; color:#065f46; }
+    #queueTableWrap td:nth-child(3) { grid-column:2; grid-row:1; font-size:15px; font-weight:800; color:#064e3b; align-self:end; }
+    #queueTableWrap td:nth-child(7) { grid-column:2; grid-row:2; align-self:start; }
+    #queueTableWrap td:nth-child(4) { grid-column:1 / -1; grid-row:3; }
+    #queueTableWrap td:nth-child(5) { grid-column:1 / -1; grid-row:4; }
+    #queueTableWrap td:nth-child(6) { grid-column:1 / -1; grid-row:5; }
+    #queueTableWrap td:nth-child(2) { grid-column:1 / -1; grid-row:6; margin-top:4px; }
+    #queueTableWrap td:nth-child(4)::before,
+    #queueTableWrap td:nth-child(5)::before,
+    #queueTableWrap td:nth-child(6)::before {
+      display:block; font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
+    }
+    #queueTableWrap td:nth-child(4)::before { content:"Alamat"; }
+    #queueTableWrap td:nth-child(5)::before { content:"No HP"; }
+    #queueTableWrap td:nth-child(6)::before { content:"Koordinat"; }
+    #queueTableWrap .move-cell { flex-direction:column; gap:6px; }
+    #queueTableWrap .order-badge { width:38px; height:38px; font-size:16px; background:linear-gradient(135deg,#10b981,#047857); box-shadow:0 4px 10px rgba(16,185,129,.35); }
+    #queueTableWrap .move-input { width:52px !important; border-radius:10px; padding:6px !important; font-size:12px; }
+    #queueTableWrap .assign-select { max-width:100%; width:100%; border-radius:10px; }
 
-    .toolbar { gap:6px; margin-bottom:8px; }
-    .toolbar input[type=text],.toolbar select { min-width:0; flex:1; }
-    .search-bar { margin-bottom:8px; gap:6px; }
-    .search-bar input[type=text] { min-width:0; font-size:13px; padding:9px 12px; }
-    .search-bar button { padding:8px 11px !important; font-size:11px !important; }
+    /* Data Pasien */
+    #patientsTableWrap tr { grid-template-columns:1fr; }
+    #patientsTableWrap td:nth-child(2) { order:1; font-size:15px; font-weight:800; color:#064e3b; }
+    #patientsTableWrap td:nth-child(3) { order:2; }
+    #patientsTableWrap td:nth-child(4) { order:3; }
+    #patientsTableWrap td:nth-child(5) { order:4; }
+    #patientsTableWrap td:nth-child(1) { order:5; margin-top:4px; }
+    #patientsTableWrap td:nth-child(3)::before,
+    #patientsTableWrap td:nth-child(4)::before,
+    #patientsTableWrap td:nth-child(5)::before {
+      display:block; font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
+    }
+    #patientsTableWrap td:nth-child(3)::before { content:"Alamat"; }
+    #patientsTableWrap td:nth-child(4)::before { content:"No HP"; }
+    #patientsTableWrap td:nth-child(5)::before { content:"Koordinat"; }
 
-    table { min-width:640px; }
-    th,td { padding:9px 10px; font-size:12px; }
-    .order-badge { width:24px; height:24px; font-size:11px; }
-    .move-input { width:44px !important; font-size:12px; }
-    td .actions button,td .actions a button { padding:5px 9px; font-size:11px; }
-    .modal { padding:20px 16px; }
-    .modal h3 { font-size:16px; }
-    .modal .row button { flex:1; min-width:90px; }
-    .pagination { padding:10px; gap:6px; margin:12px 0 6px; }
-    .pagination button { padding:8px 12px; font-size:11px; min-width:60px; }
-    .pagination .page-info { font-size:11px; padding:0 4px; }
-    .pagination input.page-jump { width:55px !important; padding:7px 5px !important; font-size:11px; }
-    .map-toolbar { padding:10px; }
-    .map-toolbar input[type=text] { min-width:0; font-size:13px; padding:9px 12px; }
+    /* Data Pasien Sobat */
+    #sobatTableWrap tr { grid-template-columns:repeat(3,1fr); }
+    #sobatTableWrap td:nth-child(2) { order:1; grid-column:1 / -1; font-size:15px; font-weight:800; color:#064e3b; }
+    #sobatTableWrap td:nth-child(3) { order:2; grid-column:1 / -1; }
+    #sobatTableWrap td:nth-child(4) { order:3; grid-column:1 / -1; }
+    #sobatTableWrap td:nth-child(5) { order:4; }
+    #sobatTableWrap td:nth-child(6) { order:5; }
+    #sobatTableWrap td:nth-child(7) { order:6; }
+    #sobatTableWrap td:nth-child(8) { order:7; }
+    #sobatTableWrap td:nth-child(9) { order:8; }
+    #sobatTableWrap td:nth-child(10) { order:9; }
+    #sobatTableWrap td:nth-child(1) { order:10; grid-column:1 / -1; margin-top:4px; }
+    #sobatTableWrap td:nth-child(n+3)::before {
+      display:block; font-size:10px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
+    }
+    #sobatTableWrap td:nth-child(3)::before { content:"Alamat"; }
+    #sobatTableWrap td:nth-child(4)::before { content:"No HP"; }
+    #sobatTableWrap td:nth-child(5)::before { content:"Tarif"; }
+    #sobatTableWrap td:nth-child(6)::before { content:"Pend. RS"; }
+    #sobatTableWrap td:nth-child(7)::before { content:"Pend. Petugas"; }
+    #sobatTableWrap td:nth-child(8)::before { content:"Petugas"; }
+    #sobatTableWrap td:nth-child(9)::before { content:"Bulan"; }
+    #sobatTableWrap td:nth-child(10)::before { content:"Tahun"; }
+    #sobatTableWrap .rupiah { font-size:12px; }
+
+    /* Riwayat */
+    #historyTableWrap tr { grid-template-columns:1fr 1fr; }
+    #historyTableWrap td:nth-child(3) { order:1; grid-column:1 / -1; font-size:15px; font-weight:800; color:#064e3b; }
+    #historyTableWrap td:nth-child(1) { order:2; }
+    #historyTableWrap td:nth-child(2) { order:3; }
+    #historyTableWrap td:nth-child(4) { order:4; grid-column:1 / -1; }
+    #historyTableWrap td:nth-child(5) { order:5; grid-column:1 / -1; }
+    #historyTableWrap td:nth-child(1)::before,
+    #historyTableWrap td:nth-child(2)::before,
+    #historyTableWrap td:nth-child(4)::before,
+    #historyTableWrap td:nth-child(5)::before {
+      display:block; font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
+    }
+    #historyTableWrap td:nth-child(1)::before { content:"Tanggal"; }
+    #historyTableWrap td:nth-child(2)::before { content:"Jam"; }
+    #historyTableWrap td:nth-child(4)::before { content:"Alamat"; }
+    #historyTableWrap td:nth-child(5)::before { content:"No HP"; }
+
+    /* User */
+    #usersTableWrap tr { grid-template-columns:1fr auto; align-items:center; }
+    #usersTableWrap td:nth-child(1) { font-size:15px; font-weight:800; color:#064e3b; }
+    #usersTableWrap td:nth-child(3) { grid-column:1 / -1; font-size:12px; color:#64748b; }
+    #usersTableWrap td:nth-child(3)::before { content:"Terdaftar: "; font-weight:800; color:#10b981; }
+
+    /* ---------- PAGINATION ---------- */
+    .pagination {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; border:none; border-radius:20px;
+      box-shadow:0 6px 20px rgba(5,46,22,.08); margin:14px 0 6px;
+    }
+    .pagination .page-info { grid-column:1 / -1; order:-1; text-align:center; font-size:12px; padding:0 4px; }
+    .pagination button { min-width:0; padding:10px 4px; font-size:12px; border-radius:12px; }
+    .pagination input.page-jump { grid-column:1 / -1; width:100% !important; border-radius:12px; font-size:12px; }
+
+    /* ---------- MODAL -> BOTTOM SHEET ---------- */
+    .modal-bg { align-items:flex-end; padding:0; }
+    .modal, .modal.modal-wide {
+      max-width:100%; width:100%; max-height:92dvh; border-radius:28px 28px 0 0; border-top:none;
+      padding:26px 18px calc(18px + env(safe-area-inset-bottom,0));
+      animation:sheetUp .28s cubic-bezier(.2,.9,.3,1); position:relative;
+      box-shadow:0 -12px 40px rgba(0,0,0,.3);
+    }
+    .modal::before {
+      content:""; position:absolute; top:9px; left:50%; transform:translateX(-50%);
+      width:42px; height:5px; border-radius:999px; background:#cfeede;
+    }
+    .modal h3 { font-size:18px; margin-top:4px; }
+    .modal .row { position:sticky; bottom:-18px; background:linear-gradient(180deg,rgba(255,255,255,0),#fff 35%); padding-top:14px; }
+    .modal .row button { flex:1; min-width:90px; border-radius:14px; padding:13px; }
+    .info-box, .geo-status, .bc-list, .bc-preview { border-radius:16px; }
+    .upload-zone { border-radius:20px; }
+    @keyframes sheetUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+
+    /* ---------- PETA ---------- */
+    .map-toolbar { border:none; border-radius:18px; padding:10px; box-shadow:0 4px 16px rgba(5,46,22,.08); }
+    .map-toolbar input[type=text] { min-width:0; font-size:13px; border-radius:999px; }
     .map-toolbar button { padding:9px 12px; font-size:12px; }
     .map-info { font-size:11px !important; }
-    .dash-filters { padding:10px; gap:6px; margin-bottom:12px; }
-    .dash-filters select { min-width:0; flex:1; font-size:12px; padding:9px 10px; }
-    .dash-summary { gap:8px; margin-bottom:12px; }
-    .dash-card { padding:12px 14px; }
-    .dash-card .value { font-size:16px; }
-    .chart-box { padding:14px; margin-bottom:12px; }
+    .map-legend { flex-wrap:nowrap; overflow-x:auto; white-space:nowrap; border-radius:999px; padding:9px 14px; gap:16px; background:#fff; box-shadow:0 2px 10px rgba(5,46,22,.06); }
+    .page-map-fill { padding-bottom:12px; }
+    .page-map-fill #mapContainer { border-radius:24px; border:none; box-shadow:0 10px 30px rgba(5,46,22,.18); }
+    .leaflet-popup-content-wrapper { border-radius:18px; }
+
+    /* ---------- DASHBOARD ---------- */
+    .dash-filters { padding:10px; gap:6px; margin-bottom:12px; border:none; border-radius:18px; box-shadow:0 4px 16px rgba(5,46,22,.08); }
+    .dash-filters label { display:none; }
+    .dash-filters select { min-width:0; flex:1 1 45%; font-size:12px; padding:9px 10px; }
+    .dash-summary { grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:12px; }
+    .dash-card { border:none; border-radius:20px; padding:14px; box-shadow:0 6px 18px rgba(5,46,22,.08); }
+    .dash-card:first-child { grid-column:1 / -1; background:linear-gradient(135deg,#059669,#047857); }
+    .dash-card:first-child .label { color:#a7f3d0; }
+    .dash-card:first-child .value { color:#fff; font-size:22px; }
+    .dash-card .value { font-size:15px; }
+    .chart-box { padding:14px; margin-bottom:12px; border:none; border-radius:22px; box-shadow:0 6px 20px rgba(5,46,22,.08); }
+    .chart-box h3 { font-size:14px; }
     .chart-box .chart-wrap { height:260px; }
-    .page-map-fill { padding-bottom:10px; }
-    .page-map-fill #mapContainer { border-radius:10px; border-width:2px; }
+
+    /* ---------- EMPTY STATE ---------- */
+    .empty { background:#fff; border-radius:20px; color:#10b981; box-shadow:0 4px 14px rgba(5,46,22,.06); }
   }
+
   @media (max-width:420px) {
     .main h1 { font-size:16px; }
-    .loc-panel .loc-actions button { font-size:9px; padding:6px 2px; }
-    .pagination button { min-width:50px; padding:7px 9px; font-size:10px; }
+    #page-queue .page-fixed > h1 { font-size:15px; }
+    .page { padding:10px 10px 0; }
+    .mobile-bottom-nav { margin:0 8px calc(8px + env(safe-area-inset-bottom,0)); }
     .mbn-item { font-size:9px; }
     .mbn-item .mbn-icon { font-size:18px; }
-  }
-      /* MOBILE MODERN PATCH */
-   @media (max-width:768px) {
-
-  /* ---------- 1. BASE ---------- */
-  html, body { background:#f3faf6; }
-  .main { background:linear-gradient(180deg,#f3faf6 0%,#e9f7f0 100%); }
-  .page { padding:12px 14px 0; }
-  .main h1 { font-size:20px; font-weight:800; letter-spacing:-.5px; margin:2px 0 12px; color:#064e3b; }
-
-  /* ---------- 2. LOGIN ---------- */
-  #loginPage { background:radial-gradient(circle at 20% 10%,#10b981 0%,#065f46 45%,#052e16 100%); padding:24px; }
-  .login-box { border-radius:28px; border-top:none; padding:34px 26px; box-shadow:0 30px 70px rgba(0,0,0,.4); }
-  .login-box input { margin-bottom:12px; }
-
-  /* ---------- 3. TOP BAR (glass) ---------- */
-  .mobile-topbar {
-    height:56px; background:rgba(255,255,255,.82);
-    -webkit-backdrop-filter:saturate(180%) blur(14px); backdrop-filter:saturate(180%) blur(14px);
-    border-bottom:1px solid rgba(16,185,129,.15); box-shadow:0 4px 20px rgba(5,46,22,.06);
-    color:#064e3b; padding:0 14px;
-  }
-  .mobile-topbar .mt-menu-btn { background:#d1fae5; color:#065f46; border-radius:12px; padding:9px 12px; }
-  .mobile-topbar .mt-menu-btn:hover { background:#a7f3d0; color:#064e3b; }
-  .mobile-topbar .mt-title { color:#064e3b; font-size:17px; font-weight:800; }
-  .mobile-topbar .mt-user {
-    background:linear-gradient(135deg,#10b981,#059669); color:#fff;
-    padding:6px 12px; font-size:11px; box-shadow:0 2px 8px rgba(16,185,129,.35);
-  }
-
-  /* ---------- 4. BOTTOM NAV (floating pill) ---------- */
-  .mobile-bottom-nav {
-    height:64px; margin:0 12px calc(10px + env(safe-area-inset-bottom,0));
-    padding:6px; border-radius:22px; border-top:none; gap:2px;
-    background:rgba(255,255,255,.92);
-    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
-    box-shadow:0 10px 30px rgba(5,46,22,.18), 0 0 0 1px rgba(16,185,129,.12);
-  }
-  .mbn-item { border-radius:16px; font-size:10px; gap:2px; padding:4px 2px; }
-  .mbn-item:hover { background:transparent; }
-  .mbn-item.active { background:linear-gradient(135deg,#d1fae5,#a7f3d0); color:#065f46; }
-  .mbn-item.active::before { display:none; }
-  .mbn-item.active .mbn-icon { transform:translateY(-1px) scale(1.12); }
-
-  /* ---------- 5. DRAWER ---------- */
-  .mobile-drawer { border-radius:0 26px 26px 0; width:84%; box-shadow:12px 0 40px rgba(0,0,0,.35); }
-  .mobile-drawer .md-user { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:16px; }
-  .drawer-item { border-radius:14px; padding:13px 14px; }
-  .mobile-drawer .md-logout { border-radius:14px; }
-
-  /* ---------- 6. INPUT / TOMBOL ---------- */
-  input, textarea, select { border-radius:14px; border:1.5px solid #cfeede; padding:12px 14px; background:#fff; }
-  input:focus, textarea:focus, select:focus { box-shadow:0 0 0 4px rgba(16,185,129,.15); }
-  button { border-radius:14px; padding:12px 16px; }
-  button:active { transform:scale(.97); }
-
-  /* ---------- 7. PANEL TOOLS (Antrian) ---------- */
-  .tools-toggle {
-    border-radius:16px; padding:13px 16px;
-    background:#fff; color:#064e3b; border:1px solid #d1fae5;
-    box-shadow:0 4px 16px rgba(5,46,22,.07);
-  }
-  .tools-toggle:hover { background:#f7fefb; }
-  .tools-toggle .tt-dot { border-color:#fff; }
-  .loc-panel, .live-link-panel, .route-panel {
-    border:none; border-radius:18px; padding:14px;
-    box-shadow:0 4px 18px rgba(5,46,22,.08); background:#fff;
-  }
-  .loc-panel.ok, .live-link-panel.ok, .route-panel.ok { background:linear-gradient(135deg,#f0fdf4,#dcfce7); }
-  .loc-panel.wait, .route-panel.wait { background:linear-gradient(135deg,#fffbeb,#fef3c7); }
-  .loc-panel.err { background:linear-gradient(135deg,#fef2f2,#fee2e2); }
-  .loc-panel .loc-actions { grid-template-columns:repeat(2,1fr); gap:8px; }
-  .loc-panel .loc-actions button { font-size:12px; padding:10px 6px; border-radius:12px; }
-
-  /* ---------- 8. TOOLBAR & SEARCH ---------- */
-  .toolbar { gap:8px; }
-  .toolbar input[type=date], .toolbar select { flex:1 1 45%; }
-  .toolbar > button { flex:1 1 100%; }
-  .search-bar input[type=text] { border-radius:999px; padding:12px 18px; font-size:13px; box-shadow:0 2px 10px rgba(5,46,22,.05); }
-  .search-bar button { border-radius:999px !important; }
-  .hint, .viewas-banner { border-radius:14px; font-size:12px; }
-
-  /* ---------- 9. TABEL -> KARTU (semua halaman data) ---------- */
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) .table-wrap { overflow:visible; border-radius:0; }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) table {
-    display:block; min-width:0; background:transparent; box-shadow:none; border-radius:0;
-  }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) thead { display:none; }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) tbody {
-    display:flex; flex-direction:column; gap:12px;
-  }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) tr {
-    display:grid; background:#fff; border-radius:20px; padding:14px; gap:8px 12px;
-    box-shadow:0 6px 20px rgba(5,46,22,.08); border:1px solid #e3f4ec;
-  }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td {
-    display:block; padding:0; border:none; font-size:13px; min-width:0; word-break:break-word;
-  }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) tr:hover td { background:transparent; }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td.cod-cell {
-    background:#fee2e2 !important; border-radius:12px; padding:8px 10px; border-left:4px solid #dc2626;
-  }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) .col-aksi { width:auto; white-space:normal; }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions { gap:8px; flex-wrap:nowrap; }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions > * { flex:1; }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions button {
-    width:100%; min-height:42px; padding:10px 8px !important; font-size:13px !important; border-radius:12px !important;
-  }
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td .actions a { display:block; }
-  /* label kecil di atas isi */
-  :is(#queueTableWrap,#patientsTableWrap,#sobatTableWrap,#historyTableWrap,#usersTableWrap) td[data-x]::before { content:none; }
-
-  /* --- 9a. ANTRIAN (admin & petugas): urut | nama+status / alamat / hp / koordinat / aksi --- */
-  #queueTableWrap tr { grid-template-columns:auto 1fr; }
-  #queueTableWrap td:nth-child(1) { grid-column:1; grid-row:1 / span 2; align-self:center; font-weight:800; color:#065f46; }
-  #queueTableWrap td:nth-child(3) { grid-column:2; grid-row:1; font-size:15px; font-weight:800; color:#064e3b; align-self:end; }
-  #queueTableWrap td:nth-child(7) { grid-column:2; grid-row:2; align-self:start; }
-  #queueTableWrap td:nth-child(4) { grid-column:1 / -1; grid-row:3; }
-  #queueTableWrap td:nth-child(5) { grid-column:1 / -1; grid-row:4; }
-  #queueTableWrap td:nth-child(6) { grid-column:1 / -1; grid-row:5; }
-  #queueTableWrap td:nth-child(2) { grid-column:1 / -1; grid-row:6; margin-top:4px; }
-  #queueTableWrap td:nth-child(4)::before,
-  #queueTableWrap td:nth-child(5)::before,
-  #queueTableWrap td:nth-child(6)::before {
-    display:block; font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
-  }
-  #queueTableWrap td:nth-child(4)::before { content:"Alamat"; }
-  #queueTableWrap td:nth-child(5)::before { content:"No HP"; }
-  #queueTableWrap td:nth-child(6)::before { content:"Koordinat"; }
-  #queueTableWrap .move-cell { flex-direction:column; gap:6px; }
-  #queueTableWrap .order-badge { width:38px; height:38px; font-size:16px; background:linear-gradient(135deg,#10b981,#047857); box-shadow:0 4px 10px rgba(16,185,129,.35); }
-  #queueTableWrap .move-input { width:52px !important; border-radius:10px; padding:6px !important; }
-  #queueTableWrap .assign-select { max-width:100%; width:100%; border-radius:10px; }
-
-  /* --- 9b. DATA PASIEN: nama / alamat / hp / koordinat / aksi --- */
-  #patientsTableWrap tr { grid-template-columns:1fr; }
-  #patientsTableWrap td:nth-child(2) { order:1; font-size:15px; font-weight:800; color:#064e3b; }
-  #patientsTableWrap td:nth-child(3) { order:2; }
-  #patientsTableWrap td:nth-child(4) { order:3; }
-  #patientsTableWrap td:nth-child(5) { order:4; }
-  #patientsTableWrap td:nth-child(1) { order:5; margin-top:4px; }
-  #patientsTableWrap td:nth-child(3)::before,
-  #patientsTableWrap td:nth-child(4)::before,
-  #patientsTableWrap td:nth-child(5)::before {
-    display:block; font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
-  }
-  #patientsTableWrap td:nth-child(3)::before { content:"Alamat"; }
-  #patientsTableWrap td:nth-child(4)::before { content:"No HP"; }
-  #patientsTableWrap td:nth-child(5)::before { content:"Koordinat"; }
-
-  /* --- 9c. DATA PASIEN SOBAT: kartu 3 kolom --- */
-  #sobatTableWrap tr { grid-template-columns:repeat(3,1fr); }
-  #sobatTableWrap td:nth-child(2) { order:1; grid-column:1 / -1; font-size:15px; font-weight:800; color:#064e3b; }
-  #sobatTableWrap td:nth-child(3) { order:2; grid-column:1 / -1; }
-  #sobatTableWrap td:nth-child(4) { order:3; grid-column:1 / -1; }
-  #sobatTableWrap td:nth-child(5) { order:4; }
-  #sobatTableWrap td:nth-child(6) { order:5; }
-  #sobatTableWrap td:nth-child(7) { order:6; }
-  #sobatTableWrap td:nth-child(8) { order:7; }
-  #sobatTableWrap td:nth-child(9) { order:8; }
-  #sobatTableWrap td:nth-child(10){ order:9; }
-  #sobatTableWrap td:nth-child(1) { order:10; grid-column:1 / -1; margin-top:4px; }
-  #sobatTableWrap td:nth-child(n+3):not(:nth-child(1))::before {
-    display:block; font-size:10px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
-  }
-  #sobatTableWrap td:nth-child(3)::before { content:"Alamat"; }
-  #sobatTableWrap td:nth-child(4)::before { content:"No HP"; }
-  #sobatTableWrap td:nth-child(5)::before { content:"Tarif"; }
-  #sobatTableWrap td:nth-child(6)::before { content:"Pend. RS"; }
-  #sobatTableWrap td:nth-child(7)::before { content:"Pend. Petugas"; }
-  #sobatTableWrap td:nth-child(8)::before { content:"Petugas"; }
-  #sobatTableWrap td:nth-child(9)::before { content:"Bulan"; }
-  #sobatTableWrap td:nth-child(10)::before { content:"Tahun"; }
-  #sobatTableWrap .rupiah { font-size:12px; }
-
-  /* --- 9d. RIWAYAT --- */
-  #historyTableWrap tr { grid-template-columns:1fr 1fr; }
-  #historyTableWrap td:nth-child(3) { order:1; grid-column:1 / -1; font-size:15px; font-weight:800; color:#064e3b; }
-  #historyTableWrap td:nth-child(1) { order:2; }
-  #historyTableWrap td:nth-child(2) { order:3; }
-  #historyTableWrap td:nth-child(4) { order:4; grid-column:1 / -1; }
-  #historyTableWrap td:nth-child(5) { order:5; grid-column:1 / -1; }
-  #historyTableWrap td:nth-child(1)::before,
-  #historyTableWrap td:nth-child(2)::before,
-  #historyTableWrap td:nth-child(4)::before,
-  #historyTableWrap td:nth-child(5)::before {
-    display:block; font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#10b981; margin-bottom:2px;
-  }
-  #historyTableWrap td:nth-child(1)::before { content:"Tanggal"; }
-  #historyTableWrap td:nth-child(2)::before { content:"Jam"; }
-  #historyTableWrap td:nth-child(4)::before { content:"Alamat"; }
-  #historyTableWrap td:nth-child(5)::before { content:"No HP"; }
-
-  /* --- 9e. USER --- */
-  #usersTableWrap tr { grid-template-columns:1fr auto; align-items:center; }
-  #usersTableWrap td:nth-child(1) { font-size:15px; font-weight:800; color:#064e3b; }
-  #usersTableWrap td:nth-child(3) { grid-column:1 / -1; font-size:12px; color:#64748b; }
-  #usersTableWrap td:nth-child(3)::before { content:"Terdaftar: "; font-weight:800; color:#10b981; }
-
-  /* ---------- 10. PAGINATION ---------- */
-  .pagination {
-    display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; border:none; border-radius:20px;
-    box-shadow:0 6px 20px rgba(5,46,22,.08); margin:14px 0 6px;
-  }
-  .pagination .page-info { grid-column:1 / -1; order:-1; text-align:center; font-size:12px; }
-  .pagination button { min-width:0; padding:10px 4px; font-size:12px; border-radius:12px; }
-  .pagination input.page-jump { grid-column:1 / -1; width:100% !important; border-radius:12px; }
-
-  /* ---------- 11. MODAL -> BOTTOM SHEET ---------- */
-  .modal-bg { align-items:flex-end; padding:0; }
-  .modal, .modal.modal-wide {
-    max-width:100%; width:100%; max-height:92dvh; border-radius:28px 28px 0 0; border-top:none;
-    padding:26px 18px calc(18px + env(safe-area-inset-bottom,0));
-    animation:sheetUp .28s cubic-bezier(.2,.9,.3,1); position:relative;
-    box-shadow:0 -12px 40px rgba(0,0,0,.3);
-  }
-  .modal::before {
-    content:""; position:absolute; top:9px; left:50%; transform:translateX(-50%);
-    width:42px; height:5px; border-radius:999px; background:#cfeede;
-  }
-  .modal h3 { font-size:18px; margin-top:4px; }
-  .modal .row { position:sticky; bottom:-18px; background:linear-gradient(180deg,rgba(255,255,255,0),#fff 35%); padding-top:14px; }
-  .modal .row button { border-radius:14px; padding:13px; }
-  .info-box, .geo-status, .bc-list, .bc-preview { border-radius:16px; }
-  .upload-zone { border-radius:20px; }
-  @keyframes sheetUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
-
-  /* ---------- 12. PETA ---------- */
-  .map-toolbar { border:none; border-radius:18px; padding:10px; box-shadow:0 4px 16px rgba(5,46,22,.08); }
-  .map-toolbar input[type=text] { border-radius:999px; }
-  .map-legend { flex-wrap:nowrap; overflow-x:auto; white-space:nowrap; border-radius:999px; padding:9px 14px; gap:16px; background:#fff; box-shadow:0 2px 10px rgba(5,46,22,.06); }
-  .page-map-fill { padding-bottom:12px; }
-  .page-map-fill #mapContainer { border-radius:24px; border:none; box-shadow:0 10px 30px rgba(5,46,22,.18); }
-  .leaflet-popup-content-wrapper { border-radius:18px; }
-
-  /* ---------- 13. DASHBOARD ---------- */
-  .dash-filters { border:none; border-radius:18px; box-shadow:0 4px 16px rgba(5,46,22,.08); }
-  .dash-filters label { display:none; }
-  .dash-filters select { flex:1 1 45%; }
-  .dash-summary { grid-template-columns:repeat(2,1fr); gap:10px; }
-  .dash-card { border:none; border-radius:20px; padding:14px; box-shadow:0 6px 18px rgba(5,46,22,.08); }
-  .dash-card:first-child { grid-column:1 / -1; background:linear-gradient(135deg,#059669,#047857); }
-  .dash-card:first-child .label { color:#a7f3d0; }
-  .dash-card:first-child .value { color:#fff; font-size:22px; }
-  .dash-card .value { font-size:15px; }
-  .chart-box { border:none; border-radius:22px; box-shadow:0 6px 20px rgba(5,46,22,.08); }
-  .chart-box h3 { font-size:14px; }
-
-  /* ---------- 14. EMPTY STATE ---------- */
-  .empty { background:#fff; border-radius:20px; color:#10b981; box-shadow:0 4px 14px rgba(5,46,22,.06); }
-}
-
-@media (max-width:420px) {
-  .main h1 { font-size:18px; }
-  .mobile-bottom-nav { margin:0 8px calc(8px + env(safe-area-inset-bottom,0)); }
-  .page { padding:10px 10px 0; }
-  #sobatTableWrap tr { grid-template-columns:repeat(2,1fr); }
+    .loc-panel .loc-actions button { font-size:11px; padding:9px 4px; }
+    .pagination button { padding:9px 2px; font-size:11px; }
+    #sobatTableWrap tr { grid-template-columns:repeat(2,1fr); }
   }
 </style>
 </head>
