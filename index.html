@@ -664,6 +664,62 @@
     .pagination button { padding:9px 2px; font-size:11px; }
     #sobatTableWrap tr { grid-template-columns:repeat(2,1fr); }
   }
+  /* TEMA DASHBOARD SIMPEL */
+#page-dashboard { background:#fafcfb; }
+#page-dashboard h1 { font-size:20px; font-weight:800; color:#0f172a; letter-spacing:-.4px; }
+
+/* Filter */
+#page-dashboard .dash-filters {
+  background:transparent; border:none; box-shadow:none; padding:0; margin-bottom:14px; gap:8px;
+}
+#page-dashboard .dash-filters label { display:none; }
+#page-dashboard .dash-filters select {
+  background:#fff; border:1px solid #e5ebe8; border-radius:12px; padding:10px 12px;
+  font-size:13px; color:#334155; min-width:0; flex:1 1 30%;
+}
+#page-dashboard .dash-filters button {
+  background:#fff; color:#334155; border:1px solid #e5ebe8; border-radius:12px; padding:10px 14px;
+}
+
+/* Kartu ringkasan */
+#page-dashboard .dash-summary { grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px; }
+#page-dashboard .dash-card,
+#page-dashboard .dash-card:first-child {
+  grid-column:auto; background:#fff; border:1px solid #eaf0ed; border-radius:16px;
+  box-shadow:none; padding:14px 16px;
+}
+#page-dashboard .dash-card .label,
+#page-dashboard .dash-card:first-child .label,
+#page-dashboard .dash-card.rs .label,
+#page-dashboard .dash-card.ptg .label {
+  display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700;
+  letter-spacing:.3px; text-transform:none; color:#64748b; margin-bottom:8px;
+}
+#page-dashboard .dash-card .label::before {
+  content:""; width:8px; height:8px; border-radius:50%; background:#10b981; flex-shrink:0;
+}
+#page-dashboard .dash-card.rs .label::before { background:#06b6d4; }
+#page-dashboard .dash-card.ptg .label::before { background:#8b5cf6; }
+#page-dashboard .dash-card:nth-child(4) .label::before { background:#f59e0b; }
+#page-dashboard .dash-card .value,
+#page-dashboard .dash-card:first-child .value,
+#page-dashboard .dash-card.rs .value,
+#page-dashboard .dash-card.ptg .value {
+  font-size:18px; font-weight:800; color:#0f172a; letter-spacing:-.4px;
+}
+
+/* Grafik */
+#page-dashboard .chart-box {
+  background:#fff; border:1px solid #eaf0ed; border-radius:16px; box-shadow:none; padding:16px; margin-bottom:12px;
+}
+#page-dashboard .chart-box h3 { font-size:13px; font-weight:700; color:#475569; margin-bottom:12px; letter-spacing:0; }
+#page-dashboard .chart-box .chart-wrap { height:240px; }
+
+@media (min-width:769px) {
+  #page-dashboard .dash-summary { grid-template-columns:repeat(4,1fr); }
+  #page-dashboard .dash-card .value { font-size:22px; }
+  #page-dashboard .chart-box .chart-wrap { height:320px; }
+}
 </style>
 </head>
 <body>
